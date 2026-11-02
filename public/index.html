@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --navy:#0b1f3a; --navy2:#132c52; --gold:#aeb8c8; --gold2:#e6eaf1;
+  --navy:#0b1f3a; --navy2:#132c52; --gold:#aeb8c8; --gold2:#e6eaf1; --acc:#c9a24b; --acc2:#e8cf8a;
   --ink:#1b2433; --muted:#5d6878; --bg:#f7f5f0; --card:#ffffff;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -59,7 +59,8 @@ header{position:sticky;top:0;z-index:50;background:rgba(11,31,58,.96);backdrop-f
 .btns{display:flex;gap:14px;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:30px;font-weight:600;transition:transform .15s,box-shadow .15s}
 .btn:hover{transform:translateY(-2px)}
-.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);box-shadow:0 8px 24px rgba(174,184,200,.35)}
+.btn-gold{background:linear-gradient(135deg,var(--acc),var(--acc2));color:var(--navy);box-shadow:0 8px 24px rgba(201,162,75,.35)}
+.btn-gold:hover{box-shadow:0 12px 30px rgba(201,162,75,.5)}
 .btn-line{border:1.5px solid rgba(255,255,255,.4);color:#fff}
 .stats{display:grid;grid-template-columns:repeat(4,auto);justify-content:start;gap:44px;margin-top:56px;flex-wrap:wrap}
 @media(max-width:620px){.stats{grid-template-columns:1fr 1fr;gap:26px 30px}}
@@ -126,7 +127,7 @@ h2{font-family:"Playfair Display",serif;font-size:clamp(1.8rem,3.5vw,2.5rem);col
 .d-cta{display:flex;gap:12px;flex-wrap:wrap}
 .d-cta .btn{padding:12px 22px;font-size:.95rem}
 .progress{margin-top:30px;height:2px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
-.progress span{display:block;height:100%;width:0;background:var(--gold2)}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2))}
 .fade{animation:fadeUp .55s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
