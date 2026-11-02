@@ -210,6 +210,21 @@ footer .mono{color:#fff}footer .mono svg{height:40px}
   html[lang="ar"] .c div{font-size:16px}
   .menu a{font-size:16px}
 }
+.about-media{grid-template-columns:1fr !important}
+.co.z{aspect-ratio:21/7;padding:5% 22% !important}
+.svc-cta{margin-top:40px}
+.btn-dark{display:inline-flex;align-items:center;padding:15px 26px;background:var(--navy);color:#fff;font-size:14px;letter-spacing:1px;text-transform:uppercase;transition:background .25s}
+html[lang="ar"] .btn-dark{letter-spacing:0;font-size:15px}
+.btn-dark:hover{background:#1d2c52}
+.ventures{padding:44px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.ven{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.ven-k{color:var(--gold);font-size:12px;letter-spacing:3px;text-transform:uppercase}
+html[lang="ar"] .ven-k{letter-spacing:0;font-size:14px}
+.ven img{height:60px;width:auto}
+.ven-l{color:var(--muted);font-size:14px}
+.ven-l:hover{color:var(--navy)}
+footer a:hover{color:#fff}
+@media (max-width:640px){.co.z{aspect-ratio:16/7;padding:6% 14% !important}.ven{justify-content:center;text-align:center;flex-direction:column;gap:14px}.ven img{height:52px}.btn-dark{font-size:12px;padding:13px 20px}}
 </style>
 </head>
 <body>
@@ -222,7 +237,7 @@ footer .mono{color:#fff}footer .mono svg{height:40px}
     <nav class="nav">
       <a href="#about" data-i="n1">About</a>
       <a href="#services" data-i="n2">Insurance</a>
-      <a href="#samco">SAMCO</a>
+      <a href="https://zamatinsurance.com" target="_blank" rel="noopener" class="ext" data-i="nz">Zamat Insurance ↗</a>
       <a href="#contact" data-i="n4">Contact</a>
       <button class="lang langBtn">العربية</button>
     </nav>
@@ -232,7 +247,7 @@ footer .mono{color:#fff}footer .mono svg{height:40px}
 <div class="menu" id="menu">
   <a href="#about" data-i="n1">About</a>
   <a href="#services" data-i="n2">Insurance</a>
-  <a href="#samco">SAMCO</a>
+  <a href="https://zamatinsurance.com" target="_blank" rel="noopener" data-i="nz">Zamat Insurance ↗</a>
   <a href="#contact" data-i="n4">Contact</a>
   <button class="lang langBtn">العربية</button>
 </div>
@@ -246,10 +261,11 @@ footer .mono{color:#fff}footer .mono svg{height:40px}
       <div class="wrap s-content">
         <div class="socials">
           <a href="https://wa.me/96171772952" aria-label="WhatsApp" class="wa"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.2-.2-.5-.3z"/></svg><span data-i="wa">Chat on WhatsApp</span></a>
+          <a href="https://instagram.com/samizamat" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zM17.3 5.5a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4zM12 2c-2.7 0-3 0-4.1.1C4.3 2.3 2.3 4.3 2.1 7.9 2 9 2 9.3 2 12s0 3 .1 4.1c.2 3.6 2.2 5.6 5.8 5.8 1.1.1 1.4.1 4.1.1s3 0 4.1-.1c3.6-.2 5.6-2.2 5.8-5.8.1-1.1.1-1.4.1-4.1s0-3-.1-4.1c-.2-3.6-2.2-5.6-5.8-5.8C15 2 14.7 2 12 2zm0 1.8c2.7 0 3 0 4 .1 2.6.1 3.9 1.4 4 4 .1 1 .1 1.3.1 4s0 3-.1 4c-.1 2.6-1.4 3.9-4 4-1 .1-1.3.1-4 .1s-3 0-4-.1c-2.6-.1-3.9-1.4-4-4-.1-1-.1-1.3-.1-4s0-3 .1-4c.1-2.6 1.4-3.9 4-4 1-.1 1.3-.1 4-.1z"/></svg></a>
         </div>
         <div class="s-name" data-i="name">Sami Zamat</div>
         <div class="s-title"><span class="typed"></span><span class="caret"></span></div>
-        <p class="s-tag" data-i="tag1">Building trust and protecting what matters — across insurance and business.</p>
+        <p class="s-tag" data-i="tag1">Founder of Zamat Insurance — building a Lebanese insurance brand to international standards.</p>
       </div>
     </div>
 
@@ -259,19 +275,10 @@ footer .mono{color:#fff}footer .mono svg{height:40px}
         <div class="s-name">Zamat</div>
         <div class="s-title"><span class="typed"></span><span class="caret"></span></div>
         <p class="s-tag" data-i="tag2">Medical, motor, life, property, travel and expat insurance.</p>
-        <a href="#services" class="btn" data-i="more">Discover more →</a>
+        <a href="https://zamatinsurance.com" target="_blank" rel="noopener" class="btn" data-i="visit">Visit zamatinsurance.com →</a>
       </div>
     </div>
 
-    <div class="slide sm" data-title="t3">
-      <img class="s-logo" src="samco-logo.png" alt="SAMCO">
-      <div class="wrap s-content">
-        <div class="s-name">SAMCO</div>
-        <div class="s-title"><span class="typed"></span><span class="caret"></span></div>
-        <p class="s-tag" data-i="tag3">Sour Auto Machinery Company — Tyre, South Lebanon.</p>
-        <a href="#samco" class="btn" data-i="more">Discover more →</a>
-      </div>
-    </div>
   </div>
   <div class="dots" id="dots"></div>
 </div>
@@ -284,14 +291,13 @@ footer .mono{color:#fff}footer .mono svg{height:40px}
       <h2 data-i="a_h">A businessman shaped by <em>trust and ambition.</em></h2>
     </div>
     <div class="about-media reveal">
-      <a href="#services" class="co z"><img src="zamat-logo-dark.png" alt="ZAMAT"><span data-i="b1">Insurance &amp; Risk Services</span></a>
-      <a href="#samco" class="co s"><img src="samco-logo-dark.png" alt="SAMCO"><span data-i="b2">Automotive &amp; Machinery</span></a>
+      <a href="https://zamatinsurance.com" target="_blank" rel="noopener" class="co z"><img src="zamat-logo-dark.png" alt="ZAMAT"><span data-i="b1">Insurance &amp; Risk Services</span></a>
     </div>
     <div class="about-body">
       <div class="reveal">
         <p data-i="a_p1">Sami Zamat is a Lebanese businessman, Insurance Agent and Insurance Consultant. Since 2021, he has built his career on one principle: protecting what matters most to people — their health, their families, their property and their businesses.</p>
         <p data-i="a_p2">As the founder of Zamat Group — Insurance &amp; Risk Services, he leads a growing practice between Beirut and Tyre, advising individuals, families and companies on the cover that truly fits them. His approach is personal and direct: clear advice, the right policy at the right price, and full follow-up on renewals, payments and claims.</p>
-        <p data-i="a_p3">Beyond insurance, Sami runs SAMCO — Sour Auto Machinery Company, extending his work into the automotive and machinery sector in South Lebanon. Across both companies, his standard remains the same: integrity, reliability, and relationships built to last.</p>
+        <p data-i="a_p3">His ambition is clear: to grow Zamat Insurance into a trusted name far beyond Lebanon — built on integrity, reliability, and relationships that last.</p>
       </div>
       <div class="stats reveal">
         <div class="stat"><b>2021</b><span data-i="s1">In insurance since</span></div>
@@ -321,19 +327,16 @@ footer .mono{color:#fff}footer .mono svg{height:40px}
       <div class="svc reveal"><i>05</i><h3 data-i="v5h">Travel</h3><p data-i="v5p">Visa-ready cover for holidays, studies and business abroad.</p></div>
       <div class="svc reveal"><i>06</i><h3 data-i="v6h">Expat</h3><p data-i="v6p">International health plans for Lebanese abroad and expats in Lebanon.</p></div>
     </div>
+    <div class="svc-cta reveal"><a href="https://zamatinsurance.com" target="_blank" rel="noopener" class="btn-dark" data-i="visit2">Request a quote at Zamat →</a></div>
   </div>
 </section>
 
-<!-- SAMCO -->
-<section class="samco" id="samco">
-  <div class="wrap samco-grid">
-    <div class="reveal">
-      <div class="kicker">SAMCO</div>
-      <h2 data-i="m_h">Sour Auto <em>Machinery Company.</em></h2>
-      <p class="lead" data-i="m_lead">An automotive and machinery company based in Tyre (Sour), South Lebanon — built on the same values of trust and reliable service.</p>
-      <a href="#contact" class="btn" data-i="m_cta">Contact SAMCO →</a>
-    </div>
-    <div class="samco-logo reveal"><img src="samco-logo.png" alt="SAMCO — Sour Auto Machinery Company"></div>
+<!-- OTHER VENTURES -->
+<section class="ventures" id="samco">
+  <div class="wrap ven">
+    <span class="ven-k" data-i="ov">Other ventures</span>
+    <img src="samco-logo-dark.png" alt="SAMCO — Sour Auto Machinery Company">
+    <a href="https://instagram.com/samco.motors" target="_blank" rel="noopener" class="ven-l">@samco.motors ↗</a>
   </div>
 </section>
 
@@ -355,7 +358,7 @@ footer .mono{color:#fff}footer .mono svg{height:40px}
 <footer>
   <div class="wrap foot">
     <a href="#top" class="mono" aria-label="Sami Zamat"><svg viewBox="0 0 120 100" aria-hidden="true" direction="ltr"><text x="0" y="78" font-family="Cormorant Garamond, Georgia, serif" font-size="88" font-weight="500" fill="currentColor">S</text><line x1="56" y1="10" x2="56" y2="90" stroke="#c3a061" stroke-width="2"/><text x="64" y="78" font-family="Cormorant Garamond, Georgia, serif" font-size="88" font-weight="500" fill="currentColor">Z</text></svg></a>
-    <div>© 2026 Sami Zamat · Zamat Group · SAMCO</div>
+    <div>© 2026 Sami Zamat · <a href="https://zamatinsurance.com" target="_blank" rel="noopener">Zamat Insurance</a> · <a href="https://instagram.com/zamatinsuranceco" target="_blank" rel="noopener">@zamatinsuranceco</a></div>
   </div>
 </footer>
 
@@ -363,15 +366,15 @@ footer .mono{color:#fff}footer .mono svg{height:40px}
 const T={en:{t1:"Insurance Agent & Consultant",t2:"Insurance & Risk Services",t3:"Automotive & Machinery"},
          ar:{t1:"وكيل ومستشار تأميني",t2:"خدمات التأمين وإدارة المخاطر",t3:"سيارات وآليات"}};
 const AR={
-  wa:"راسلني على واتساب",n1:"من أنا",n2:"التأمين",n4:"تواصل",name:"سامي زمط",
-  tag1:"نبني الثقة ونحمي ما يهمّك — في التأمين وفي الأعمال.",
+  wa:"راسلني على واتساب",nz:"زمط للتأمين ↗",visit:"زور zamatinsurance.com ←",visit2:"اطلب عرض سعر من زمط ←",ov:"مشاريع أخرى",n1:"من أنا",n2:"التأمين",n4:"تواصل",name:"سامي زمط",
+  tag1:"مؤسس زمط للتأمين — نبني علامة تأمين لبنانية بمعايير عالمية.",
   tag2:"تأمين صحي، سيارات، حياة، ممتلكات، سفر ومغتربين.",
   tag3:"شركة صور للسيارات والآليات — صور، جنوب لبنان.",more:"اكتشف أكثر ←",
   a_k:"عن سامي زمط",a_h:"رجل أعمال صنعته <em>الثقة والطموح.</em>",
   b1:"خدمات التأمين وإدارة المخاطر",b2:"سيارات وآليات",
   a_p1:"سامي زمط رجل أعمال لبناني، ووكيل ومستشار تأميني. منذ عام 2021 بنى مسيرته على مبدأ واحد: حماية ما يهمّ الناس أكثر — صحتهم، عائلاتهم، ممتلكاتهم وأعمالهم.",
   a_p2:"بصفته مؤسس مجموعة زمط — خدمات التأمين وإدارة المخاطر، يقود أعمالاً متنامية بين بيروت وصور، ويقدّم المشورة للأفراد والعائلات والشركات لاختيار التغطية الأنسب لهم. أسلوبه شخصي ومباشر: نصيحة واضحة، البوليصة المناسبة بالسعر المناسب، ومتابعة كاملة للتجديد والدفعات والمطالبات.",
-  a_p3:"إلى جانب التأمين، يدير سامي شركة SAMCO — شركة صور للسيارات والآليات، موسّعاً نشاطه إلى قطاع السيارات والآليات في جنوب لبنان. وفي الشركتين يبقى معياره واحداً: النزاهة، الالتزام، وعلاقات تدوم.",
+  a_p3:"وطموحه واضح: أن تصبح زمط للتأمين اسماً موثوقاً أبعد من لبنان — مبنياً على النزاهة، الالتزام، وعلاقات تدوم.",
   s1:"بالتأمين من سنة",s4:"عميل",s5:"أقساط تأمين",s3:"شركتين",
   v_k:"زمط للتأمين",v_h:"تأمين <em>بالشكل الصح.</em>",v_lead:"التغطية الصح بالسعر الصح — بقارن بين شركات موثوقة وبشرحلك كل شي بوضوح.",
   v1h:"التأمين الصحي",v1p:"خطط صحية للأفراد والعائلات مع تغطية استشفاء وخارج المستشفى.",
