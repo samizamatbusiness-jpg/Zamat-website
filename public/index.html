@@ -97,28 +97,38 @@ h2{font-family:"Playfair Display",serif;font-size:clamp(1.8rem,3.5vw,2.5rem);col
 .work{background:var(--navy);color:#fff}
 .work h2{color:#fff}
 .work .lead{color:#b8c2d2}
-.slider{position:relative;margin:40px auto 0;max-width:620px;border-radius:20px;overflow:hidden;aspect-ratio:1/1;background:#081830;box-shadow:0 24px 60px rgba(0,0,0,.35)}
-
-.slides{display:flex;height:100%;transition:transform .6s cubic-bezier(.6,.05,.2,1)}
-[dir=rtl] .slides{flex-direction:row-reverse}
-.slide{min-width:100%;height:100%;position:relative}
-.slide img{width:100%;height:100%;object-fit:cover;display:block}
-.ph{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:rgba(255,255,255,.55);background:linear-gradient(135deg,#132c52,#0b1f3a);font-size:.95rem}
-.ph b{display:block;font-size:2.4rem;color:var(--gold);opacity:.6}
-.slide-tag{position:absolute;top:16px;left:16px;background:rgba(5,14,30,.7);backdrop-filter:blur(6px);color:#fff;font-size:.8rem;padding:6px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.2)}
-[dir=rtl] .slide-tag{left:auto;right:16px}
-.cap{position:absolute;left:0;right:0;bottom:0;padding:60px 28px 26px;background:linear-gradient(transparent,rgba(5,14,30,.85))}
-.cap h3{font-size:1.3rem}
-.cap p{color:#c7cfdc;font-size:.95rem}
-.ctrl{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:20px}
-.ctrl .dots{margin:0}
-[dir=rtl] .ctrl{flex-direction:row-reverse}
-.arrow{flex:none;width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.15);color:#fff;font-size:1.3rem;cursor:pointer;backdrop-filter:blur(6px);z-index:2}
-.arrow:hover{background:var(--gold);color:var(--navy)}
-.prev{left:16px}.next{right:16px}
-.dots{display:flex;gap:8px;justify-content:center;margin-top:18px}
-.dots button{width:10px;height:10px;border-radius:10px;border:0;background:rgba(255,255,255,.3);cursor:pointer;transition:all .3s}
-.dots button.on{width:28px;background:var(--gold)}
+.work-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+.work-nav{display:flex;gap:10px}
+[dir=rtl] .work-nav{flex-direction:row-reverse}
+.arrow{width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;font-size:1.5rem;line-height:1;cursor:pointer;transition:all .25s}
+.arrow:hover{background:var(--gold2);color:var(--navy);border-color:var(--gold2)}
+.tabs{display:flex;gap:8px;margin:34px 0 26px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04);color:#c3ccd9;padding:10px 18px;border-radius:30px;font:inherit;font-size:.88rem;cursor:pointer;white-space:nowrap;transition:all .25s}
+.tab:hover{border-color:rgba(255,255,255,.4);color:#fff}
+.tab.on{background:#fff;color:var(--navy);border-color:#fff;font-weight:600}
+.showcase{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:center;background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:28px}
+@media(max-width:860px){.showcase{grid-template-columns:1fr;gap:26px;padding:16px}}
+.poster{position:relative;aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:#081830;box-shadow:0 30px 60px rgba(0,0,0,.4)}
+.poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.04);transition:opacity .7s ease,transform 1.2s ease}
+.poster img.on{opacity:1;transform:none}
+.detail{padding:8px 8px 8px 0}
+[dir=rtl] .detail{padding:8px 0 8px 8px}
+.count{display:flex;align-items:center;gap:12px;font-family:"Playfair Display",serif;color:#8d99ad;font-size:1rem;letter-spacing:1px}
+.count #cur{color:#fff;font-size:1.6rem}
+.count i{width:40px;height:1px;background:rgba(255,255,255,.3)}
+.detail h3{font-family:"Playfair Display",serif;font-size:clamp(1.7rem,3.2vw,2.4rem);margin:14px 0 12px;line-height:1.15}
+[dir=rtl] .detail h3{font-family:Cairo,sans-serif}
+.detail>p{color:#b8c2d2;font-size:1.02rem;max-width:460px}
+.feat{list-style:none;margin:22px 0 30px;display:grid;gap:12px}
+.feat li{display:flex;gap:12px;align-items:flex-start;color:#dfe5ee;font-size:.96rem}
+.feat li::before{content:"";flex:none;width:18px;height:18px;margin-top:3px;border-radius:50%;background:var(--gold2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%230b1f3a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
+.d-cta{display:flex;gap:12px;flex-wrap:wrap}
+.d-cta .btn{padding:12px 22px;font-size:.95rem}
+.progress{margin-top:30px;height:2px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
+.progress span{display:block;height:100%;width:0;background:var(--gold2)}
+.fade{animation:fadeUp .55s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
 /* Why */
 .why{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px;margin-top:40px}
@@ -151,7 +161,7 @@ footer{background:#06142a;color:#7f8ba0;text-align:center;padding:24px;font-size
     <nav class="links" id="links">
       <a href="#about" data-en="About" data-ar="من نحن">About</a>
       <a href="#services" data-en="Services" data-ar="خدماتنا">Services</a>
-      <a href="#work" data-en="Our Work" data-ar="شغلنا">Our Work</a>
+      <a href="#work" data-en="Solutions" data-ar="حلولنا">Solutions</a>
       <a href="#contact" data-en="Contact" data-ar="تواصل معنا">Contact</a>
       <button class="lang" id="lang">عربي</button>
     </nav>
@@ -183,14 +193,34 @@ footer{background:#06142a;color:#7f8ba0;text-align:center;padding:24px;font-size
 <!-- WORK SLIDER -->
 <section class="work" id="work">
   <div class="wrap">
-    <div class="eyebrow" data-en="Our Work" data-ar="شغلنا">Our Work</div>
-    <h2 data-en="Our solutions" data-ar="حلولنا التأمينية">Our solutions</h2>
-    <p class="lead" data-en="Every type of cover we offer — swipe through, or tap a service above to jump to it." data-ar="كل أنواع التأمين اللي منقدّمها — اسحب لتشوفهن، أو كبوس على أي خدمة فوق.">Every type of cover we offer — swipe through, or tap a service above to jump to it.</p>
-
-    <div class="slider" id="slider">
-      <div class="slides" id="slides"></div>
+    <div class="work-head">
+      <div>
+        <div class="eyebrow" data-en="Our Solutions" data-ar="حلولنا">Our Solutions</div>
+        <h2 data-en="Coverage built around you" data-ar="تغطية مصمّمة إلك">Coverage built around you</h2>
+        <p class="lead" data-en="Explore our insurance solutions and request a tailored quote in one tap." data-ar="اكتشف حلولنا التأمينية واطلب عرض سعر خاص فيك بكبسة وحدة.">Explore our insurance solutions and request a tailored quote in one tap.</p>
+      </div>
+      <div class="work-nav">
+        <button class="arrow" id="prev" aria-label="Previous">&#8249;</button>
+        <button class="arrow" id="next" aria-label="Next">&#8250;</button>
+      </div>
     </div>
-    <div class="ctrl"><button class="arrow" id="prev" aria-label="Previous">‹</button><div class="dots" id="dots"></div><button class="arrow" id="next" aria-label="Next">›</button></div>
+
+    <div class="tabs" id="tabs" role="tablist"></div>
+
+    <div class="showcase" id="slider">
+      <div class="poster" id="poster"></div>
+      <div class="detail">
+        <div class="count"><span id="cur">01</span><i></i><span id="tot">08</span></div>
+        <h3 id="d-title"></h3>
+        <p id="d-desc"></p>
+        <ul class="feat" id="d-feat"></ul>
+        <div class="d-cta">
+          <a class="btn btn-gold" id="d-quote" target="_blank" rel="noopener"></a>
+          <a class="btn btn-line" id="d-call"></a>
+        </div>
+        <div class="progress"><span id="bar"></span></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -279,43 +309,78 @@ const CONTACT = {
 };
 /* Slides: put photos in the images/ folder with these names */
 const SLIDES = [
-  {key:"life", img:"images/life.jpg", en:"Life", ar:"الحياة"},
-  {key:"travel", img:"images/travel.jpg", en:"Travel", ar:"السفر"},
-  {key:"accident", img:"images/accident.jpg", en:"Personal Accident", ar:"الحوادث الشخصية"},
-  {key:"workmen", img:"images/workmen.jpg", en:"Workmen's Compensation", ar:"تأمين العمّال"},
-  {key:"liability", img:"images/liability.jpg", en:"Public Liability", ar:"المسؤولية المدنية"},
-  {key:"motor", img:"images/motor.jpg", en:"Motor", ar:"السيارات"},
-  {key:"medical", img:"images/medical.jpg", en:"Medical", ar:"الصحي"},
-  {key:"property", img:"images/property.jpg", en:"Property", ar:"الممتلكات"}
+  {key:"medical", img:"images/medical.jpg",
+   en:{t:"Medical Insurance", d:"Comprehensive health plans for individuals and families, with access to leading hospitals and clinics.", f:["In-patient & out-patient cover","Plans for individuals, families & groups","Direct billing with partner hospitals"]},
+   ar:{t:"التأمين الصحي", d:"خطط صحية شاملة للأفراد والعائلات، مع وصول لأهم المستشفيات والعيادات.", f:["تغطية داخل وخارج المستشفى","خطط للأفراد والعائلات والمجموعات","دفع مباشر مع المستشفيات المتعاقدة"]}},
+  {key:"motor", img:"images/motor.jpg",
+   en:{t:"Motor Insurance", d:"From mandatory cover to full protection — drive with confidence on every road.", f:["Third Party & Bodily Injury","Full Motor All Risk cover","Fast claims follow-up"]},
+   ar:{t:"تأمين السيارات", d:"من التأمين الإلزامي للتغطية الشاملة، سوق وإنت مرتاح على كل طريق.", f:["ضد الغير والأضرار الجسدية","تأمين شامل (All Risk)","متابعة سريعة للحوادث"]}},
+  {key:"life", img:"images/life.jpg",
+   en:{t:"Life Insurance", d:"Secure your family's future and give the people who depend on you lasting peace of mind.", f:["Financial protection for loved ones","Savings & protection plans","Flexible terms and amounts"]},
+   ar:{t:"تأمين الحياة", d:"أمّن مستقبل عيلتك وأعطِ الناس اللي بيتّكلوا عليك راحة بال دائمة.", f:["حماية مالية لعيلتك","خطط ادّخار وحماية","مدد ومبالغ مرنة"]}},
+  {key:"property", img:"images/property.jpg",
+   en:{t:"Property Insurance", d:"Protect your home, shop or office and everything inside it against the unexpected.", f:["Fire, water & natural perils","Contents and equipment cover","Homes, shops and offices"]},
+   ar:{t:"تأمين الممتلكات", d:"احمِ بيتك أو محلّك أو مكتبك وكل شي جوّاه من المفاجآت.", f:["حريق، مياه وكوارث طبيعية","تغطية المحتويات والمعدّات","بيوت، محلات ومكاتب"]}},
+  {key:"travel", img:"images/travel.jpg",
+   en:{t:"Travel Insurance", d:"Worldwide medical and travel assistance — visa-ready and issued fast.", f:["Accepted for visa applications","Emergency medical abroad","Issued the same day"]},
+   ar:{t:"تأمين السفر", d:"تغطية طبية ومساعدة بالسفر بكل العالم، مقبولة للفيزا وبتطلع بسرعة.", f:["مقبول لطلبات الفيزا","طوارئ طبية برّا البلد","بيطلع بنفس النهار"]}},
+  {key:"accident", img:"images/accident.jpg",
+   en:{t:"Personal Accident", d:"Be prepared for life's unexpected moments with cover that protects you and your income.", f:["Accidental injury & disability","24/7 worldwide cover","Affordable annual premiums"]},
+   ar:{t:"الحوادث الشخصية", d:"خليك مستعد للحظات اللي ما بتتوقعها، مع تغطية بتحميك وبتحمي دخلك.", f:["إصابات وعجز ناتج عن حادث","تغطية 24/7 بكل العالم","أقساط سنوية مناسبة"]}},
+  {key:"workmen", img:"images/workmen.jpg",
+   en:{t:"Workmen's Compensation", d:"Protect your workers and your business against on-site accidents and liabilities.", f:["Work-related injuries","Medical & compensation costs","Compliance for employers"]},
+   ar:{t:"تأمين العمّال", d:"احمِ عمّالك وشغلك من حوادث الشغل والمسؤوليات.", f:["إصابات العمل","مصاريف طبية وتعويضات","مطابقة لمتطلبات أصحاب العمل"]}},
+  {key:"liability", img:"images/liability.jpg",
+   en:{t:"Public Liability", d:"Cover for third-party injury or damage claims arising from your business activities.", f:["Third-party injury & damage","Legal defence costs","For shops, offices & contractors"]},
+   ar:{t:"المسؤولية المدنية", d:"تغطية لمطالبات الغير عن إصابات أو أضرار سببها نشاط شغلك.", f:["إصابات وأضرار الغير","مصاريف الدفاع القانوني","للمحلات والمكاتب والمتعهدين"]}}
 ];
 /* ================================== */
 
 let lang = "en";
-const slidesEl = document.getElementById("slides"), dotsEl = document.getElementById("dots");
-let i = 0, timer;
+let i = 0, timer, t0, raf;
+const DUR = 6000;
+const posterEl = document.getElementById("poster"), tabsEl = document.getElementById("tabs");
+const pad = n => String(n).padStart(2,"0");
 
 function buildSlides(){
-  slidesEl.innerHTML = ""; dotsEl.innerHTML = "";
-  SLIDES.forEach((s,n)=>{
-    const d = document.createElement("div"); d.className="slide";
-    d.innerHTML = `<img src="${s.img}" alt="${s.en} insurance" loading="${n<2?"eager":"lazy"}"><span class="slide-tag">${s[lang]}</span>`;
-    slidesEl.appendChild(d);
-    const b = document.createElement("button"); b.onclick=()=>go(n,true); dotsEl.appendChild(b);
-  });
+  if(!posterEl.children.length){
+    SLIDES.forEach((s,n)=>{ const im=new Image(); im.src=s.img; im.alt=s.en.t; im.loading=n<2?"eager":"lazy"; posterEl.appendChild(im); });
+  }
+  tabsEl.innerHTML="";
+  SLIDES.forEach((s,n)=>{ const b=document.createElement("button"); b.className="tab"; b.setAttribute("role","tab"); b.textContent=s[lang].t; b.onclick=()=>go(n,true); tabsEl.appendChild(b); });
+  document.getElementById("tot").textContent=pad(SLIDES.length);
+  document.getElementById("d-call").textContent = lang==="ar" ? "اتصل فينا" : "Call us";
   go(i);
 }
 function go(n,user){
-  i = (n + SLIDES.length) % SLIDES.length;
-  slidesEl.style.transform = `translateX(${(lang==="ar"?1:-1)*i*100}%)`;
-  [...dotsEl.children].forEach((d,k)=>d.classList.toggle("on",k===i));
-  if(user) restart();
+  i=(n+SLIDES.length)%SLIDES.length;
+  const s=SLIDES[i], c=s[lang];
+  [...posterEl.children].forEach((im,k)=>im.classList.toggle("on",k===i));
+  [...tabsEl.children].forEach((b,k)=>{ b.classList.toggle("on",k===i); b.setAttribute("aria-selected",k===i); });
+  const on=tabsEl.children[i]; if(on) tabsEl.scrollTo({left:on.offsetLeft-tabsEl.offsetWidth/2+on.offsetWidth/2,behavior:"smooth"});
+  document.getElementById("cur").textContent=pad(i+1);
+  const det=document.querySelector(".detail"); det.classList.remove("fade"); void det.offsetWidth; det.classList.add("fade");
+  document.getElementById("d-title").textContent=c.t;
+  document.getElementById("d-desc").textContent=c.d;
+  document.getElementById("d-feat").innerHTML=c.f.map(x=>`<li>${x}</li>`).join("");
+  const q=document.getElementById("d-quote");
+  q.textContent = lang==="ar" ? "اطلب عرض سعر" : "Request a quote";
+  q.href="https://wa.me/"+CONTACT.phone.replace(/\D/g,"")+"?text="+encodeURIComponent(`Hello Zamat, I would like a quote for ${s.en.t}.`);
+  document.getElementById("d-call").href="tel:"+CONTACT.phone;
+  restart();
 }
-function restart(){ clearInterval(timer); timer=setInterval(()=>go(i+1),5000); }
-document.getElementById("next").onclick=()=>go(i+1,true);
-document.getElementById("prev").onclick=()=>go(i-1,true);
+function restart(){
+  clearTimeout(timer); cancelAnimationFrame(raf); t0=performance.now();
+  const bar=document.getElementById("bar");
+  const tick=t=>{ bar.style.width=Math.min(100,(t-t0)/DUR*100)+"%"; raf=requestAnimationFrame(tick); };
+  raf=requestAnimationFrame(tick);
+  timer=setTimeout(()=>go(i+1),DUR);
+}
+document.getElementById("next").onclick=()=>go(i+(lang==="ar"?-1:1));
+document.getElementById("prev").onclick=()=>go(i-(lang==="ar"?-1:1));
 let sx=0; const sl=document.getElementById("slider");
 sl.addEventListener("touchstart",e=>sx=e.touches[0].clientX,{passive:true});
-sl.addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>40) go(i+(dx<0?1:-1)*(lang==="ar"?-1:1),true);});
+sl.addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>40) go(i+(dx<0?1:-1)*(lang==="ar"?-1:1));});
 
 function setLang(l){
   lang=l;
@@ -324,7 +389,7 @@ function setLang(l){
   document.getElementById("lang").textContent = l==="ar"?"English":"عربي";
   buildSlides();
 }
-document.getElementById("lang").onclick=()=>setLang(lang==="en"?"ar":"en");
+document.getElementById("lang").onclick=()=>{setLang(lang==="en"?"ar":"en");document.getElementById("links").classList.remove("open");};
 document.getElementById("burger").onclick=()=>document.getElementById("links").classList.toggle("open");
 document.querySelectorAll(".links a").forEach(a=>a.onclick=()=>document.getElementById("links").classList.remove("open"));
 
@@ -341,7 +406,7 @@ document.querySelectorAll(".card[data-slide]").forEach(c=>{
   const open=()=>{go(SLIDES.findIndex(x=>x.key===c.dataset.slide),true);document.getElementById("work").scrollIntoView({behavior:"smooth"});};
   c.onclick=open; c.onkeydown=e=>{if(e.key==="Enter")open();};
 });
-buildSlides(); restart();
+buildSlides();
 </script>
 </body>
 </html>
