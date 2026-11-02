@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sami Zamat — Insurance Agent & Consultant</title>
+<meta name="description" content="Sami Zamat — insurance agent and insurance consultant since 2021. Founder of Zamat Group (Insurance & Risk Services) and SAMCO (Sour Auto Machinery Company). Beirut & Tyre, Lebanon.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#101a33;--navy-2:#16223f;--ink:#121a2c;--muted:#5d6678;
+  --gold:#c3a061;--line:#e7e8ec;--paper:#f7f7f5;--char:#1c1e22;--samco:#e26e78;
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Inter',system-ui,-apple-system,sans-serif;
+}
+html[lang="ar"]{--serif:'IBM Plex Sans Arabic',sans-serif;--sans:'IBM Plex Sans Arabic',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);color:var(--ink);background:#fff;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:60;background:#fff;border-bottom:1px solid transparent;transition:border-color .3s}
+header.scrolled{border-color:var(--line)}
+.head{display:flex;align-items:center;justify-content:space-between;height:92px}
+.mono{display:flex;align-items:center;color:var(--navy);direction:ltr}
+.mono svg{height:46px;width:auto}
+.nav{display:flex;align-items:center;gap:34px}
+.nav a{font-size:14px;color:var(--ink);letter-spacing:.3px;position:relative}
+.nav a:after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;background:var(--gold);transform:scaleX(0);transition:transform .3s}
+.nav a:hover:after{transform:scaleX(1)}
+.burger{background:none;border:0;cursor:pointer;width:28px;height:20px;padding:0;display:flex;flex-direction:column;justify-content:space-between}
+.burger span{display:block;width:100%;height:2.5px;background:var(--navy);border-radius:3px;transition:transform .3s,opacity .3s}
+.burger.x span:nth-child(1){transform:translateY(8.75px) rotate(45deg)}
+.burger.x span:nth-child(2){opacity:0;transform:scaleX(0)}
+.burger.x span:nth-child(3){transform:translateY(-8.75px) rotate(-45deg)}
+.menu{position:fixed;inset:92px 0 0;background:#fff;z-index:55;display:flex;flex-direction:column;padding:16px 28px;gap:0;transform:translateY(-12px);opacity:0;pointer-events:none;transition:.35s}
+.menu.open{opacity:1;transform:none;pointer-events:auto}
+.menu a{font-family:var(--sans);font-size:17px;font-weight:500;letter-spacing:.5px;color:var(--navy);padding:16px 0;border-bottom:1px solid var(--line)}
+.menu .lang{margin-top:24px;align-self:flex-start;font-size:13px;padding:7px 16px}
+.lang{border:1px solid var(--navy);color:var(--navy);background:none;padding:8px 18px;border-radius:999px;font:500 14px var(--sans);cursor:pointer}
+
+/* HERO SLIDER */
+.hero{position:relative;height:min(86vh,720px);min-height:540px;overflow:hidden;background:var(--navy)}
+.slide{position:absolute;inset:0;opacity:0;transition:opacity 1s ease;pointer-events:none}
+.slide.on{opacity:1;pointer-events:auto}
+.slide .bg{position:absolute;top:0;bottom:0;right:0;height:100%;width:auto;max-width:none;-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 35%);mask-image:linear-gradient(90deg,transparent 0%,#000 35%)}
+.slide .shade{position:absolute;inset:0;background:linear-gradient(90deg,var(--navy) 0%,rgba(16,26,51,.92) 32%,rgba(16,26,51,.45) 62%,rgba(16,26,51,.05) 100%)}
+html[dir="rtl"] .slide .bg{right:auto;left:0;transform:scaleX(-1)}
+html[dir="rtl"] .slide .shade{background:linear-gradient(270deg,var(--navy) 0%,rgba(16,26,51,.92) 32%,rgba(16,26,51,.45) 62%,rgba(16,26,51,.05) 100%)}
+.s-content{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;color:#fff}
+.s-content>*{max-width:600px}
+.s-content>.s-title{max-width:none;line-height:1.3}
+.socials{display:flex;gap:10px;margin-bottom:36px}
+.socials a{width:42px;height:42px;border-radius:10px;background:#eef0f4;display:grid;place-items:center;transition:transform .2s}
+.socials a:hover{transform:translateY(-2px)}
+.socials svg{width:20px;height:20px;fill:var(--navy)}
+.socials a.wa{width:auto;padding:0 18px 0 14px;gap:10px;display:inline-flex;align-items:center;border-radius:999px;background:#fff;color:var(--navy);font-size:14px;font-weight:600;letter-spacing:.3px;height:44px}
+.socials a.wa svg{fill:#25d366;width:22px;height:22px}
+
+.s-name{font-family:var(--serif);font-weight:500;font-size:clamp(46px,7vw,82px);line-height:1;letter-spacing:1px;text-transform:uppercase}
+html[lang="ar"] .s-name{line-height:1.3;letter-spacing:0;font-weight:600}
+.s-title{font-weight:700;font-size:clamp(20px,2.6vw,30px);letter-spacing:.5px;text-transform:uppercase;margin-top:26px;min-height:1.3em}
+html[lang="ar"] .s-title{letter-spacing:0}
+.caret{display:inline-block;width:2px;height:1.05em;background:rgba(255,255,255,.7);vertical-align:-3px;margin-inline-start:8px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.s-tag{font-size:clamp(18px,2vw,24px);font-weight:400;letter-spacing:1.4px;margin-top:30px;max-width:460px;color:#eef1f6}
+html[lang="ar"] .s-tag{letter-spacing:0}
+.s-logo{position:absolute;z-index:1;right:6%;top:50%;transform:translateY(-50%);width:min(42%,520px);opacity:.95}
+html[dir="rtl"] .s-logo{right:auto;left:6%}
+.slide.sm{background:radial-gradient(circle at 75% 50%,#2d3036,var(--char) 65%)}
+.slide.zm{background:radial-gradient(circle at 75% 45%,#22355e,var(--navy) 65%)}
+.slide.sm .s-title{color:var(--samco)}
+.btn{display:inline-flex;align-items:center;gap:10px;margin-top:34px;align-self:flex-start;padding:14px 26px;border:1px solid rgba(255,255,255,.55);color:#fff;font-size:14px;letter-spacing:1px;text-transform:uppercase;transition:background .25s}
+html[lang="ar"] .btn{letter-spacing:0;font-size:15px}
+.btn:hover{background:rgba(255,255,255,.1)}
+.dots{display:flex;justify-content:center;align-items:center;gap:8px;padding:18px 0 0}
+.dots button{width:6px;height:6px;padding:0;border-radius:999px;border:0;background:#cfd2d8;cursor:pointer;transition:width .35s,background .35s}
+.dots button.on{width:20px;background:var(--ink)}
+
+/* SECTION HEADS */
+section{padding:96px 0}
+.kicker{display:flex;align-items:center;gap:22px;color:var(--gold);font-size:14px;letter-spacing:4px;text-transform:uppercase;font-weight:400}
+html[lang="ar"] .kicker{letter-spacing:0;font-size:16px}
+.kicker:before{content:"";width:46px;height:1.5px;background:var(--gold)}
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(40px,5.6vw,66px);line-height:1.08;color:var(--navy);margin-top:30px}
+h2 em{display:block;color:var(--gold);font-style:italic}
+html[lang="ar"] h2{font-weight:500;line-height:1.4}
+html[lang="ar"] h2 em{font-style:normal}
+.lead{color:var(--muted);font-size:18px;max-width:640px;margin-top:22px}
+
+/* ABOUT */
+.about-media{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:56px}
+.co{border-radius:4px;aspect-ratio:16/10;display:grid;place-items:center;padding:12%;position:relative;overflow:hidden}
+.co.z{background:#fff;border:1px solid var(--line);padding:16% 13%}
+.co.s{background:#fff;border:1px solid var(--line);padding:9% 16% 15%}
+.co img{width:100%;height:auto}
+.co{transition:box-shadow .3s,transform .3s}
+.co:hover{box-shadow:0 18px 40px rgba(16,26,51,.08);transform:translateY(-2px)}
+.co span{position:absolute;bottom:16px;left:0;right:0;text-align:center;color:#8a90a0;font-size:11px;letter-spacing:3px;text-transform:uppercase}
+html[lang="ar"] .co span{letter-spacing:0;font-size:13px}
+.about-body{display:grid;grid-template-columns:1.3fr .7fr;gap:64px;margin-top:56px}
+.about-body p{font-size:18px;color:#3a4256}
+.about-body p+p{margin-top:18px}
+.stats{display:grid;gap:26px;border-inline-start:1px solid var(--line);padding-inline-start:36px;align-content:start}
+.stat b{display:block;font-family:var(--serif);font-size:48px;font-weight:500;color:var(--navy);line-height:1}
+.stat span{color:var(--muted);font-size:14px;letter-spacing:1px;text-transform:uppercase}
+html[lang="ar"] .stat span{letter-spacing:0}
+
+
+/* BRAND BANNER */
+.banner-wrap{padding:0 0 96px}
+.banner{position:relative;overflow:hidden;aspect-ratio:1320/863;max-width:900px;margin:0 auto;border-radius:6px;background:#e9eaec;box-shadow:0 30px 60px rgba(16,26,51,.12)}
+.banner img{width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.02);transition:opacity 1.2s ease,transform 2.5s ease}
+.banner.in img{opacity:1;transform:scale(1)}
+@media (max-width:640px){.banner-wrap{padding:0 0 64px}.banner{border-radius:4px}}
+
+/* SERVICES */
+.services{background:var(--paper)}
+.svc-list{margin-top:56px;border-top:1px solid #dcdde2}
+.svc{display:grid;grid-template-columns:80px 1fr 1.2fr;gap:24px;align-items:baseline;padding:30px 0;border-bottom:1px solid #dcdde2;transition:padding .3s}
+.svc:hover{padding-inline-start:12px}
+.svc i{font-style:normal;font-family:var(--serif);font-size:22px;color:var(--gold)}
+.svc h3{font-family:var(--serif);font-size:32px;font-weight:500;color:var(--navy);line-height:1.15}
+html[lang="ar"] .svc h3{font-size:24px}
+.svc p{color:var(--muted);font-size:16px}
+
+/* SAMCO */
+.samco{background:var(--char);color:#fff}
+.samco .kicker{color:var(--samco)}.samco .kicker:before{background:var(--samco)}
+.samco h2{color:#fff}.samco h2 em{color:var(--samco)}
+.samco .lead{color:#c5c7cd}
+.samco-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.samco-logo{padding:40px 20px}
+.samco .btn{border-color:var(--samco);color:var(--samco)}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:repeat(3,1fr);margin-top:56px;border-top:1px solid var(--line)}
+.c{padding:32px 28px 32px 0;border-bottom:1px solid var(--line)}
+html[dir="rtl"] .c{padding:32px 0 32px 28px}
+.c small{display:block;color:var(--gold);font-size:12px;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px}
+html[lang="ar"] .c small{letter-spacing:0;font-size:14px}
+.c div,.c a{font-family:var(--serif);font-size:26px;color:var(--navy);line-height:1.3;word-break:break-word}
+html[lang="ar"] .c div{font-size:20px}
+
+footer{background:var(--navy);color:#aab2c3;padding:44px 0;font-size:14px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+footer .mono{color:#fff}footer .mono svg{height:40px}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .9s ease,transform .9s ease}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:900px){
+  .nav{display:none}
+  .about-body,.samco-grid{grid-template-columns:1fr;gap:40px}
+  .stats{grid-template-columns:repeat(3,1fr);border:0;border-top:1px solid var(--line);padding:28px 0 0}
+  .stat b{font-size:36px}
+  .contact-grid{grid-template-columns:1fr}
+  .svc{grid-template-columns:44px 1fr}
+  .svc p{grid-column:2}
+}
+@media (min-width:901px){.burger{display:none}}
+@media (max-width:640px){
+  .head{height:80px}.menu{inset:80px 0 0}
+  .mono svg{height:38px}
+  .hero{height:520px;min-height:0}
+  .slide .bg{right:auto;left:34%}
+  html[dir="rtl"] .slide .bg{left:auto;right:34%}
+  .slide .shade{background:linear-gradient(90deg,var(--navy) 0%,rgba(16,26,51,.88) 38%,rgba(16,26,51,.35) 75%,rgba(16,26,51,.15) 100%)}
+  html[dir="rtl"] .slide .shade{background:linear-gradient(270deg,var(--navy) 0%,rgba(16,26,51,.88) 38%,rgba(16,26,51,.35) 75%,rgba(16,26,51,.15) 100%)}
+  .s-content{justify-content:flex-start;padding-top:72px}
+  .s-logo{top:auto;bottom:56px;transform:none;right:28px;left:28px;width:auto;max-width:320px;margin:0 auto}
+  html[dir="rtl"] .s-logo{left:28px}
+  .about-media{grid-template-columns:1fr}
+  section{padding:76px 0}
+  .stat span{font-size:11px;line-height:1.5;display:block;margin-top:6px}
+  .stat b{font-size:30px}
+}
+
+/* mobile type scale */
+@media (max-width:640px){
+  body{font-size:15px}
+  .s-name{font-size:36px;letter-spacing:.5px}
+  .s-title{font-size:16px;margin-top:16px}
+  .s-tag{font-size:15px;letter-spacing:.4px;margin-top:18px}
+  .socials{margin-bottom:26px}
+  .btn{font-size:12px;padding:12px 20px;margin-top:24px}
+  .kicker{font-size:11px;letter-spacing:2.5px;gap:14px}
+  .kicker:before{width:30px}
+  h2{font-size:30px;line-height:1.15;margin-top:18px}
+  html[lang="ar"] h2{font-size:26px}
+  .lead{font-size:15px;margin-top:14px}
+  .about-media{margin-top:36px;gap:12px}
+  .about-body{margin-top:36px}
+  .about-body p{font-size:15px}
+  .stat b{font-size:26px}
+  .svc-list{margin-top:36px}
+  .svc{padding:20px 0;gap:6px 14px;grid-template-columns:34px 1fr}
+  .svc i{font-size:15px}
+  .svc h3{font-size:20px}
+  html[lang="ar"] .svc h3{font-size:18px}
+  .svc p{font-size:14px}
+  .contact-grid{margin-top:36px}
+  .c{padding:20px 0}
+  .c small{font-size:11px}
+  .c div,.c a{font-size:18px}
+  html[lang="ar"] .c div{font-size:16px}
+  .menu a{font-size:16px}
+}
+</style>
+</head>
+<body>
+
+<header id="hdr">
+  <div class="wrap head">
+    <a href="#top" class="mono" aria-label="Sami Zamat">
+      <svg viewBox="0 0 120 100" aria-hidden="true" direction="ltr"><text x="0" y="78" font-family="Cormorant Garamond, Georgia, serif" font-size="88" font-weight="500" fill="currentColor">S</text><line x1="56" y1="10" x2="56" y2="90" stroke="#c3a061" stroke-width="2"/><text x="64" y="78" font-family="Cormorant Garamond, Georgia, serif" font-size="88" font-weight="500" fill="currentColor">Z</text></svg>
+    </a>
+    <nav class="nav">
+      <a href="#about" data-i="n1">About</a>
+      <a href="#services" data-i="n2">Insurance</a>
+      <a href="#samco">SAMCO</a>
+      <a href="#contact" data-i="n4">Contact</a>
+      <button class="lang langBtn">العربية</button>
+    </nav>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="menu" id="menu">
+  <a href="#about" data-i="n1">About</a>
+  <a href="#services" data-i="n2">Insurance</a>
+  <a href="#samco">SAMCO</a>
+  <a href="#contact" data-i="n4">Contact</a>
+  <button class="lang langBtn">العربية</button>
+</div>
+
+<!-- HERO SLIDER -->
+<div id="top">
+  <div class="hero" id="hero">
+    <div class="slide on" data-title="t1">
+      <img class="bg" src="sami-hero.jpg" alt="Sami Zamat">
+      <div class="shade"></div>
+      <div class="wrap s-content">
+        <div class="socials">
+          <a href="https://wa.me/96171772952" aria-label="WhatsApp" class="wa"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.2-.2-.5-.3z"/></svg><span data-i="wa">Chat on WhatsApp</span></a>
+        </div>
+        <div class="s-name" data-i="name">Sami Zamat</div>
+        <div class="s-title"><span class="typed"></span><span class="caret"></span></div>
+        <p class="s-tag" data-i="tag1">Building trust and protecting what matters — across insurance and business.</p>
+      </div>
+    </div>
+
+    <div class="slide zm" data-title="t2">
+      <img class="s-logo" src="zamat-logo.png" alt="ZAMAT">
+      <div class="wrap s-content">
+        <div class="s-name">Zamat</div>
+        <div class="s-title"><span class="typed"></span><span class="caret"></span></div>
+        <p class="s-tag" data-i="tag2">Medical, motor, life, property, travel and expat insurance.</p>
+        <a href="#services" class="btn" data-i="more">Discover more →</a>
+      </div>
+    </div>
+
+    <div class="slide sm" data-title="t3">
+      <img class="s-logo" src="samco-logo.png" alt="SAMCO">
+      <div class="wrap s-content">
+        <div class="s-name">SAMCO</div>
+        <div class="s-title"><span class="typed"></span><span class="caret"></span></div>
+        <p class="s-tag" data-i="tag3">Sour Auto Machinery Company — Tyre, South Lebanon.</p>
+        <a href="#samco" class="btn" data-i="more">Discover more →</a>
+      </div>
+    </div>
+  </div>
+  <div class="dots" id="dots"></div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="kicker" data-i="a_k">About Sami Zamat</div>
+      <h2 data-i="a_h">A businessman shaped by <em>trust and ambition.</em></h2>
+    </div>
+    <div class="about-media reveal">
+      <a href="#services" class="co z"><img src="zamat-logo-dark.png" alt="ZAMAT"><span data-i="b1">Insurance &amp; Risk Services</span></a>
+      <a href="#samco" class="co s"><img src="samco-logo-dark.png" alt="SAMCO"><span data-i="b2">Automotive &amp; Machinery</span></a>
+    </div>
+    <div class="about-body">
+      <div class="reveal">
+        <p data-i="a_p1">Sami Zamat is a Lebanese businessman, Insurance Agent and Insurance Consultant. Since 2021, he has built his career on one principle: protecting what matters most to people — their health, their families, their property and their businesses.</p>
+        <p data-i="a_p2">As the founder of Zamat Group — Insurance &amp; Risk Services, he leads a growing practice between Beirut and Tyre, advising individuals, families and companies on the cover that truly fits them. His approach is personal and direct: clear advice, the right policy at the right price, and full follow-up on renewals, payments and claims.</p>
+        <p data-i="a_p3">Beyond insurance, Sami runs SAMCO — Sour Auto Machinery Company, extending his work into the automotive and machinery sector in South Lebanon. Across both companies, his standard remains the same: integrity, reliability, and relationships built to last.</p>
+      </div>
+      <div class="stats reveal">
+        <div class="stat"><b>2021</b><span data-i="s1">In insurance since</span></div>
+        <div class="stat"><b>300+</b><span data-i="s4">Clients</span></div>
+        <div class="stat"><b>$500K+</b><span data-i="s5">In insurance premiums</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRAND BANNER -->
+<div class="banner-wrap"><div class="wrap"><div class="banner" id="banner"><img src="zamat-office.jpg" alt="ZAMAT — Insurance &amp; Risk Services — Protecting what matters" loading="lazy"></div></div></div>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="kicker" data-i="v_k">Zamat Insurance</div>
+      <h2 data-i="v_h">Insurance, <em>done properly.</em></h2>
+      <p class="lead" data-i="v_lead">The right cover at the right price — compared across trusted insurers and explained clearly.</p>
+    </div>
+    <div class="svc-list">
+      <div class="svc reveal"><i>01</i><h3 data-i="v1h">Medical</h3><p data-i="v1p">Individual and family health plans with hospital and outpatient cover.</p></div>
+      <div class="svc reveal"><i>02</i><h3 data-i="v2h">Motor</h3><p data-i="v2p">Third-party, bodily injury and full all-risk cover for your vehicle.</p></div>
+      <div class="svc reveal"><i>03</i><h3 data-i="v3h">Life &amp; Personal Accident</h3><p data-i="v3p">Financial security for the people who depend on you.</p></div>
+      <div class="svc reveal"><i>04</i><h3 data-i="v4h">Property &amp; Business</h3><p data-i="v4p">Protection for homes, shops, offices and commercial risks.</p></div>
+      <div class="svc reveal"><i>05</i><h3 data-i="v5h">Travel</h3><p data-i="v5p">Visa-ready cover for holidays, studies and business abroad.</p></div>
+      <div class="svc reveal"><i>06</i><h3 data-i="v6h">Expat</h3><p data-i="v6p">International health plans for Lebanese abroad and expats in Lebanon.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SAMCO -->
+<section class="samco" id="samco">
+  <div class="wrap samco-grid">
+    <div class="reveal">
+      <div class="kicker">SAMCO</div>
+      <h2 data-i="m_h">Sour Auto <em>Machinery Company.</em></h2>
+      <p class="lead" data-i="m_lead">An automotive and machinery company based in Tyre (Sour), South Lebanon — built on the same values of trust and reliable service.</p>
+      <a href="#contact" class="btn" data-i="m_cta">Contact SAMCO →</a>
+    </div>
+    <div class="samco-logo reveal"><img src="samco-logo.png" alt="SAMCO — Sour Auto Machinery Company"></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="kicker" data-i="c_k">Contact</div>
+      <h2 data-i="c_h">Let’s talk <em>about what matters.</em></h2>
+    </div>
+    <div class="contact-grid reveal">
+      <div class="c"><small data-i="c1">Email</small><a href="mailto:info@samizamat.com">info@samizamat.com</a></div>
+      <div class="c"><small>WhatsApp</small><a href="https://wa.me/96171772952" dir="ltr">+961 71 772 952</a></div>
+      <div class="c"><small data-i="c3">Offices</small><div data-i="c3v">Beirut &amp; Tyre, Lebanon</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <a href="#top" class="mono" aria-label="Sami Zamat"><svg viewBox="0 0 120 100" aria-hidden="true" direction="ltr"><text x="0" y="78" font-family="Cormorant Garamond, Georgia, serif" font-size="88" font-weight="500" fill="currentColor">S</text><line x1="56" y1="10" x2="56" y2="90" stroke="#c3a061" stroke-width="2"/><text x="64" y="78" font-family="Cormorant Garamond, Georgia, serif" font-size="88" font-weight="500" fill="currentColor">Z</text></svg></a>
+    <div>© 2026 Sami Zamat · Zamat Group · SAMCO</div>
+  </div>
+</footer>
+
+<script>
+const T={en:{t1:"Insurance Agent & Consultant",t2:"Insurance & Risk Services",t3:"Automotive & Machinery"},
+         ar:{t1:"وكيل ومستشار تأميني",t2:"خدمات التأمين وإدارة المخاطر",t3:"سيارات وآليات"}};
+const AR={
+  wa:"راسلني على واتساب",n1:"من أنا",n2:"التأمين",n4:"تواصل",name:"سامي زمط",
+  tag1:"نبني الثقة ونحمي ما يهمّك — في التأمين وفي الأعمال.",
+  tag2:"تأمين صحي، سيارات، حياة، ممتلكات، سفر ومغتربين.",
+  tag3:"شركة صور للسيارات والآليات — صور، جنوب لبنان.",more:"اكتشف أكثر ←",
+  a_k:"عن سامي زمط",a_h:"رجل أعمال صنعته <em>الثقة والطموح.</em>",
+  b1:"خدمات التأمين وإدارة المخاطر",b2:"سيارات وآليات",
+  a_p1:"سامي زمط رجل أعمال لبناني، ووكيل ومستشار تأميني. منذ عام 2021 بنى مسيرته على مبدأ واحد: حماية ما يهمّ الناس أكثر — صحتهم، عائلاتهم، ممتلكاتهم وأعمالهم.",
+  a_p2:"بصفته مؤسس مجموعة زمط — خدمات التأمين وإدارة المخاطر، يقود أعمالاً متنامية بين بيروت وصور، ويقدّم المشورة للأفراد والعائلات والشركات لاختيار التغطية الأنسب لهم. أسلوبه شخصي ومباشر: نصيحة واضحة، البوليصة المناسبة بالسعر المناسب، ومتابعة كاملة للتجديد والدفعات والمطالبات.",
+  a_p3:"إلى جانب التأمين، يدير سامي شركة SAMCO — شركة صور للسيارات والآليات، موسّعاً نشاطه إلى قطاع السيارات والآليات في جنوب لبنان. وفي الشركتين يبقى معياره واحداً: النزاهة، الالتزام، وعلاقات تدوم.",
+  s1:"بالتأمين من سنة",s4:"عميل",s5:"أقساط تأمين",s3:"شركتين",
+  v_k:"زمط للتأمين",v_h:"تأمين <em>بالشكل الصح.</em>",v_lead:"التغطية الصح بالسعر الصح — بقارن بين شركات موثوقة وبشرحلك كل شي بوضوح.",
+  v1h:"التأمين الصحي",v1p:"خطط صحية للأفراد والعائلات مع تغطية استشفاء وخارج المستشفى.",
+  v2h:"تأمين السيارات",v2p:"ضد الغير، أضرار جسدية، وتأمين شامل لسيارتك.",
+  v3h:"الحياة والحوادث الشخصية",v3p:"أمان مادي للناس يلي بيعتمدوا عليك.",
+  v4h:"الممتلكات والأعمال",v4p:"حماية للبيوت والمحلات والمكاتب والمخاطر التجارية.",
+  v5h:"تأمين السفر",v5p:"تأمين مقبول للفيزا للسياحة والدراسة والشغل.",
+  v6h:"تأمين المغتربين",v6p:"خطط صحية دولية للبنانيين بالخارج وللأجانب بلبنان.",
+  m_h:"شركة صور <em>للسيارات والآليات.</em>",m_lead:"شركة سيارات وآليات مقرها صور، جنوب لبنان — مبنية على نفس قيم الثقة والخدمة يلي فيك تتكل عليها.",m_cta:"تواصل مع SAMCO ←",
+  c_k:"تواصل",c_h:"خلينا نحكي <em>عن الشي يلي بيهمّك.</em>",c1:"البريد الإلكتروني",c3:"المكاتب",c3v:"بيروت وصور، لبنان"
+};
+const EN={};document.querySelectorAll('[data-i]').forEach(e=>{if(!(e.dataset.i in EN))EN[e.dataset.i]=e.innerHTML});
+let lang='en';
+
+/* slider + typing */
+const slides=[...document.querySelectorAll('.slide')],dots=document.getElementById('dots');let cur=0,timer,typeT;
+slides.forEach((s,i)=>{const b=document.createElement('button');b.setAttribute('aria-label','Slide '+(i+1));b.onclick=()=>go(i,true);dots.appendChild(b)});
+function type(i){clearTimeout(typeT);const el=slides[i].querySelector('.typed');const txt=T[lang][slides[i].dataset.title];el.textContent='';let n=0;
+  (function step(){el.textContent=txt.slice(0,n++);if(n<=txt.length)typeT=setTimeout(step,55)})();}
+function go(i,user){slides[cur].classList.remove('on');dots.children[cur].classList.remove('on');cur=(i+slides.length)%slides.length;
+  slides[cur].classList.add('on');dots.children[cur].classList.add('on');type(cur);if(user)restart();}
+function restart(){clearInterval(timer);timer=setInterval(()=>go(cur+1),6500)}
+dots.children[0].classList.add('on');type(0);restart();
+let sx=null;const hero=document.getElementById('hero');
+hero.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+hero.addEventListener('touchend',e=>{if(sx==null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>45)go(cur+((d<0)!==(lang==='ar')?1:-1),true);sx=null});
+
+/* language */
+function setLang(l){lang=l;const d=l==='ar'?AR:EN,h=document.documentElement;h.lang=l;h.dir=l==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-i]').forEach(e=>{if(d[e.dataset.i]!=null)e.innerHTML=d[e.dataset.i]});
+  document.querySelectorAll('.langBtn').forEach(b=>b.textContent=l==='ar'?'English':'العربية');type(cur);
+  try{localStorage.setItem('sz-lang',l)}catch(e){}}
+document.querySelectorAll('.langBtn').forEach(b=>b.onclick=()=>{setLang(lang==='en'?'ar':'en');closeMenu()});
+try{if(localStorage.getItem('sz-lang')==='ar')setLang('ar')}catch(e){}
+
+/* menu */
+const menu=document.getElementById('menu'),burger=document.getElementById('burger');
+function closeMenu(){menu.classList.remove('open');burger.classList.remove('x')}
+burger.onclick=()=>{menu.classList.toggle('open');burger.classList.toggle('x')};
+menu.querySelectorAll('a').forEach(a=>a.onclick=closeMenu);
+const hdr=document.getElementById('hdr');addEventListener('scroll',()=>hdr.classList.toggle('scrolled',scrollY>10));
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.1});
+document.querySelectorAll('.reveal,.banner').forEach(e=>io.observe(e));
+</script>
+</body>
+</html>
