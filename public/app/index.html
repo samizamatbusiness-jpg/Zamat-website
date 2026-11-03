@@ -212,7 +212,7 @@ body.zc[data-tab="home"] #zBell{right:12px}
 #zBell svg{width:26px;height:28px;fill:#fff}
 #zBell i{position:absolute;top:4px;right:4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#D9A441;color:#0E2239;font-style:normal;font-size:10.5px;font-weight:800;display:grid;place-items:center}
 #zBell i:empty{display:none}
-body.zc[data-tab="home"] #zHero{display:block;position:relative;z-index:2;height:172px;margin:22px 4px 0;border-radius:16px;overflow:hidden;background:#2E4560;box-shadow:0 10px 26px -14px rgba(11,37,69,.6)}
+body.zc[data-tab="home"] #zHero{display:block;position:relative;z-index:2;height:172px;margin:22px 4px 0;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#16335C,#0B1F3A);box-shadow:0 10px 26px -14px rgba(11,37,69,.6)}
 #zHero .zg{position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 2px,transparent 2px 22px),repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 2px,transparent 2px 18px)}
 #zHero .zb1,#zHero .zb2{position:absolute;top:0;right:0;bottom:0;width:64%;clip-path:polygon(22% 0,100% 0,100% 100%,64% 100%)}
 #zHero .zb1{background:#CFE0F0}
@@ -251,11 +251,14 @@ body.zc[data-tab="home"] header.brand>div:nth-child(2){top:calc(env(safe-area-in
 body.zc[data-tab="home"] #zMenu,body.zc[data-tab="home"] #zBell{top:calc(env(safe-area-inset-top,0px) + 8px)}
 body.zc #msg:empty{display:none}
 #zHero{cursor:pointer}
+#zHero .zsky,#zHero .zb2,#zHero .zb3{display:none!important}
+#zHero .zlogo{position:absolute;right:16px;top:16px;width:92px;height:92px;filter:drop-shadow(0 8px 16px rgba(0,0,0,.35))}
+#zHero .zlogo svg,#zHero .zlogo img{width:100%!important;height:100%!important;object-fit:contain;border-radius:22px;display:block}
 #zHero .zsky{position:absolute;top:0;right:0;bottom:0;width:64%;clip-path:polygon(22% 0,100% 0,100% 100%,64% 100%);background:linear-gradient(200deg,#F4F8FC 0%,#CFE0F0 45%,#8FB2D3 100%)}
 #zHero .zs{position:absolute;left:18px;bottom:14px;display:flex;gap:16px;color:#fff}
 #zHero .zs div{font-size:11px;font-weight:600;color:rgba(255,255,255,.75);line-height:1.25}
 #zHero .zs b{display:block;font-size:17px;font-weight:800;color:#fff;letter-spacing:-.01em}
-#zHero .zgo{position:absolute;right:14px;bottom:14px;width:36px;height:36px;border-radius:50%;background:rgba(14,34,57,.85);display:grid;place-items:center}
+#zHero .zgo{position:absolute;right:14px;bottom:14px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center}
 #zHero .zgo svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 body.zc[data-tab="home"] .zcat button.g{box-shadow:0 1px 2px rgba(14,34,57,.04),0 6px 16px -10px rgba(14,34,57,.25);transition:transform .1s ease,box-shadow .1s ease}
 body.zc[data-tab="home"] .zcat button.g:active{transform:scale(.97);box-shadow:none}
@@ -449,7 +452,7 @@ button:not(#zPad button),input,select,textarea,.tabs,.tabs button.g,.acts a{bord
 body[data-tab="home"] .tile.g{flex-direction:row!important;text-align:start!important;min-height:0!important;padding:14px 16px!important;justify-content:flex-start!important}
 body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[data-tab="home"] .tile .ti svg{width:24px!important;height:24px!important}body[data-tab="home"] .tile .ar{display:block!important}body[data-tab="home"] .tile .ts{display:block!important}body[data-tab="home"] .tile.g{border-width:1.5px!important}`;
     (P.hidden||[]).forEach(k=>{s+=k==="bk"?`#bkTile{display:none!important}`:`.home .tile[data-go="${k}"]{display:none!important}`});
-    const z={xs:.8,s:.86,m:.92,l:1,xl:1.1}[P.size||"m"];if(z&&z!==1)s+=`body{zoom:${z}}`;
+    if(P.heroColor&&/^#[0-9a-f]{6}$/i.test(P.heroColor))s+=`#zHero{background:linear-gradient(135deg,${mix(P.heroColor,"#ffffff",.08)},${mix(P.heroColor,"#000000",.3)})!important}`;const z={xs:.8,s:.86,m:.92,l:1,xl:1.1}[P.size||"m"];if(z&&z!==1)s+=`body{zoom:${z}}`;
     return s}
   function styleCSS(P){const{p,a}=colors(P),C='.panel,.card,.zt-card,.zl-card,.tile.g,.stat,.clist,.zcat button.g,#zHero';
     if(P.style==="flat")return C+'{box-shadow:none!important}';
@@ -571,7 +574,7 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
 
 <div id="zDrawer" aria-hidden="true"><div class="zo" id="zDrO"></div><aside class="zp2" aria-label="Menu">
   <div class="zdh"><div class="zdl" id="zDLogo"></div><div><b>ZAMAT INSURANCE</b><small>By Sami Zamat Group</small></div></div>
-  <nav class="zdn"><button class="zi" data-go="log"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h10l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg><span>Daily Log</span><em id="zDLogT"></em></button><button class="zi" data-go="pol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5.5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg><span>Clients &amp; Policies</span></button><button class="zi" data-go="db"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7" ry="3"/><path d="M5 5.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6M5 11.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg><span>Customer Database</span></button><button class="zi" data-go="pay"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/></svg><span>Payments &amp; Collections</span></button><button class="zi" data-go="ren"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.5L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.5l1.7-2"/><path d="M20 20v-4.5h-4.5"/></svg><span>Renewals</span></button><button class="zi" data-go="pf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9h9"/><path d="M20.5 15.5A9 9 0 1 1 8.5 3.5"/></svg><span>Portfolio</span></button><button class="zi" data-go="tgt"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3"/></svg><span>Targets &amp; Daily Tracker</span></button><button class="zi" id="zDBk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg><span>Backup</span><em id="zDBkT"></em></button><div class="zsep"></div><button class="zi" data-go="set"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 14.6H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 10 3.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></button><div class="zver">Version 3 Nov · Zoom</div></nav></aside></div>
+  <nav class="zdn"><button class="zi" data-go="log"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h10l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg><span>Daily Log</span><em id="zDLogT"></em></button><button class="zi" data-go="pol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5.5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg><span>Clients &amp; Policies</span></button><button class="zi" data-go="db"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7" ry="3"/><path d="M5 5.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6M5 11.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg><span>Customer Database</span></button><button class="zi" data-go="pay"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/></svg><span>Payments &amp; Collections</span></button><button class="zi" data-go="ren"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.5L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.5l1.7-2"/><path d="M20 20v-4.5h-4.5"/></svg><span>Renewals</span></button><button class="zi" data-go="pf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9h9"/><path d="M20.5 15.5A9 9 0 1 1 8.5 3.5"/></svg><span>Portfolio</span></button><button class="zi" data-go="tgt"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3"/></svg><span>Targets &amp; Daily Tracker</span></button><button class="zi" id="zDBk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg><span>Backup</span><em id="zDBkT"></em></button><div class="zsep"></div><button class="zi" data-go="set"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 14.6H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 10 3.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></button><div class="zver">Version 3 Nov · Card</div></nav></aside></div>
 <div id="zPop" hidden><div class="zph"><b>Renewals within 1 month</b><span id="zPopN"></span></div><div id="zPopL"></div><button class="zpa" data-go="ren">See all renewals</button></div>
 <div id="msg"></div>
 <div id="tabHome"><style>
@@ -740,7 +743,7 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
 })();
 </script>
 <div class="today" id="todayLine"></div>
-<div id="zHero" data-go="pf" role="link" aria-label="Open portfolio"><div class="zg"></div><div class="zsky"></div><div class="zb2"></div><div class="zb3"></div>
+<div id="zHero" data-go="pf" role="link" aria-label="Open portfolio"><div class="zg"></div><div class="zlogo" id="zHeroLogo"></div><div class="zsky"></div><div class="zb2"></div><div class="zb3"></div>
   <div class="zm">By Sami Zamat Group</div>
   <div class="zt"><div class="zy" id="zYear"></div></div>
   <div class="zs"><div><b id="zHA">0</b>active policies</div><div><b id="zHP">$0</b>active premium</div></div>
@@ -1498,7 +1501,7 @@ function renderBrand(){
   document.title=b.name||"Zamat";
   $("brandLogo").innerHTML=b.logoId?`<img src="/_blob/${esc(b.logoId)}" alt="" style="width:46px;height:46px;object-fit:contain;border-radius:10px;background:#fff;padding:3px;display:block">`:DEF_LOGO;
   {const h=$("brandLogo").innerHTML,cp=pre=>h.replace(/<rect fill/g,'<rect width="1024" height="1024" fill').replace(/id="(lg\w+)"/g,'id="'+pre+'$1"').replace(/url\(#(lg\w+)\)/g,'url(#'+pre+'$1)');
-   const a=$("zHLogo"),c=$("zDLogo");if(a)a.innerHTML=cp("h");if(c)c.innerHTML=cp("d");}
+   const a=$("zHLogo"),c=$("zDLogo");if(a)a.innerHTML=cp("h");if(c)c.innerHTML=cp("d");const x=$("zHeroLogo");if(x)x.innerHTML=cp("x");}
 }
 async function saveBrand(logoId){
   if(!db){$("msg").textContent="Storage is unavailable.";return}
@@ -2257,6 +2260,7 @@ render();renderBrand();
 .zs h3{font-size:13px;font-weight:750;color:var(--mu);margin:22px 4px 8px;letter-spacing:.02em;text-transform:uppercase}
 .zs .panel label{margin-top:14px}.zs .panel label:first-child{margin-top:0}
 .zth{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.zhc{display:flex;flex-wrap:wrap;gap:6px}.zhc button.g{display:flex;align-items:center;gap:6px;min-height:34px;padding:5px 10px;font-size:12.5px;color:var(--tx);border:2px solid var(--bd)}.zhc button.g.on{border-color:var(--ac2)}.zhc i{width:16px;height:16px;border-radius:50%;display:block}
 .zpre{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .zpre button.g{display:flex;flex-direction:column;align-items:stretch;gap:4px;padding:8px;min-height:0;text-align:left;border:2px solid var(--bd);color:var(--tx)}
 .zpre button.g.on{border-color:var(--ac2);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac2) 20%,transparent)}
@@ -2335,6 +2339,9 @@ render();renderBrand();
 <div class="panel" style="display:block">
   <label>Home title</label><input id="zsHero">
   <label>Subtitle</label><input id="zsSub">
+  <label>Home card color</label>
+  <div class="zhc" id="zsHcSw">${[["#16335C","Navy"],["#0B1F3A","Midnight"],["#1E3A8A","Royal blue"],["#141414","Black"],["#0F4C5C","Teal"],["#5B1A33","Burgundy"],["#6B4F12","Bronze"]].map(([c,n])=>`<button class="g" data-hc="${c}" title="${n}"><i style="background:${c}"></i>${n}</button>`).join("")}</div>
+  <div class="zcol" style="margin-top:8px"><div><input type="color" id="zsHc">Your own color</div></div>
   <label>Sections shown on Home</label>
   <div>${TILES.map(([k,l])=>`<div class="zrow"><span>${l}</span>${sw("zsT_"+k)}</div>`).join("")}</div>
 </div>
@@ -2359,7 +2366,7 @@ render();renderBrand();
     $s("zsCp").value=c.p;$s("zsCa").value=c.a;$s("zsCg").value=c.g;
     [["zsMode","mode"],["zsFont","font"],["zsSize","size"],["zsCorn","corners"],["zsLay","layout"],["zsStyle","style"]].forEach(([id,k])=>document.querySelectorAll("#"+id+" button").forEach(b=>b.classList.toggle("on",b.dataset.v===(p[k]||(k==="style"?"classic":"")))));
     document.querySelectorAll("#zsPre button").forEach(b=>{const d=zPrefs.PRESETS[b.dataset.p];b.classList.toggle("on",!p.custom&&["theme","font","corners","layout","mode"].every(k=>p[k]===d[k])&&(p.style||"classic")===d.style)});
-    if(document.activeElement!==$s("zsHero"))$s("zsHero").value=p.heroTitle;if(document.activeElement!==$s("zsSub"))$s("zsSub").value=p.subtitle;
+    $s("zsHc").value=p.heroColor||"#16335C";document.querySelectorAll("#zsHcSw button").forEach(b=>b.classList.toggle("on",b.dataset.hc.toLowerCase()===(p.heroColor||"#16335C").toLowerCase()));if(document.activeElement!==$s("zsHero"))$s("zsHero").value=p.heroTitle;if(document.activeElement!==$s("zsSub"))$s("zsSub").value=p.subtitle;
     TILES.forEach(([k])=>$s("zsT_"+k).checked=!(p.hidden||[]).includes(k));
     chips($s("zsTypes"),p.types||[],"types");chips($s("zsComps"),p.comps||[],"comps")}
   $s("zsPinSet").onclick=()=>zPin.set();$s("zsPinOff").onclick=()=>zPin.remove();
@@ -2369,6 +2376,8 @@ render();renderBrand();
   $s("zsPre").onclick=e=>{const b=e.target.closest("button[data-p]");if(!b)return;const d=zPrefs.PRESETS[b.dataset.p],p=P();Object.assign(p,{theme:d.theme,font:d.font,corners:d.corners,layout:d.layout,mode:d.mode,style:d.style,custom:null});S(p);draw()};
   [["zsMode","mode"],["zsFont","font"],["zsSize","size"],["zsCorn","corners"],["zsLay","layout"],["zsStyle","style"]].forEach(([id,k])=>$s(id).onclick=e=>{const b=e.target.closest("button[data-v]");if(!b)return;const p=P();p[k]=b.dataset.v;S(p);draw()});
   $s("zsHero").oninput=e=>{const p=P();p.heroTitle=e.target.value;S(p)};
+  $s("zsHcSw").onclick=e=>{const b=e.target.closest("button[data-hc]");if(!b)return;const p=P();p.heroColor=b.dataset.hc;S(p);draw()};
+  $s("zsHc").oninput=e=>{const p=P();p.heroColor=e.target.value;S(p);draw()};
   $s("zsSub").oninput=e=>{const p=P();p.subtitle=e.target.value;S(p)};
   TILES.forEach(([k])=>$s("zsT_"+k).onchange=e=>{const p=P();p.hidden=(p.hidden||[]).filter(x=>x!==k);if(!e.target.checked)p.hidden.push(k);S(p)});
   const adder=(inp,btn,key)=>{const go=()=>{const v=$s(inp).value.trim();if(!v)return;const p=P();p[key]=p[key]||[];if(!p[key].some(x=>x.toLowerCase()===v.toLowerCase()))p[key].push(v);S(p);$s(inp).value="";draw()};$s(btn).onclick=go;$s(inp).onkeydown=e=>{if(e.key==="Enter")go()}};
