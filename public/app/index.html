@@ -400,19 +400,20 @@ body.zc #tabPay.more #zpMore{margin-bottom:14px}
     sand:{name:"Sand & Brown",p:"#4A3426",p2:"#6B4C36",a:"#B7791F",g:"#E9C46A"}
   };
   const PRESETS={
-    classic:{name:"Zamat Classic",d:"The original navy & gold",theme:"navy",font:"manrope",corners:"round",layout:"connect",mode:"auto",style:"classic"},
-    exec:{name:"Executive Black",d:"Dark, black & gold, premium",theme:"gold",font:"inter",corners:"soft",layout:"connect",mode:"dark",style:"elevated"},
-    minimal:{name:"Clean Minimal",d:"Light, flat and simple",theme:"slate",font:"inter",corners:"soft",layout:"list",mode:"light",style:"flat"},
-    ocean:{name:"Ocean Fresh",d:"Bright blue, big tiles",theme:"ocean",font:"poppins",corners:"round",layout:"grid",mode:"light",style:"elevated"},
-    emerald:{name:"Emerald Pro",d:"Green with clear outlines",theme:"emerald",font:"manrope",corners:"round",layout:"connect",mode:"light",style:"outline"},
-    royal:{name:"Royal",d:"Purple & gold, rich cards",theme:"purple",font:"poppins",corners:"round",layout:"grid",mode:"auto",style:"elevated"},
-    glass:{name:"Glass",d:"Soft see-through cards",theme:"teal",font:"inter",corners:"round",layout:"connect",mode:"light",style:"glass"},
-    night:{name:"Night",d:"Dark charcoal, easy on the eyes",theme:"charcoal",font:"inter",corners:"soft",layout:"list",mode:"dark",style:"flat"},
-    arabic:{name:"Arabic Touch",d:"Burgundy with Cairo font",theme:"burgundy",font:"cairo",corners:"round",layout:"grid",mode:"light",style:"classic"},
-    luxury:{name:"Rose Luxury",d:"Rose & gold, elegant",theme:"rose",font:"poppins",corners:"round",layout:"connect",mode:"light",style:"elevated"},
-    earth:{name:"Earth",d:"Warm sand & brown",theme:"sand",font:"manrope",corners:"soft",layout:"grid",mode:"light",style:"outline"},
-    forest:{name:"Forest",d:"Deep green, calm",theme:"forest",font:"inter",corners:"square",layout:"list",mode:"auto",style:"flat"}
+    classic:{name:"Zamat Classic",d:"Banking-style home with categories",theme:"navy",font:"manrope",corners:"round",layout:"connect",mode:"auto",style:"classic"},
+    dash:{name:"Dashboard",d:"Numbers first: premium, sales, renewals",theme:"slate",font:"inter",corners:"soft",layout:"dash",mode:"light",style:"elevated"},
+    wallet:{name:"Wallet",d:"Big card, quick buttons, today's list",theme:"purple",font:"poppins",corners:"round",layout:"bank",mode:"light",style:"elevated"},
+    tiles:{name:"Bold Tiles",d:"Big colored tiles with your numbers",theme:"ocean",font:"poppins",corners:"soft",layout:"tiles",mode:"light",style:"flat"},
+    exec:{name:"Executive Black",d:"Dark black & gold, banking home",theme:"gold",font:"inter",corners:"soft",layout:"connect",mode:"dark",style:"elevated"},
+    night:{name:"Night Dashboard",d:"Dark dashboard, easy on the eyes",theme:"charcoal",font:"inter",corners:"soft",layout:"dash",mode:"dark",style:"flat"},
+    glass:{name:"Glass Wallet",d:"See-through cards on soft colors",theme:"teal",font:"inter",corners:"round",layout:"bank",mode:"light",style:"glass"},
+    arabic:{name:"Arabic Tiles",d:"Burgundy tiles, Cairo font",theme:"burgundy",font:"cairo",corners:"round",layout:"tiles",mode:"light",style:"classic"},
+    grid:{name:"Classic Grid",d:"Big icon squares, outlined",theme:"emerald",font:"manrope",corners:"round",layout:"grid",mode:"light",style:"outline"},
+    minimal:{name:"Clean List",d:"Simple list, no clutter",theme:"slate",font:"inter",corners:"soft",layout:"list",mode:"light",style:"flat"},
+    luxury:{name:"Rose Wallet",d:"Rose & gold wallet style",theme:"rose",font:"poppins",corners:"round",layout:"bank",mode:"light",style:"elevated"},
+    earth:{name:"Earth Grid",d:"Warm sand & brown squares",theme:"sand",font:"manrope",corners:"soft",layout:"grid",mode:"light",style:"outline"}
   };
+
   const FONTS={manrope:{n:"Manrope",css:'"Manrope"'},inter:{n:"Inter",css:'"Inter"',g:"Inter:wght@400;500;600;700;800"},poppins:{n:"Poppins",css:'"Poppins"',g:"Poppins:wght@400;500;600;700;800"},cairo:{n:"Cairo",css:'"Cairo"',g:"Cairo:wght@400;500;600;700;800"},system:{n:"System",css:'-apple-system,BlinkMacSystemFont,"Segoe UI"'}};
   const DEF={theme:"navy",custom:null,mode:"auto",font:"manrope",size:"m",corners:"round",layout:"connect",style:"classic",heroTitle:"INSURANCE POLICIES",subtitle:"Policies, renewals and collections in one place",hidden:[],types:null,comps:[],autolock:true};
   const load=()=>{try{return Object.assign({},DEF,JSON.parse(localStorage.getItem(PK)||"{}"))}catch(e){return Object.assign({},DEF)}};
@@ -458,7 +459,7 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
 :root:not([data-theme="dark"]) .panel,:root:not([data-theme="dark"]) .card,:root:not([data-theme="dark"]) .zt-card,:root:not([data-theme="dark"]) .zl-card,:root:not([data-theme="dark"]) .tile.g,:root:not([data-theme="dark"]) .zcat button.g,:root:not([data-theme="dark"]) .stat{background:rgba(255,255,255,.62)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-color:rgba(255,255,255,.7)!important;box-shadow:0 8px 24px -14px rgba(10,20,40,.3)!important}`;
     return""}
   function apply(){const P=load();document.documentElement.classList.toggle("zc",(P.v3?P.layout:"connect")==="connect");if(!P.v3){P.v3=1;P.layout="connect";try{localStorage.setItem(PK,JSON.stringify(P))}catch(e){}}const r=document.documentElement;
-    if(P.mode==="light"||P.mode==="dark")r.setAttribute("data-theme",P.mode);else r.removeAttribute("data-theme");
+    if(P.mode==="light"||P.mode==="dark")r.setAttribute("data-theme",P.mode);else r.removeAttribute("data-theme");r.dataset.lay=P.layout||"connect";if(window.renderAlt)setTimeout(window.renderAlt,0);
     let st=document.getElementById("zPrefCSS");if(!st){st=document.createElement("style");st.id="zPrefCSS";document.head.appendChild(st)}
     st.textContent=themeCSS(P)+"\n"+fontCSS(P)+"\n"+shapeCSS(P)+"\n"+layoutCSS(P)+"\n"+styleCSS(P);
     const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=colors(P).p;
@@ -570,10 +571,175 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
 
 <div id="zDrawer" aria-hidden="true"><div class="zo" id="zDrO"></div><aside class="zp2" aria-label="Menu">
   <div class="zdh"><div class="zdl" id="zDLogo"></div><div><b>ZAMAT INSURANCE</b><small>By Sami Zamat Group</small></div></div>
-  <nav class="zdn"><button class="zi" data-go="log"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h10l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg><span>Daily Log</span><em id="zDLogT"></em></button><button class="zi" data-go="pol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5.5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg><span>Clients &amp; Policies</span></button><button class="zi" data-go="db"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7" ry="3"/><path d="M5 5.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6M5 11.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg><span>Customer Database</span></button><button class="zi" data-go="pay"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/></svg><span>Payments &amp; Collections</span></button><button class="zi" data-go="ren"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.5L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.5l1.7-2"/><path d="M20 20v-4.5h-4.5"/></svg><span>Renewals</span></button><button class="zi" data-go="pf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9h9"/><path d="M20.5 15.5A9 9 0 1 1 8.5 3.5"/></svg><span>Portfolio</span></button><button class="zi" data-go="tgt"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3"/></svg><span>Targets &amp; Daily Tracker</span></button><button class="zi" id="zDBk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg><span>Backup</span><em id="zDBkT"></em></button><div class="zsep"></div><button class="zi" data-go="set"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 14.6H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 10 3.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></button><div class="zver">Version 3 Nov · Designs</div></nav></aside></div>
+  <nav class="zdn"><button class="zi" data-go="log"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h10l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg><span>Daily Log</span><em id="zDLogT"></em></button><button class="zi" data-go="pol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5.5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg><span>Clients &amp; Policies</span></button><button class="zi" data-go="db"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7" ry="3"/><path d="M5 5.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6M5 11.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg><span>Customer Database</span></button><button class="zi" data-go="pay"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/></svg><span>Payments &amp; Collections</span></button><button class="zi" data-go="ren"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.5L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.5l1.7-2"/><path d="M20 20v-4.5h-4.5"/></svg><span>Renewals</span></button><button class="zi" data-go="pf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9h9"/><path d="M20.5 15.5A9 9 0 1 1 8.5 3.5"/></svg><span>Portfolio</span></button><button class="zi" data-go="tgt"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3"/></svg><span>Targets &amp; Daily Tracker</span></button><button class="zi" id="zDBk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg><span>Backup</span><em id="zDBkT"></em></button><div class="zsep"></div><button class="zi" data-go="set"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 14.6H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 10 3.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></button><div class="zver">Version 3 Nov · Designs 2</div></nav></aside></div>
 <div id="zPop" hidden><div class="zph"><b>Renewals within 1 month</b><span id="zPopN"></span></div><div id="zPopL"></div><button class="zpa" data-go="ren">See all renewals</button></div>
 <div id="msg"></div>
-<div id="tabHome"><div class="today" id="todayLine"></div>
+<div id="tabHome"><style>
+#zAlt{display:none;padding-top:max(14px,env(safe-area-inset-top));padding-bottom:20px}
+:root[data-lay="dash"] #zAlt,:root[data-lay="bank"] #zAlt,:root[data-lay="tiles"] #zAlt{display:block}
+:root[data-lay="dash"] body[data-tab="home"] header.brand,:root[data-lay="bank"] body[data-tab="home"] header.brand,:root[data-lay="tiles"] body[data-tab="home"] header.brand,
+:root[data-lay="dash"] #tabHome>.today,:root[data-lay="bank"] #tabHome>.today,:root[data-lay="tiles"] #tabHome>.today,
+:root[data-lay="dash"] #tabHome>#zHero,:root[data-lay="bank"] #tabHome>#zHero,:root[data-lay="tiles"] #tabHome>#zHero,
+:root[data-lay="dash"] #tabHome>.home,:root[data-lay="bank"] #tabHome>.home,:root[data-lay="tiles"] #tabHome>.home,
+:root[data-lay="dash"] #zCatH,:root[data-lay="bank"] #zCatH,:root[data-lay="tiles"] #zCatH,
+:root[data-lay="dash"] #zCat,:root[data-lay="bank"] #zCat,:root[data-lay="tiles"] #zCat{display:none!important}
+#zAlt .za-top{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 16px}
+#zAlt .za-top small{display:block;color:var(--mu);font-size:13px;font-weight:600}
+#zAlt .za-top h1{margin:0;font-size:26px;font-weight:800;color:var(--tx)}
+#zAlt .za-ic{width:44px;height:44px;min-height:0;padding:0;border-radius:50%;display:grid;place-items:center;position:relative}
+#zAlt .za-ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#zAlt .za-ic em{position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;font-style:normal;font-size:11px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:grid;place-items:center;padding:0 4px}
+#zAlt .za-card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r,16px);box-shadow:var(--shadow,none);padding:14px;margin-bottom:12px}
+#zAlt .za-kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+#zAlt .za-kpi{background:var(--card);border:1px solid var(--bd);border-radius:var(--r,16px);box-shadow:var(--shadow,none);padding:13px;text-align:left;min-height:0;color:var(--tx);display:block;width:100%}
+#zAlt .za-kpi span{display:block;font-size:12.5px;color:var(--mu);font-weight:600}
+#zAlt .za-kpi b{display:block;font-size:22px;font-weight:800;margin:3px 0 1px;color:var(--tx)}
+#zAlt .za-kpi small{font-size:12px;color:var(--mu);font-weight:500}
+#zAlt .za-kpi.warn b{color:var(--red)}
+#zAlt .za-bar{height:9px;background:var(--bd);border-radius:6px;overflow:hidden;margin:8px 0 4px}
+#zAlt .za-bar i{display:block;height:100%;background:var(--gold);border-radius:6px}
+#zAlt .za-h{font-size:14px;font-weight:800;color:var(--tx);margin:16px 2px 8px}
+#zAlt .za-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:6px}
+#zAlt .za-q{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;box-shadow:none;padding:4px 0;min-height:0;color:var(--tx);font-size:12px;font-weight:700}
+#zAlt .za-q i{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--ac);color:#fff}
+#zAlt .za-q i svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+:root[data-theme="dark"] #zAlt .za-q i{color:#0e1116}
+#zAlt .za-scroll{display:flex;gap:14px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:none}
+#zAlt .za-scroll::-webkit-scrollbar{display:none}
+#zAlt .za-scroll .za-q{flex:none;width:66px}
+#zAlt .za-row{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;border-bottom:1px solid var(--bd);border-radius:0;box-shadow:none;padding:12px 2px;min-height:0;text-align:left;color:var(--tx)}
+#zAlt .za-row:last-child{border:0}
+#zAlt .za-row i{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--soft,var(--bg));color:var(--ac);flex:none}
+#zAlt .za-row i svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#zAlt .za-row div{flex:1;min-width:0}
+#zAlt .za-row b{display:block;font-size:14.5px}
+#zAlt .za-row small{display:block;font-size:12.5px;color:var(--mu);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#zAlt .za-row em{font-style:normal;color:var(--mu);font-size:18px}
+#zAlt .za-row .tag{font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px;white-space:nowrap}
+#zAlt .tag.r{background:var(--redbg);color:var(--red)}#zAlt .tag.o{background:var(--orgbg);color:var(--org)}#zAlt .tag.g{background:var(--grnbg);color:var(--grn)}
+#zAlt .za-wallet{border-radius:22px;padding:20px;color:#fff;background:linear-gradient(135deg,var(--ac),color-mix(in srgb,var(--ac) 55%,var(--ac2)));box-shadow:0 18px 34px -18px color-mix(in srgb,var(--ac) 80%,transparent);margin-bottom:18px;position:relative;overflow:hidden}
+#zAlt .za-wallet::after{content:"";position:absolute;right:-50px;top:-50px;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.08)}
+#zAlt .za-wallet small{opacity:.8;font-size:13px;font-weight:600}
+#zAlt .za-wallet .big{font-size:36px;font-weight:800;margin:4px 0 10px;letter-spacing:-.5px}
+#zAlt .za-wallet .chips{display:flex;gap:8px;flex-wrap:wrap}
+#zAlt .za-wallet .chips span{background:rgba(255,255,255,.16);border-radius:20px;padding:5px 11px;font-size:12.5px;font-weight:700}
+#zAlt .za-logo{display:flex;align-items:center;gap:10px}
+#zAlt .za-logo b{width:42px;height:42px;border-radius:13px;background:var(--ac);color:var(--gold);display:grid;place-items:center;font-size:20px;font-weight:900}
+#zAlt .za-logo span{font-size:19px;font-weight:800;color:var(--tx)}
+#zAlt .za-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#zAlt .za-t{border:0;border-radius:var(--r,18px);padding:16px;min-height:118px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;color:#fff;box-shadow:none;width:100%}
+#zAlt .za-t.w{grid-column:1/-1;min-height:140px}
+#zAlt .za-t span{font-size:13px;font-weight:700;opacity:.9}
+#zAlt .za-t b{font-size:28px;font-weight:800;line-height:1.1}
+#zAlt .za-t.w b{font-size:38px}
+#zAlt .za-t small{font-size:12px;font-weight:600;opacity:.85}
+#zAlt .c1{background:var(--ac)}#zAlt .c2{background:var(--ac2)}#zAlt .c3{background:var(--gold);color:#1a1405}#zAlt .c4{background:color-mix(in srgb,var(--ac) 70%,#fff)}#zAlt .c5{background:color-mix(in srgb,var(--ac2) 60%,var(--ac))}#zAlt .c6{background:var(--card);color:var(--tx);border:1px solid var(--bd)}
+:root[data-theme="dark"] #zAlt .c1,:root[data-theme="dark"] #zAlt .c2,:root[data-theme="dark"] #zAlt .c4,:root[data-theme="dark"] #zAlt .c5{color:#0e1116}
+#zAlt .za-word{font-size:30px;font-weight:900;letter-spacing:3px;color:var(--tx);line-height:1}
+#zAlt .za-word small{display:block;font-size:12px;letter-spacing:4px;color:var(--mu);font-weight:700;margin-top:4px}
+#zAlt .za-empty{color:var(--mu);font-size:13.5px;text-align:center;padding:10px 0}
+</style>
+<div id="zAlt"></div>
+<script>
+/* Zamat — extra home designs: Dashboard, Wallet, Bold Tiles */
+(function(){
+  const I={
+    pol:'<svg viewBox="0 0 24 24"><path d="M12 3 5 6v5.5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg>',
+    db:'<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="7" ry="3"/><path d="M5 5.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6M5 11.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>',
+    pay:'<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/></svg>',
+    ren:'<svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.3-4.5L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.5l1.7-2"/><path d="M20 20v-4.5h-4.5"/></svg>',
+    pf:'<svg viewBox="0 0 24 24"><path d="M12 3v9h9"/><path d="M20.5 15.5A9 9 0 1 1 8.5 3.5"/></svg>',
+    log:'<svg viewBox="0 0 24 24"><path d="M6 3h10l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg>',
+    tgt:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3"/></svg>',
+    set:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
+    plus:'<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+    bk:'<svg viewBox="0 0 24 24"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>',
+    bell:'<svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
+    cli:'<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18.5 14.3c1.9.8 3 2.6 3 5.7"/></svg>'
+  };
+  const E=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const M=n=>"$"+Math.round(Number(n)||0).toLocaleString("en-US");
+  const K=n=>{n=Number(n)||0;return n>=1e6?"$"+(n/1e6).toFixed(1)+"M":n>=1e4?"$"+Math.round(n/1e3)+"K":M(n)};
+  const nice=s=>{if(!s)return"";const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c).toLocaleDateString("en-GB",{day:"numeric",month:"short"})};
+  function data(){
+    const R=typeof rows!=="undefined"?rows:[],t=todayStr(),m=t.slice(0,7);
+    const act=R.filter(r=>{try{return isAct(r)}catch(e){return r.status!=="canceled"}});
+    const ap=act.reduce((a,r)=>a+(Number(r.premium)||0),0);
+    let clients=0;try{clients=Object.keys(clientsMap()).length}catch(e){}
+    const ren=act.map(r=>({r,d:days(r.renewal||r.expiry)})).filter(x=>x.d!==null&&x.d<=30).sort((a,b)=>a.d-b.d);
+    const ev=window.zEvents?window.zEvents():[],mn=ev.filter(e=>e.kind==="new"&&e.date.startsWith(m)),ms=mn.reduce((a,e)=>a+e.premium,0);
+    const mt=window.zTgt?window.zTgt(new Date().getFullYear()).prem/12:7500;
+    let col=0;try{col=allPays().filter(p=>(p.date||"").slice(0,7)===m).reduce((a,p)=>a+(Number(p.amount)||0),0)}catch(e){}
+    const L=window.zLogItems?window.zLogItems():[],fu=L.filter(i=>i.followup&&i.followup<=t).sort((a,b)=>a.followup.localeCompare(b.followup)),lt=L.filter(i=>i.date===t);
+    return{act,ap,clients,ren,mn,ms,mt,col,fu,lt,t};
+  }
+  const greet=()=>{const h=new Date().getHours();return h<12?"Good morning":h<18?"Good afternoon":"Good evening"};
+  const today=()=>new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+  const sec=[["pol","Clients & Policies"],["db","Customer Database"],["pay","Payments & Collections"],["ren","Renewals"],["pf","Portfolio"],["log","Daily Log"],["tgt","Targets & Tracker"],["set","Settings"]];
+  function rowsList(D){return sec.map(([k,l])=>{const sub={pol:`${D.act.length} active policies`,db:`${D.clients} clients`,pay:`Collected this month ${M(D.col)}`,ren:`${D.ren.length} due within 30 days`,pf:`${M(D.ap)} active premium`,log:`${D.fu.length} follow-ups due`,tgt:`${M(D.ms)} of ${M(D.mt)} this month`,set:"Design, PIN, backup"}[k];return `<button class="za-row" data-go="${k}"><i>${I[k]}</i><div><b>${l}</b><small>${sub}</small></div><em>›</em></button>`}).join("")}
+  function todayList(D){
+    const it=[];D.fu.slice(0,4).forEach(i=>it.push(`<button class="za-row" data-go="log"><i>${I.log}</i><div><b>${E(i.name)}</b><small>${E(i.note||i.interest||"Follow up")}</small></div><span class="tag ${i.followup<D.t?"r":"o"}">${i.followup<D.t?"Overdue":"Today"}</span></button>`));
+    D.ren.slice(0,4).forEach(x=>it.push(`<button class="za-row" data-go="ren"><i>${I.ren}</i><div><b>${E(x.r.name)}</b><small>${E(x.r.type||"Policy")} · renews ${nice(x.r.renewal||x.r.expiry)}</small></div><span class="tag ${x.d<0?"r":x.d<=7?"o":"g"}">${x.d<0?"Late":x.d===0?"Today":x.d+"d"}</span></button>`));
+    return it.length?it.join(""):`<div class="za-empty">Nothing urgent today.</div>`;
+  }
+  const quick=(cls)=>`<div class="${cls}">
+    <button class="za-q" data-zaq="pol"><i>${I.plus}</i>New policy</button>
+    <button class="za-q" data-zaq="log"><i>${I.log}</i>Log visit</button>
+    <button class="za-q" data-go="pay"><i>${I.pay}</i>Payment</button>
+    <button class="za-q" data-zaq="bk"><i>${I.bk}</i>Backup</button>`;
+  function dash(D){const pc=D.mt?Math.min(100,D.ms/D.mt*100):0;return `
+    <div class="za-top"><div><small>${greet()}</small><h1>Sami</h1></div><button class="za-ic g" data-go="set" aria-label="Settings">${I.set}</button></div>
+    <div class="za-kpis">
+      <button class="za-kpi" data-go="pf"><span>Active premium</span><b>${K(D.ap)}</b><small>${D.act.length} policies</small></button>
+      <button class="za-kpi" data-go="tgt"><span>New this month</span><b>${K(D.ms)}</b><small>${D.mn.length} policies · ${Math.round(pc)}%</small></button>
+      <button class="za-kpi ${D.ren.some(x=>x.d<0)?"warn":""}" data-go="ren"><span>Renewals (30 days)</span><b>${D.ren.length}</b><small>${D.ren.filter(x=>x.d<0).length} late</small></button>
+      <button class="za-kpi ${D.fu.length?"warn":""}" data-go="log"><span>Follow-ups due</span><b>${D.fu.length}</b><small>${D.lt.length} logged today</small></button>
+    </div>
+    <div class="za-card"><div style="display:flex;justify-content:space-between;font-size:13.5px;font-weight:700;color:var(--tx)"><span>Monthly target</span><span>${M(D.ms)} / ${M(D.mt)}</span></div><div class="za-bar"><i style="width:${pc}%"></i></div><div style="font-size:12px;color:var(--mu)">Collected this month ${M(D.col)}</div></div>
+    ${quick("za-quick")}</div>
+    <div class="za-h">All sections</div><div class="za-card" style="padding:2px 12px">${rowsList(D)}</div>`}
+  function bank(D){return `
+    <div class="za-top"><div class="za-logo"><b>Z</b><span>Zamat</span></div><button class="za-ic g" data-go="log" aria-label="Follow-ups">${I.bell}${D.fu.length?`<em>${D.fu.length}</em>`:""}</button></div>
+    <div class="za-wallet" data-go="pf"><small>Active premium</small><div class="big">${M(D.ap)}</div><div class="chips"><span>${D.act.length} policies</span><span>${D.clients} clients</span><span>+${K(D.ms)} this month</span></div></div>
+    <div class="za-scroll">
+      <button class="za-q" data-zaq="pol"><i>${I.plus}</i>New</button>
+      <button class="za-q" data-go="pol"><i>${I.pol}</i>Policies</button>
+      <button class="za-q" data-go="cli"><i>${I.cli}</i>Clients</button>
+      <button class="za-q" data-go="pay"><i>${I.pay}</i>Payments</button>
+      <button class="za-q" data-go="ren"><i>${I.ren}</i>Renewals</button>
+      <button class="za-q" data-go="log"><i>${I.log}</i>Log</button>
+      <button class="za-q" data-go="tgt"><i>${I.tgt}</i>Targets</button>
+      <button class="za-q" data-go="pf"><i>${I.pf}</i>Portfolio</button>
+      <button class="za-q" data-go="set"><i>${I.set}</i>Settings</button>
+    </div>
+    <div class="za-h">Today · ${today()}</div><div class="za-card" style="padding:2px 12px">${todayList(D)}</div>`}
+  function tiles(D){const pc=D.mt?Math.round(D.ms/D.mt*100):0;return `
+    <div class="za-top"><div class="za-word">ZAMAT<small>${today().toUpperCase()}</small></div><button class="za-ic g" data-go="set" aria-label="Settings">${I.set}</button></div>
+    <div class="za-tiles">
+      <button class="za-t w c1" data-go="pf"><span>Active premium</span><b>${M(D.ap)}</b><small>${D.act.length} policies · ${D.clients} clients</small></button>
+      <button class="za-t c2" data-go="ren"><span>Renewals</span><b>${D.ren.length}</b><small>due in 30 days</small></button>
+      <button class="za-t c3" data-go="log"><span>Follow-ups</span><b>${D.fu.length}</b><small>waiting today</small></button>
+      <button class="za-t c5" data-go="tgt"><span>This month</span><b>${K(D.ms)}</b><small>${pc}% of target</small></button>
+      <button class="za-t c4" data-go="pay"><span>Collected</span><b>${K(D.col)}</b><small>this month</small></button>
+      <button class="za-t c6" data-go="pol"><span>Clients &amp; Policies</span><b style="font-size:20px">Open ›</b><small>search, add, renew</small></button>
+      <button class="za-t c6" data-go="db"><span>Customer Database</span><b style="font-size:20px">Open ›</b><small>${D.clients} clients</small></button>
+      <button class="za-t c6" data-zaq="pol"><span>Quick add</span><b style="font-size:20px">+ Policy</b><small>new client policy</small></button>
+      <button class="za-t c6" data-zaq="log"><span>Quick add</span><b style="font-size:20px">+ Visit</b><small>Daily Log entry</small></button>
+    </div>`}
+  function render(){
+    const lay=document.documentElement.dataset.lay,box=document.getElementById("zAlt");if(!box)return;
+    if(!["dash","bank","tiles"].includes(lay)){box.innerHTML="";return}
+    const D=data();box.innerHTML=lay==="dash"?dash(D):lay==="bank"?bank(D):tiles(D);
+  }
+  window.renderAlt=render;
+  document.addEventListener("click",e=>{const q=e.target.closest&&e.target.closest("[data-zaq]");if(!q)return;const k=q.dataset.zaq;
+    if(k==="pol"){showTab("pol");setTimeout(()=>{try{openForm(null);document.getElementById("form").scrollIntoView({behavior:"smooth",block:"start"})}catch(x){}},50)}
+    if(k==="log"){showTab("log");setTimeout(()=>{const b=document.getElementById("zlNew");if(b)b.click()},80)}
+    if(k==="bk"){const b=document.getElementById("bkTile");if(b)b.click()}});
+  setTimeout(render,400);
+})();
+</script>
+<div class="today" id="todayLine"></div>
 <div id="zHero" data-go="pf" role="link" aria-label="Open portfolio"><div class="zg"></div><div class="zsky"></div><div class="zb2"></div><div class="zb3"></div>
   <div class="zm">By Sami Zamat Group</div>
   <div class="zt"><div class="zy" id="zYear"></div></div>
@@ -894,6 +1060,7 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
     if(view==="plan")renderPlan();else renderDay();
   }
   window.renderTgt=render;
+  window.zEvents=events;window.zTgt=tg;
 
   const pend={},tm={};
   function bump(k,dl){
@@ -1359,6 +1526,7 @@ function renderBackupLine(){
 }
 async function markBackup(){if(!db)return;try{await db.collection("settings").doc("backup").set({at:Date.now()})}catch(e){}}
 function renderHome(){
+  try{window.renderAlt&&window.renderAlt()}catch(e){}
   renderBackupLine();
   $("todayLine").textContent=new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
   const names={size:Object.keys(clientsMap()).length};
@@ -2092,8 +2260,9 @@ render();renderBrand();
 .zpre{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .zpre button.g{display:flex;flex-direction:column;align-items:stretch;gap:4px;padding:8px;min-height:0;text-align:left;border:2px solid var(--bd);color:var(--tx)}
 .zpre button.g.on{border-color:var(--ac2);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac2) 20%,transparent)}
-.zpre .pv{display:flex;flex-direction:column;gap:5px;height:84px;padding:0 0 7px;overflow:hidden;margin-bottom:4px}
-.zpre .pv i{display:block;height:22px;flex:none}
+.zpre .pv{display:flex;flex-direction:column;gap:4px;height:90px;padding:0 0 6px;overflow:hidden;margin-bottom:4px}
+.zpre .pv>i{display:block;flex:none}.zpre .pg{display:flex;flex-direction:column;gap:3px;padding:0 6px}.zpre .pg.g2,.zpre .pg.g3{display:grid;grid-template-columns:1fr 1fr;gap:3px}.zpre .pg.g3{grid-template-columns:1fr 1fr 1fr}.zpre .pg.row{flex-direction:row;justify-content:space-between}.zpre .pg i{display:block}
+#zsLay{grid-template-columns:repeat(3,1fr)!important}
 .zpre .pv u{display:flex;flex-direction:column;gap:4px;margin:0 7px;padding:6px;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .zpre .pv s{display:block;height:5px;border-radius:3px;width:80%;text-decoration:none}
 .zpre b{font-size:13px;font-weight:800}.zpre small{font-size:11px;color:var(--mu);line-height:1.3;font-weight:500}
@@ -2134,10 +2303,18 @@ render();renderBrand();
   <div class="zbtns"><button id="zsPinSet"></button><button class="d" id="zsPinOff">Remove PIN</button></div>
   <div class="mu" id="pinMsg" style="margin-top:8px"></div>
 </div>
-<h3>Ready-made designs</h3>
+<h3>Designs</h3>
 <div class="panel" style="display:block">
   <div class="mu" style="margin:0 0 10px">Tap a design to try it. You can fine-tune colors, font and layout below.</div>
-  <div class="zpre" id="zsPre">${Object.entries(zPrefs.PRESETS).map(([k,d])=>{const t=zPrefs.THEMES[d.theme],dk=d.mode==="dark";return `<button class="g" data-p="${k}"><span class="pv" style="background:${dk?"#0e1116":"#f4f6f9"};border-radius:${d.corners==="square"?3:d.corners==="soft"?7:11}px"><i style="background:${t.p}"></i><u style="background:${dk?"#1c212a":"#fff"};border-radius:${d.corners==="square"?2:d.corners==="soft"?5:8}px;${d.style==="outline"?"outline:1.5px solid "+t.a:""}"><s style="background:${t.a}"></s><s style="background:${t.g};width:40%"></s></u><u style="background:${dk?"#1c212a":"#fff"};border-radius:${d.corners==="square"?2:d.corners==="soft"?5:8}px"><s style="background:${t.p2};width:55%"></s></u></span><b>${E(d.name)}</b><small>${E(d.d)}</small></button>`}).join("")}</div>
+  <div class="zpre" id="zsPre">${Object.entries(zPrefs.PRESETS).map(([k,d])=>{const t=zPrefs.THEMES[d.theme],dk=d.mode==="dark",bg=dk?"#0e1116":"#f1f3f7",cd=dk?"#1c212a":"#fff",r=d.corners==="square"?2:d.corners==="soft"?4:7,o=d.style==="outline"?"outline:1px solid "+t.a+";":"",B=(w,h,c,x="")=>`<i style="width:${w};height:${h}px;background:${c};border-radius:${r}px;${o}${x}"></i>`;
+    let body="";
+    if(d.layout==="connect")body=`<i style="height:16px;background:${t.p};border-radius:0"></i><div class="pg">${B("100%",22,t.p2)}</div><div class="pg g3">${B("",14,cd)}${B("",14,cd)}${B("",14,cd)}${B("",14,cd)}${B("",14,cd)}${B("",14,cd)}</div>`;
+    else if(d.layout==="dash")body=`<div class="pg" style="padding-top:6px"><i style="width:45%;height:6px;background:${dk?"#e8ecf2":t.p};border-radius:3px"></i></div><div class="pg g2">${B("",16,cd)}${B("",16,cd)}${B("",16,cd)}${B("",16,cd)}</div><div class="pg">${B("100%",7,cd)}</div><div class="pg">${B("100%",6,cd)}${B("100%",6,cd,"margin-top:3px")}</div>`;
+    else if(d.layout==="bank")body=`<div class="pg" style="padding-top:6px">${B("100%",26,`linear-gradient(135deg,${t.p},${t.a})`,"border-radius:"+(r+3)+"px")}</div><div class="pg row">${[0,1,2,3,4].map(()=>`<i style="width:11px;height:11px;border-radius:50%;background:${t.p}"></i>`).join("")}</div><div class="pg">${B("100%",6,cd)}${B("100%",6,cd,"margin-top:3px")}</div>`;
+    else if(d.layout==="tiles")body=`<div class="pg" style="padding-top:6px">${B("100%",20,t.p)}</div><div class="pg g2">${B("",16,t.a)}${B("",16,t.g)}${B("",16,t.p2)}${B("",16,cd)}</div>`;
+    else if(d.layout==="grid")body=`<i style="height:20px;background:${t.p};border-radius:0 0 8px 8px"></i><div class="pg g2" style="margin-top:-8px">${B("",17,cd)}${B("",17,cd)}${B("",17,cd)}${B("",17,cd)}</div>`;
+    else body=`<i style="height:18px;background:${t.p};border-radius:0 0 8px 8px"></i><div class="pg">${B("100%",8,cd)}${B("100%",8,cd,"margin-top:3px")}${B("100%",8,cd,"margin-top:3px")}${B("100%",8,cd,"margin-top:3px")}</div>`;
+    return `<button class="g" data-p="${k}"><span class="pv" style="background:${bg};border-radius:${r+3}px">${body}</span><b>${E(d.name)}</b><small>${E(d.d)}</small></button>`}).join("")}</div>
 </div>
 <h3>Theme</h3>
 <div class="panel" style="display:block">
@@ -2151,7 +2328,7 @@ render();renderBrand();
   <label>Font</label>${seg("zsFont",Object.entries(zPrefs.FONTS).map(([k,f])=>[k,f.n]))}
   <label>Text size</label>${seg("zsSize",[["s","Small"],["m","Normal"],["l","Large"],["xl","X-Large"]])}
   <label>Corners</label>${seg("zsCorn",[["round","Rounded"],["soft","Soft"],["square","Square"]])}
-  <label>Home layout</label>${seg("zsLay",[["grid","Grid"],["list","List"],["connect","Connect"]])}
+  <label>Home layout</label>${seg("zsLay",[["connect","Connect"],["dash","Dashboard"],["bank","Wallet"],["tiles","Bold Tiles"],["grid","Grid"],["list","List"]])}
   <label>Card style</label>${seg("zsStyle",[["classic","Classic"],["flat","Flat"],["elevated","Raised"],["outline","Outline"],["glass","Glass"]])}
 </div>
 <h3>Home screen</h3>
