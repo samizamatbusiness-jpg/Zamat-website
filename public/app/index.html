@@ -253,24 +253,23 @@ body.zc #msg:empty{display:none}
 #zHero{cursor:pointer}
 #zHero .zsky,#zHero .zb2,#zHero .zb3{display:none!important}
 #zHero .zg{display:none!important}
-body.zc[data-tab="home"]{background:#0E2239!important}
-body.zc[data-tab="home"] header.brand{box-shadow:none!important}
-body.zc[data-tab="home"]::before,body.zc[data-tab="home"]::after{transform:none!important;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M16 14h68v16L42 70h42v16H16V70l42-40H16z' fill='%23ffffff'/%3E%3C/svg%3E") no-repeat center/contain!important;opacity:.07!important;clip-path:none!important}
-body.zc[data-tab="home"]::before{right:-70px!important;bottom:70px!important;width:300px!important;height:300px!important}
-body.zc[data-tab="home"]::after{right:150px!important;bottom:20px!important;width:150px!important;height:150px!important;opacity:.05!important}
-body.zc[data-tab="home"] #zHero{background:linear-gradient(135deg,#21497D,#12305A);border:1px solid rgba(255,255,255,.08);box-shadow:0 14px 30px -16px rgba(0,0,0,.6)}
-body.zc[data-tab="home"] #zHero .zm{color:#EBC27A;opacity:1}
-body.zc[data-tab="home"] #zHero .zs div{color:#EBC27A}
-body.zc[data-tab="home"] .zcat button.g{background:#16335C!important;color:#fff!important;box-shadow:none!important}
-body.zc[data-tab="home"] .zcat b{color:#fff!important}
-body.zc[data-tab="home"] .zcat svg{stroke:#EBC27A!important;color:#EBC27A!important}
-body.zc[data-tab="home"] .zcat .zn{color:rgba(255,255,255,.7)!important}
-body.zc[data-tab="home"] .zcat .zn i{color:#fff!important}
-body.zc[data-tab="home"] .zcat small{color:#EBC27A!important}
-body.zc[data-tab="home"] #nav{background:#0E2239!important;box-shadow:0 -1px 0 rgba(255,255,255,.08)!important}
-body.zc[data-tab="home"] #nav button.g.zy{color:rgba(255,255,255,.65)!important}
-body.zc[data-tab="home"] #nav #zHome{background:#21497D!important;border-color:#0E2239!important}
-body.zc #nav{padding-bottom:max(2px,calc(env(safe-area-inset-bottom,0px) - 20px))!important}
+body.zc[data-tab="home"]{background:#1A3D6B!important}
+body.zc[data-tab="home"] header.brand{background:#1A3D6B!important;box-shadow:none!important}
+body.zc[data-tab="home"]::before,body.zc[data-tab="home"]::after{display:none!important}
+#zWm{display:none}
+body.zc[data-tab="home"] #zWm{display:block;position:fixed;right:-40px;bottom:70px;width:260px;height:260px;opacity:.12;pointer-events:none;z-index:0}
+#zWm img,#zWm svg{width:100%!important;height:100%!important;object-fit:contain;display:block;border-radius:40px}
+body.zc[data-tab="home"] #zHero{background:linear-gradient(135deg,#2C5D99,#21497D);border:1px solid rgba(255,255,255,.1);box-shadow:0 14px 30px -18px rgba(0,0,0,.55)}
+body.zc[data-tab="home"] #zHero .zm,body.zc[data-tab="home"] #zHero .zs div{color:rgba(255,255,255,.85)!important;opacity:1}
+body.zc[data-tab="home"] .zcat button.g{background:#24508A!important;color:#fff!important;box-shadow:none!important;border-color:rgba(255,255,255,.14)!important}
+body.zc[data-tab="home"] .zcat b,body.zc[data-tab="home"] .zcat .zn i{color:#fff!important}
+body.zc[data-tab="home"] .zcat svg{stroke:#fff!important;color:#fff!important}
+body.zc[data-tab="home"] .zcat .zn,body.zc[data-tab="home"] .zcat small{color:rgba(255,255,255,.75)!important}
+body.zc[data-tab="home"] #nav{background:#1A3D6B!important;box-shadow:0 -1px 0 rgba(255,255,255,.1)!important}
+body.zc[data-tab="home"] #nav button.g.zy{color:rgba(255,255,255,.75)!important}
+body.zc[data-tab="home"] #nav #zHome{background:#2C5D99!important;border-color:#1A3D6B!important}
+body.zc #nav{bottom:0!important;box-sizing:border-box;height:calc(54px + max(4px,calc(env(safe-area-inset-bottom,0px) - 22px)));padding:0 8px max(4px,calc(env(safe-area-inset-bottom,0px) - 22px))!important;align-items:end!important}
+body.zc #nav button.g.zy{min-height:50px!important;padding:2px 0 4px!important;justify-content:flex-end}
 #zHero .zlogo{position:absolute;right:16px;top:16px;width:92px;height:92px;filter:drop-shadow(0 8px 16px rgba(0,0,0,.35))}
 #zHero .zlogo svg,#zHero .zlogo img{width:100%!important;height:100%!important;object-fit:contain;border-radius:22px;display:block}
 #zHero .zsky{position:absolute;top:0;right:0;bottom:0;width:64%;clip-path:polygon(22% 0,100% 0,100% 100%,64% 100%);background:linear-gradient(200deg,#F4F8FC 0%,#CFE0F0 45%,#8FB2D3 100%)}
@@ -593,10 +592,10 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
 
 <div id="zDrawer" aria-hidden="true"><div class="zo" id="zDrO"></div><aside class="zp2" aria-label="Menu">
   <div class="zdh"><div class="zdl" id="zDLogo"></div><div><b>ZAMAT INSURANCE</b><small>By Sami Zamat Group</small></div></div>
-  <nav class="zdn"><button class="zi" data-go="log"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h10l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg><span>Daily Log</span><em id="zDLogT"></em></button><button class="zi" data-go="pol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5.5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg><span>Clients &amp; Policies</span></button><button class="zi" data-go="db"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7" ry="3"/><path d="M5 5.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6M5 11.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg><span>Customer Database</span></button><button class="zi" data-go="pay"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/></svg><span>Payments &amp; Collections</span></button><button class="zi" data-go="ren"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.5L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.5l1.7-2"/><path d="M20 20v-4.5h-4.5"/></svg><span>Renewals</span></button><button class="zi" data-go="pf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9h9"/><path d="M20.5 15.5A9 9 0 1 1 8.5 3.5"/></svg><span>Portfolio</span></button><button class="zi" data-go="tgt"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3"/></svg><span>Targets &amp; Daily Tracker</span></button><button class="zi" id="zDBk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg><span>Backup</span><em id="zDBkT"></em></button><div class="zsep"></div><button class="zi" data-go="set"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 14.6H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 10 3.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></button><div class="zver">Version 3 Nov · Navy</div></nav></aside></div>
+  <nav class="zdn"><button class="zi" data-go="log"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h10l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg><span>Daily Log</span><em id="zDLogT"></em></button><button class="zi" data-go="pol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5.5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg><span>Clients &amp; Policies</span></button><button class="zi" data-go="db"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7" ry="3"/><path d="M5 5.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6M5 11.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg><span>Customer Database</span></button><button class="zi" data-go="pay"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/></svg><span>Payments &amp; Collections</span></button><button class="zi" data-go="ren"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.5L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.5l1.7-2"/><path d="M20 20v-4.5h-4.5"/></svg><span>Renewals</span></button><button class="zi" data-go="pf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9h9"/><path d="M20.5 15.5A9 9 0 1 1 8.5 3.5"/></svg><span>Portfolio</span></button><button class="zi" data-go="tgt"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3"/></svg><span>Targets &amp; Daily Tracker</span></button><button class="zi" id="zDBk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg><span>Backup</span><em id="zDBkT"></em></button><div class="zsep"></div><button class="zi" data-go="set"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 14.6H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 10 3.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></button><div class="zver">Version 3 Nov · Navy 2</div></nav></aside></div>
 <div id="zPop" hidden><div class="zph"><b>Renewals within 1 month</b><span id="zPopN"></span></div><div id="zPopL"></div><button class="zpa" data-go="ren">See all renewals</button></div>
 <div id="msg"></div>
-<div id="tabHome"><style>
+<div id="tabHome"><div id="zWm" aria-hidden="true"></div><style>
 #zAlt{display:none;padding-top:max(14px,env(safe-area-inset-top));padding-bottom:20px}
 :root[data-lay="dash"] #zAlt,:root[data-lay="bank"] #zAlt,:root[data-lay="tiles"] #zAlt{display:block}
 :root[data-lay="dash"] body[data-tab="home"] header.brand,:root[data-lay="bank"] body[data-tab="home"] header.brand,:root[data-lay="tiles"] body[data-tab="home"] header.brand,
@@ -1520,7 +1519,7 @@ function renderBrand(){
   document.title=b.name||"Zamat";
   $("brandLogo").innerHTML=b.logoId?`<img src="/_blob/${esc(b.logoId)}" alt="" style="width:46px;height:46px;object-fit:contain;border-radius:10px;background:#fff;padding:3px;display:block">`:DEF_LOGO;
   {const h=$("brandLogo").innerHTML,cp=pre=>h.replace(/<rect fill/g,'<rect width="1024" height="1024" fill').replace(/id="(lg\w+)"/g,'id="'+pre+'$1"').replace(/url\(#(lg\w+)\)/g,'url(#'+pre+'$1)');
-   const a=$("zHLogo"),c=$("zDLogo");if(a)a.innerHTML=cp("h");if(c)c.innerHTML=cp("d");const x=$("zHeroLogo");if(x)x.innerHTML=cp("x");}
+   const a=$("zHLogo"),c=$("zDLogo");if(a)a.innerHTML=cp("h");if(c)c.innerHTML=cp("d");const x=$("zHeroLogo");if(x)x.innerHTML=cp("x");const w=$("zWm");if(w)w.innerHTML=cp("w");}
 }
 async function saveBrand(logoId){
   if(!db){$("msg").textContent="Storage is unavailable.";return}
