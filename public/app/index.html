@@ -483,10 +483,32 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
     if(P.style==="glass")return `:root:not([data-theme="dark"]) body{background:linear-gradient(160deg,${mix(p,"#ffffff",.84)},${mix(a,"#ffffff",.78)}) fixed!important}
 :root:not([data-theme="dark"]) .panel,:root:not([data-theme="dark"]) .card,:root:not([data-theme="dark"]) .zt-card,:root:not([data-theme="dark"]) .zl-card,:root:not([data-theme="dark"]) .tile.g,:root:not([data-theme="dark"]) .zcat button.g,:root:not([data-theme="dark"]) .stat{background:rgba(255,255,255,.62)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-color:rgba(255,255,255,.7)!important;box-shadow:0 8px 24px -14px rgba(10,20,40,.3)!important}`;
     return""}
+  const CKEYS=[
+    ["Home page",[["homeBg","Page background","#12264B"],["topBar","Top bar","#12264B"],["cardBg","Main card","#21407A"],["cardText","Main card text","#FFFFFF"],["tileBg","Squares (Health, Motor…)","#1A3263"],["tileText","Squares text","#FFFFFF"],["tileIcon","Squares icons","#D3DAE3"],["tileBorder","Squares border","#33496F"]]],
+    ["Bottom bar",[["navBg","Bottom bar","#12264B"],["navText","Bottom bar icons & text","#D3DAE3"],["homeBtn","Home button","#21407A"]]],
+    ["Inside pages",[["pageBg","Page background","#F1F3F7"],["boxBg","Boxes & cards","#FFFFFF"],["textCol","Text","#14213D"],["btnCol","Buttons","#0B2545"]]]
+  ];
+  function colorCSS(P){const c=P.colors||{},ok=k=>c[k]&&/^#[0-9a-f]{6}$/i.test(c[k])?c[k]:null;let s="";const H='body.zc[data-tab="home"]';
+    if(ok("homeBg"))s+=`${H}{background:${c.homeBg}!important}html:has(${H}){background:${c.homeBg}!important}`;
+    if(ok("topBar"))s+=`body.zc header.brand,${H} header.brand{background:${c.topBar}!important}`;
+    if(ok("cardBg"))s+=`#zHero,${H} #zHero{background:linear-gradient(135deg,${mix(c.cardBg,"#ffffff",.1)},${mix(c.cardBg,"#000000",.2)})!important}`;
+    if(ok("cardText"))s+=`#zHero .zy,#zHero .zs b,${H} #zHero .zm,${H} #zHero .zs div{color:${c.cardText}!important}#zHero .zgo svg{stroke:${c.cardText}!important}`;
+    if(ok("tileBg"))s+=`${H} .zcat button.g,body[data-tab="home"] .tile.g{background:${c.tileBg}!important}`;
+    if(ok("tileText"))s+=`${H} .zcat b,${H} .zcat .zn,${H} .zcat .zn i,${H} .zcat small,body[data-tab="home"] .tile .tt,body[data-tab="home"] .tile .ts{color:${c.tileText}!important}`;
+    if(ok("tileIcon"))s+=`${H} .zcat svg{stroke:${c.tileIcon}!important;color:${c.tileIcon}!important}`;
+    if(ok("tileBorder"))s+=`${H} .zcat button.g,body[data-tab="home"] .tile.g{border-color:${c.tileBorder}!important}`;
+    if(ok("navBg"))s+=`body.zc #nav,${H} #nav{background:${c.navBg}!important}body.zc #nav #zHome,${H} #nav #zHome{border-color:${c.navBg}!important}`;
+    if(ok("navText"))s+=`body.zc #nav button.g.zy,${H} #nav button.g.zy{color:${c.navText}!important}body.zc #nav button.g.zy svg,${H} #nav svg{stroke:${c.navText}!important}body.zc #nav #zHome svg{stroke:${c.navText}!important}`;
+    if(ok("homeBtn"))s+=`body.zc #nav #zHome,${H} #nav #zHome{background:${c.homeBtn}!important}`;
+    if(ok("pageBg"))s+=`body.zc:not([data-tab="home"]),body:not(.zc){background:${c.pageBg}!important}:root{--bg:${c.pageBg}!important}`;
+    if(ok("boxBg"))s+=`:root{--card:${c.boxBg}!important}`;
+    if(ok("textCol"))s+=`:root{--tx:${c.textCol}!important}`;
+    if(ok("btnCol"))s+=`:root{--ac:${c.btnCol}!important;--btn:${c.btnCol}!important}`;
+    return s}
   function apply(){const P=load();document.documentElement.classList.toggle("zc",(P.v3?P.layout:"connect")==="connect");if(!P.v3){P.v3=1;P.layout="connect";try{localStorage.setItem(PK,JSON.stringify(P))}catch(e){}}const r=document.documentElement;
     if(P.mode==="light"||P.mode==="dark")r.setAttribute("data-theme",P.mode);else r.removeAttribute("data-theme");r.dataset.lay=P.layout||"connect";if(window.renderAlt)setTimeout(window.renderAlt,0);
     let st=document.getElementById("zPrefCSS");if(!st){st=document.createElement("style");st.id="zPrefCSS";document.head.appendChild(st)}
-    st.textContent=themeCSS(P)+"\n"+fontCSS(P)+"\n"+shapeCSS(P)+"\n"+layoutCSS(P)+"\n"+styleCSS(P);
+    st.textContent=themeCSS(P)+"\n"+fontCSS(P)+"\n"+shapeCSS(P)+"\n"+layoutCSS(P)+"\n"+styleCSS(P)+"\n"+colorCSS(P);
     const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=colors(P).p;
     if(document.body)applyDom(P)}
   function applyDom(P){
@@ -499,7 +521,7 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
     cl.innerHTML=[...new Set([...(P.comps||[]),...fromData])].sort((a,b)=>a.localeCompare(b)).map(t=>`<option value="${t.replace(/"/g,"&quot;")}">`).join("");
     ["cComp","fComp"].forEach(id=>{const e=document.getElementById(id);if(e)e.setAttribute("list","comps")})}
   function save(P,quiet){localStorage.setItem(PK,JSON.stringify(P));if(!quiet)apply()}
-  window.zPrefs={THEMES,PRESETS,FONTS,DEF,load,save,apply,applyDom,colors};
+  window.zPrefs={THEMES,PRESETS,FONTS,DEF,CKEYS,load,save,apply,applyDom,colors};
   apply();
   document.addEventListener("DOMContentLoaded",()=>applyDom(load()));
 })();
@@ -596,7 +618,7 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
 
 <div id="zDrawer" aria-hidden="true"><div class="zo" id="zDrO"></div><aside class="zp2" aria-label="Menu">
   <div class="zdh"><div class="zdl" id="zDLogo"></div><div><b>ZAMAT INSURANCE</b><small>By Sami Zamat Group</small></div></div>
-  <nav class="zdn"><button class="zi" data-go="log"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h10l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg><span>Daily Log</span><em id="zDLogT"></em></button><button class="zi" data-go="pol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5.5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg><span>Clients &amp; Policies</span></button><button class="zi" data-go="db"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7" ry="3"/><path d="M5 5.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6M5 11.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg><span>Customer Database</span></button><button class="zi" data-go="pay"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/></svg><span>Payments &amp; Collections</span></button><button class="zi" data-go="ren"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.5L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.5l1.7-2"/><path d="M20 20v-4.5h-4.5"/></svg><span>Renewals</span></button><button class="zi" data-go="pf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9h9"/><path d="M20.5 15.5A9 9 0 1 1 8.5 3.5"/></svg><span>Portfolio</span></button><button class="zi" data-go="tgt"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3"/></svg><span>Targets &amp; Daily Tracker</span></button><button class="zi" id="zDBk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg><span>Backup</span><em id="zDBkT"></em></button><div class="zsep"></div><button class="zi" data-go="set"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 14.6H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 10 3.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></button><div class="zver">Version 3 Nov · Navy 4</div></nav></aside></div>
+  <nav class="zdn"><button class="zi" data-go="log"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h10l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg><span>Daily Log</span><em id="zDLogT"></em></button><button class="zi" data-go="pol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5.5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg><span>Clients &amp; Policies</span></button><button class="zi" data-go="db"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7" ry="3"/><path d="M5 5.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6M5 11.5v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg><span>Customer Database</span></button><button class="zi" data-go="pay"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/></svg><span>Payments &amp; Collections</span></button><button class="zi" data-go="ren"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.5L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.5l1.7-2"/><path d="M20 20v-4.5h-4.5"/></svg><span>Renewals</span></button><button class="zi" data-go="pf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9h9"/><path d="M20.5 15.5A9 9 0 1 1 8.5 3.5"/></svg><span>Portfolio</span></button><button class="zi" data-go="tgt"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3"/></svg><span>Targets &amp; Daily Tracker</span></button><button class="zi" id="zDBk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg><span>Backup</span><em id="zDBkT"></em></button><div class="zsep"></div><button class="zi" data-go="set"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 14.6H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 10 3.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></button><div class="zver">Version 3 Nov · Colors</div></nav></aside></div>
 <div id="zPop" hidden><div class="zph"><b>Renewals within 1 month</b><span id="zPopN"></span></div><div id="zPopL"></div><button class="zpa" data-go="ren">See all renewals</button></div>
 <div id="msg"></div>
 <div id="tabHome"><div id="zWm" aria-hidden="true"></div><style>
@@ -2282,6 +2304,10 @@ render();renderBrand();
 .zs h3{font-size:13px;font-weight:750;color:var(--mu);margin:22px 4px 8px;letter-spacing:.02em;text-transform:uppercase}
 .zs .panel label{margin-top:14px}.zs .panel label:first-child{margin-top:0}
 .zth{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.zcg{margin-top:12px}.zcg>b{display:block;font-size:12.5px;color:var(--mu);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px}
+.zcr{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--bd)}.zcr span{flex:1;font-size:14px;color:var(--tx)}
+.zcr input[type=color]{width:46px;height:34px;min-height:0;padding:2px;border-radius:10px;flex:none}
+.zcr .zcx{min-height:0;width:30px;height:30px;padding:0;border-radius:50%;font-size:15px;visibility:hidden}
 .zhc{display:flex;flex-wrap:wrap;gap:6px}.zhc button.g{display:flex;align-items:center;gap:6px;min-height:34px;padding:5px 10px;font-size:12.5px;color:var(--tx);border:2px solid var(--bd)}.zhc button.g.on{border-color:var(--ac2)}.zhc i{width:16px;height:16px;border-radius:50%;display:block}
 .zpre{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .zpre button.g{display:flex;flex-direction:column;align-items:stretch;gap:4px;padding:8px;min-height:0;text-align:left;border:2px solid var(--bd);color:var(--tx)}
@@ -2342,6 +2368,12 @@ render();renderBrand();
     else body=`<i style="height:18px;background:${t.p};border-radius:0 0 8px 8px"></i><div class="pg">${B("100%",8,cd)}${B("100%",8,cd,"margin-top:3px")}${B("100%",8,cd,"margin-top:3px")}${B("100%",8,cd,"margin-top:3px")}</div>`;
     return `<button class="g" data-p="${k}"><span class="pv" style="background:${bg};border-radius:${r+3}px">${body}</span><b>${E(d.name)}</b><small>${E(d.d)}</small></button>`}).join("")}</div>
 </div>
+<h3>Colors</h3>
+<div class="panel" style="display:block" id="zsColors">
+  <div class="mu" style="margin:0 0 6px">Tap any color to change it. The change shows right away.</div>
+  ${zPrefs.CKEYS.map(([g,items])=>`<div class="zcg"><b>${g}</b>${items.map(([k,l,d])=>`<div class="zcr"><span>${l}</span><button class="g zcx" data-cx="${k}" title="Back to default">↺</button><input type="color" data-ck="${k}" value="${d}"></div>`).join("")}</div>`).join("")}
+  <button class="g" id="zsColR" style="width:100%;margin-top:10px">Reset all colors</button>
+</div>
 <h3>Theme</h3>
 <div class="panel" style="display:block">
   <div class="zth" id="zsThemes">${Object.entries(zPrefs.THEMES).map(([k,t])=>`<button class="g" data-t="${k}"><span class="sw"><i style="background:${t.p}"></i><i style="background:${t.a}"></i><i style="background:${t.g}"></i></span>${E(t.name)}</button>`).join("")}</div>
@@ -2387,6 +2419,7 @@ render();renderBrand();
     document.querySelectorAll("#zsThemes button").forEach(b=>b.classList.toggle("on",!p.custom&&b.dataset.t===p.theme));
     $s("zsCp").value=c.p;$s("zsCa").value=c.a;$s("zsCg").value=c.g;
     [["zsMode","mode"],["zsFont","font"],["zsSize","size"],["zsCorn","corners"],["zsLay","layout"],["zsStyle","style"]].forEach(([id,k])=>document.querySelectorAll("#"+id+" button").forEach(b=>b.classList.toggle("on",b.dataset.v===(p[k]||(k==="style"?"classic":"")))));
+    {const cc=p.colors||{};zPrefs.CKEYS.forEach(([g,it])=>it.forEach(([k,l,d])=>{const i=document.querySelector(`#zsColors input[data-ck="${k}"]`);if(i&&document.activeElement!==i)i.value=cc[k]||d;const x=document.querySelector(`#zsColors [data-cx="${k}"]`);if(x)x.style.visibility=cc[k]?"visible":"hidden"}))}
     document.querySelectorAll("#zsPre button").forEach(b=>{const d=zPrefs.PRESETS[b.dataset.p];b.classList.toggle("on",!p.custom&&["theme","font","corners","layout","mode"].every(k=>p[k]===d[k])&&(p.style||"classic")===d.style)});
     $s("zsHc").value=p.heroColor||"#16335C";document.querySelectorAll("#zsHcSw button").forEach(b=>b.classList.toggle("on",b.dataset.hc.toLowerCase()===(p.heroColor||"#16335C").toLowerCase()));if(document.activeElement!==$s("zsHero"))$s("zsHero").value=p.heroTitle;if(document.activeElement!==$s("zsSub"))$s("zsSub").value=p.subtitle;
     TILES.forEach(([k])=>$s("zsT_"+k).checked=!(p.hidden||[]).includes(k));
@@ -2395,6 +2428,9 @@ render();renderBrand();
   $s("zsAuto").onchange=e=>{const p=P();p.autolock=e.target.checked;S(p)};
   $s("zsThemes").onclick=e=>{const b=e.target.closest("button[data-t]");if(!b)return;const p=P();p.theme=b.dataset.t;p.custom=null;S(p);draw()};
   [["zsCp","p"],["zsCa","a"],["zsCg","g"]].forEach(([id,k])=>$s(id).oninput=e=>{const p=P(),c=zPrefs.colors(p);p.custom={p:c.p,a:c.a,g:c.g,[k]:e.target.value};S(p);draw()});
+  $s("zsColors").oninput=e=>{const i=e.target.closest("input[data-ck]");if(!i)return;const p=P();p.colors=Object.assign({},p.colors||{},{[i.dataset.ck]:i.value});S(p);const x=document.querySelector(`#zsColors [data-cx="${i.dataset.ck}"]`);if(x)x.style.visibility="visible"};
+  $s("zsColors").onclick=async e=>{const x=e.target.closest("[data-cx]");if(x){const p=P();if(p.colors){delete p.colors[x.dataset.cx]}S(p);draw();return}
+    if(e.target.id==="zsColR"&&await ask("Reset all your custom colors?","Reset")){const p=P();p.colors={};S(p);draw()}};
   $s("zsPre").onclick=e=>{const b=e.target.closest("button[data-p]");if(!b)return;const d=zPrefs.PRESETS[b.dataset.p],p=P();Object.assign(p,{theme:d.theme,font:d.font,corners:d.corners,layout:d.layout,mode:d.mode,style:d.style,custom:null});S(p);draw()};
   [["zsMode","mode"],["zsFont","font"],["zsSize","size"],["zsCorn","corners"],["zsLay","layout"],["zsStyle","style"]].forEach(([id,k])=>$s(id).onclick=e=>{const b=e.target.closest("button[data-v]");if(!b)return;const p=P();p[k]=b.dataset.v;S(p);draw()});
   $s("zsHero").oninput=e=>{const p=P();p.heroTitle=e.target.value;S(p)};
@@ -2404,7 +2440,7 @@ render();renderBrand();
   TILES.forEach(([k])=>$s("zsT_"+k).onchange=e=>{const p=P();p.hidden=(p.hidden||[]).filter(x=>x!==k);if(!e.target.checked)p.hidden.push(k);S(p)});
   const adder=(inp,btn,key)=>{const go=()=>{const v=$s(inp).value.trim();if(!v)return;const p=P();p[key]=p[key]||[];if(!p[key].some(x=>x.toLowerCase()===v.toLowerCase()))p[key].push(v);S(p);$s(inp).value="";draw()};$s(btn).onclick=go;$s(inp).onkeydown=e=>{if(e.key==="Enter")go()}};
   adder("zsTypeIn","zsTypeAdd","types");adder("zsCompIn","zsCompAdd","comps");
-  $s("zsReset").onclick=async()=>{if(!(await ask("Reset the design to the original look? Your data, PIN and lists won't change.","Reset")))return;const p=P(),d=zPrefs.DEF;Object.assign(p,{theme:d.theme,custom:null,mode:d.mode,font:d.font,size:d.size,corners:d.corners,layout:d.layout,style:"classic",heroTitle:d.heroTitle,subtitle:d.subtitle,hidden:[]});S(p);draw()};
+  $s("zsReset").onclick=async()=>{if(!(await ask("Reset the design to the original look? Your data, PIN and lists won't change.","Reset")))return;const p=P(),d=zPrefs.DEF;Object.assign(p,{theme:d.theme,custom:null,mode:d.mode,font:d.font,size:d.size,corners:d.corners,layout:d.layout,style:"classic",colors:{},heroTitle:d.heroTitle,subtitle:d.subtitle,hidden:[]});S(p);draw()};
   document.querySelectorAll('[data-go="set"]').forEach(b=>b.addEventListener("click",()=>setTimeout(draw,0)));
   document.addEventListener("focusin",e=>{if(e.target.id==="cComp"||e.target.id==="fComp")zPrefs.applyDom(P())});
   draw();
