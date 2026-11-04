@@ -1591,7 +1591,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
   function lookIn(d){if(!d||typeof d!=="object")return;S.look=true;saveS();
     try{if(localStorage.getItem("zamat_prefs_v1")===JSON.stringify(d))return;localStorage.setItem("zamat_prefs_v1",JSON.stringify(d));inbound=true;if(window.zPrefs)zPrefs.apply()}catch(e){}inbound=false}
   function applyIn(changes){let n=0;(changes||[]).forEach(ch=>{const k=ch.c+"\u0001"+ch.i;if(S.dirty[k])return;
-      if(ch.c===PREF){lookIn(ch.d);return}
+      if(ch.c===PREF){if(ch.d){col(PREF).main=ch.d;persist()}lookIn(ch.d);return}
       if(ch.d===null||ch.d===undefined){if(data[ch.c]&&data[ch.c][ch.i]!==undefined){delete data[ch.c][ch.i];n++}}
       else{col(ch.c)[ch.i]=ch.d;n++}});
     if(n){persist();fire()}return n}
@@ -1642,6 +1642,8 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
   setInterval(()=>{if(!document.hidden)run()},20000);
   document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#zSync"))run();
     const b=e.target.closest&&e.target.closest("#zsAll");if(b){zSync.shareLook();b.textContent="Done ✓ — your other devices will match in a few seconds";setTimeout(()=>{b.textContent="Use this look on all my devices"},4000)}});
+  // a look that reached this device earlier (even with an older version of the app) is applied now
+  if(data[PREF]&&data[PREF].main)lookIn(data[PREF].main);
   setTimeout(run,800);
 
 })();
