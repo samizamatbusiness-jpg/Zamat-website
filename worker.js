@@ -45,7 +45,9 @@ export default {
     if (p === "/app/__login") {
       if (req.method !== "POST") return Response.redirect(url.origin + "/app/", 303);
       let pw = "";
-      try { pw = String((await req.formData()).get("password") || "").trim().toUpperCase(); } catch (e) {}
+      try { pw = String((await req.formData()).get("password") || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); } catch (e) {}
+      // accept it typed with spaces, without dashes or in small letters
+      if (pw.length === 16) pw = pw.match(/.{4}/g).join("-");
       if (pw && (await sha(pw + "|zamat-login-v1")) === LOGIN_HASH) {
         const key = await sha(pw + "|zamat-cookie-v1");
         return new Response(null, { status: 303, headers: { Location: "/app/", "Cache-Control": "no-store",
