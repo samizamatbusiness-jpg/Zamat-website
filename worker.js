@@ -1,3 +1,4 @@
+import { DurableObject } from "cloudflare:workers";
 // Zamat site worker: the public website stays open, the Zamat app (/app) needs the owner's password.
 // Only one-way hashes are stored here; the password itself is not in this file.
 const LOGIN_HASH = "d9e2f51dcf184f8a405dfa52d073b92f4ef864429dd855531390d0f2a38e05ad";
@@ -58,12 +59,108 @@ export default {
 
     const key = getCookie(req, COOKIE);
     if (key && (await sha(key)) === COOKIE_HASH) {
+      if (p.startsWith("/app/api/")) return env.STORE.get(env.STORE.idFromName("main")).fetch(req);
       const res = await env.ASSETS.fetch(req);
       const r = new Response(res.body, res);
       r.headers.set("Cache-Control", "no-store");
       r.headers.set("X-Robots-Tag", "noindex, nofollow");
       return r;
     }
+    if (p.startsWith("/app/api/")) return json({ error: "login" }, 401);
     return html(page(""), 401);
   }
 };
+
+const json = (o, status = 200) =>
+  new Response(JSON.stringify(o), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+
+// One private database (SQLite inside a Durable Object) that every device reads and writes.
+// Each saved item keeps the time it was changed; the newest change wins.
+const PART = 900000;
+export class ZamatStore extends DurableObject {
+  constructor(ctx, env) {
+    super(ctx, env);
+    this.sql = ctx.storage.sql;
+    this.sql.exec("CREATE TABLE IF NOT EXISTS docs(col TEXT NOT NULL, id TEXT NOT NULL, data TEXT, ts INTEGER NOT NULL, seq INTEGER NOT NULL, PRIMARY KEY(col,id))");
+    this.sql.exec("CREATE INDEX IF NOT EXISTS docs_seq ON docs(seq)");
+    this.sql.exec("CREATE TABLE IF NOT EXISTS files(id TEXT NOT NULL, part INTEGER NOT NULL, data TEXT NOT NULL, PRIMARY KEY(id,part))");
+    this.sql.exec("CREATE TABLE IF NOT EXISTS meta(k TEXT PRIMARY KEY, v INTEGER)");
+  }
+  getSeq() { const r = this.sql.exec("SELECT v FROM meta WHERE k='seq'").toArray(); return r.length ? r[0].v : 0; }
+  setSeq(v) { this.sql.exec("INSERT INTO meta(k,v) VALUES('seq',?) ON CONFLICT(k) DO UPDATE SET v=excluded.v", v); }
+  put(c, i, d, t, s) {
+    this.sql.exec("INSERT INTO docs(col,id,data,ts,seq) VALUES(?,?,?,?,?) ON CONFLICT(col,id) DO UPDATE SET data=excluded.data, ts=excluded.ts, seq=excluded.seq",
+      c, i, d === null || d === undefined ? null : JSON.stringify(d), t, s);
+  }
+  since(n) {
+    const q = n > 0 ? this.sql.exec("SELECT col,id,data FROM docs WHERE seq>? ORDER BY seq", n)
+                    : this.sql.exec("SELECT col,id,data FROM docs WHERE data IS NOT NULL ORDER BY seq");
+    return q.toArray().map(r => ({ c: r.col, i: r.id, d: r.data === null ? null : JSON.parse(r.data) }));
+  }
+  ok(ch) { return ch && typeof ch.c === "string" && typeof ch.i === "string" && ch.c && ch.i && ch.c.length < 100 && ch.i.length < 200; }
+
+  async fetch(req) {
+    const url = new URL(req.url), p = url.pathname.replace(/^\/app\/api\//, "");
+    try {
+      if (p === "status") {
+        const n = this.sql.exec("SELECT COUNT(*) AS n FROM docs WHERE data IS NOT NULL").one().n;
+        return json({ count: n, seq: this.getSeq() });
+      }
+      if (p === "sync" && req.method === "POST") {
+        const body = await req.json();
+        const since = Math.max(0, +body.since || 0);
+        const changes = Array.isArray(body.changes) ? body.changes : [];
+        const out = this.ctx.storage.transactionSync(() => {
+          let s = this.getSeq();
+          for (const ch of changes) {
+            if (!this.ok(ch)) continue;
+            const t = Math.floor(+ch.t || Date.now());
+            const ex = this.sql.exec("SELECT ts FROM docs WHERE col=? AND id=?", ch.c, ch.i).toArray();
+            s++;
+            if (ex.length && ex[0].ts > t) {
+              // the cloud has a newer version: send it back so the device corrects itself
+              this.sql.exec("UPDATE docs SET seq=? WHERE col=? AND id=?", s, ch.c, ch.i);
+            } else this.put(ch.c, ch.i, ch.d, t, s);
+          }
+          this.setSeq(s);
+          return { seq: s, changes: this.since(since) };
+        });
+        return json(out);
+      }
+      if (p === "replace" && req.method === "POST") {
+        const body = await req.json();
+        const changes = Array.isArray(body.changes) ? body.changes : [];
+        const s = this.ctx.storage.transactionSync(() => {
+          const s = this.getSeq() + 1, now = Date.now();
+          this.sql.exec("UPDATE docs SET data=NULL, ts=?, seq=? WHERE data IS NOT NULL", now, s);
+          for (const ch of changes) if (this.ok(ch) && ch.d != null) this.put(ch.c, ch.i, ch.d, Math.max(now, Math.floor(+ch.t || 0)), s);
+          this.setSeq(s);
+          return s;
+        });
+        return json({ seq: s });
+      }
+      if (p === "files") {
+        return json({ ids: this.sql.exec("SELECT DISTINCT id FROM files").toArray().map(r => r.id) });
+      }
+      if (p === "file") {
+        const id = url.searchParams.get("id") || "";
+        if (!id || id.length > 200) return json({ error: "id" }, 400);
+        if (req.method === "PUT") {
+          const text = await req.text();
+          if (!text.startsWith("data:") || text.length > 30000000) return json({ error: "file" }, 400);
+          this.ctx.storage.transactionSync(() => {
+            this.sql.exec("DELETE FROM files WHERE id=?", id);
+            for (let k = 0, part = 0; k < text.length; k += PART, part++) this.sql.exec("INSERT INTO files(id,part,data) VALUES(?,?,?)", id, part, text.slice(k, k + PART));
+          });
+          return json({ ok: true });
+        }
+        const rows = this.sql.exec("SELECT data FROM files WHERE id=? ORDER BY part", id).toArray();
+        if (!rows.length) return new Response("not found", { status: 404, headers: { "Cache-Control": "no-store" } });
+        return new Response(rows.map(r => r.data).join(""), { headers: { "Content-Type": "text/plain", "Cache-Control": "no-store" } });
+      }
+      return json({ error: "not found" }, 404);
+    } catch (e) {
+      return json({ error: String(e && e.message || e) }, 500);
+    }
+  }
+}
