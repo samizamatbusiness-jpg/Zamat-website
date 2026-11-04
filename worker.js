@@ -4,6 +4,11 @@ import { DurableObject } from "cloudflare:workers";
 const LOGIN_HASH = "d9e2f51dcf184f8a405dfa52d073b92f4ef864429dd855531390d0f2a38e05ad";
 const COOKIE_HASH = "50e1f2a621ee50fbab7ada8aeced310377b84a974c45bd9ab96ffe9bdaa74f1e";
 const COOKIE = "zamat_key";
+// forgiving check: letters that look alike count the same (S/5, B/8, G/6, O/0, I/L/1, Z/2), and the 4 groups may be in any order
+const LOGIN2 = "eacaa318d372ec9cc0eb6244f973ad1295c496554f34c5d706dd37580dbdc3a7";
+const COOKIE2 = "47846e3c5e876dd610e6dbed7561cfa5b4de2c0d50f0637973524268d5f73613";
+const fold = s => s.toUpperCase().replace(/[^A-Z0-9]/g, "").replace(/S/g, "5").replace(/B/g, "8").replace(/G/g, "6").replace(/O/g, "0").replace(/[IL]/g, "1").replace(/Z/g, "2");
+function perms(a) { if (a.length < 2) return [a]; const out = []; a.forEach((x, i) => perms(a.filter((_, j) => j !== i)).forEach(r => out.push([x, ...r]))); return out; }
 // files the phone needs to add the app to the home screen (no client data in them)
 const OPEN = /^\/app\/(manifest\.webmanifest|icon-192\.png|icon-512\.png|apple-touch-icon\.png|favicon\.ico)$/;
 
@@ -45,20 +50,22 @@ export default {
 
     if (p === "/app/__login") {
       if (req.method !== "POST") return Response.redirect(url.origin + "/app/", 303);
-      let pw = "";
-      try { pw = String((await req.formData()).get("password") || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); } catch (e) {}
-      // accept it typed with spaces, without dashes or in small letters
-      if (pw.length === 16) pw = pw.match(/.{4}/g).join("-");
-      if (pw && (await sha(pw + "|zamat-login-v1")) === LOGIN_HASH) {
-        const key = await sha(pw + "|zamat-cookie-v1");
-        return new Response(null, { status: 303, headers: { Location: "/app/", "Cache-Control": "no-store",
-          "Set-Cookie": `${COOKIE}=${key}; Path=/app; Max-Age=34560000; Secure; HttpOnly; SameSite=Lax` } });
+      let raw = "";
+      try { raw = String((await req.formData()).get("password") || ""); } catch (e) {}
+      const f = fold(raw);
+      const tries = f.length === 16 ? perms(f.match(/.{4}/g)).map(g => g.join("")) : [f];
+      for (const t of tries) {
+        if (t && (await sha(t + "|zamat-login-v2")) === LOGIN2) {
+          const key = await sha(t + "|zamat-cookie-v2");
+          return new Response(null, { status: 303, headers: { Location: "/app/", "Cache-Control": "no-store",
+            "Set-Cookie": `${COOKIE}=${key}; Path=/app; Max-Age=34560000; Secure; HttpOnly; SameSite=Lax` } });
+        }
       }
       return html(page("Wrong password. Try again."), 401);
     }
 
     const key = getCookie(req, COOKIE);
-    if (key && (await sha(key)) === COOKIE_HASH) {
+    if (key && [COOKIE_HASH, COOKIE2].includes(await sha(key))) {
       if (p.startsWith("/app/api/")) return env.STORE.get(env.STORE.idFromName("main")).fetch(req);
       const res = await env.ASSETS.fetch(req);
       const r = new Response(res.body, res);
