@@ -1,0 +1,4 @@
+/app/*
+  X-Robots-Tag: noindex, nofollow, noarchive
+/app
+  X-Robots-Tag: noindex, nofollow, noarchive
