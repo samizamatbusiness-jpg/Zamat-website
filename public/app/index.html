@@ -529,7 +529,7 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
     let fromData=[];try{fromData=(typeof rows!=="undefined"?rows:[]).map(r=>(r.company||"").trim()).filter(Boolean)}catch(e){}
     cl.innerHTML=[...new Set([...(P.comps||[]),...fromData])].sort((a,b)=>a.localeCompare(b)).map(t=>`<option value="${t.replace(/"/g,"&quot;")}">`).join("");
     ["cComp","fComp"].forEach(id=>{const e=document.getElementById(id);if(e)e.setAttribute("list","comps")})}
-  function save(P,quiet){localStorage.setItem(PK,JSON.stringify(P));if(!quiet)apply()}
+  function save(P,quiet){localStorage.setItem(PK,JSON.stringify(P));if(!quiet)apply();if(window.zSync&&zSync.prefs)zSync.prefs(P)}
   window.zPrefs={THEMES,PRESETS,FONTS,DEF,CKEYS,load,save,apply,applyDom,colors};
   apply();
   document.addEventListener("DOMContentLoaded",()=>applyDom(load()));
@@ -1587,7 +1587,11 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
     else if(!S.init||busy||pend){t="Syncing…";cl=""}
     else{t="Synced ✓ "+(lastOk?new Date(lastOk).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"");cl="ok"}
     el.textContent=t;el.className="zsync "+cl};
+  const PREF="_look";let inbound=false;
+  function lookIn(d){if(!d||typeof d!=="object")return;S.look=true;saveS();
+    try{if(localStorage.getItem("zamat_prefs_v1")===JSON.stringify(d))return;localStorage.setItem("zamat_prefs_v1",JSON.stringify(d));inbound=true;if(window.zPrefs)zPrefs.apply()}catch(e){}inbound=false}
   function applyIn(changes){let n=0;(changes||[]).forEach(ch=>{const k=ch.c+"\u0001"+ch.i;if(S.dirty[k])return;
+      if(ch.c===PREF){lookIn(ch.d);return}
       if(ch.d===null||ch.d===undefined){if(data[ch.c]&&data[ch.c][ch.i]!==undefined){delete data[ch.c][ch.i];n++}}
       else{col(ch.c)[ch.i]=ch.d;n++}});
     if(n){persist();fire()}return n}
@@ -1628,12 +1632,16 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
     }catch(e){state=(e.off||!navigator.onLine)?"off":"err";console.warn(e)}
     busy=false;label();
     if(again){again=false;setTimeout(run,300)}}
-  window.zSync={soon(){clearTimeout(timer);timer=setTimeout(run,1200);label()},now:run,label,
+  const pushLook=P=>{data[PREF]={main:JSON.parse(JSON.stringify(P))};mark(PREF,"main");persist();saveS();zSync.soon()};
+  window.zSync={prefs(P){if(inbound||!S.look)return;pushLook(P)},
+    shareLook(){S.look=true;pushLook(window.zPrefs?zPrefs.load():{})},
+    soon(){clearTimeout(timer);timer=setTimeout(run,1200);label()},now:run,label,
     reset(){try{localStorage.removeItem(SK)}catch(e){}}};
   addEventListener("online",()=>run());
   document.addEventListener("visibilitychange",()=>{if(!document.hidden)run()});
   setInterval(()=>{if(!document.hidden)run()},20000);
-  document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#zSync"))run()});
+  document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#zSync"))run();
+    const b=e.target.closest&&e.target.closest("#zsAll");if(b){zSync.shareLook();b.textContent="Done ✓ — your other devices will match in a few seconds";setTimeout(()=>{b.textContent="Use this look on all my devices"},4000)}});
   setTimeout(run,800);
 
 })();
@@ -2722,7 +2730,7 @@ render();renderBrand();
 <h3>Backup</h3>`;
   brandBox.insertAdjacentHTML("beforebegin",'<h3 class="zs" style="font-size:13px;font-weight:750;color:var(--mu);margin:6px 4px 8px;letter-spacing:.02em;text-transform:uppercase">Company</h3>');
   brandBox.after(wrap);wrap.after(bkPanel);
-  bkPanel.insertAdjacentHTML("afterend",`<div class="zs"><h3>Reset</h3><div class="panel" style="display:block"><div class="mu" style="margin-bottom:10px">Go back to the original Navy & Gold look. Your clients and data stay as they are.</div><button class="g" id="zsReset">Reset design to default</button></div></div>`);
+  bkPanel.insertAdjacentHTML("afterend",`<div class="zs"><h3>All my devices</h3><div class="panel" style="display:block"><div class="mu" style="margin-bottom:10px">Make the app icon, Safari, Chrome and every device look exactly like this one: colors, design, bottom bar and menu. After this, any design change you make anywhere shows everywhere.</div><button class="g" id="zsAll">Use this look on all my devices</button></div></div><div class="zs"><h3>Reset</h3><div class="panel" style="display:block"><div class="mu" style="margin-bottom:10px">Go back to the original Navy & Gold look. Your clients and data stay as they are.</div><button class="g" id="zsReset">Reset design to default</button></div></div>`);
   const $s=id=>document.getElementById(id);
   window.zPinMsg=t=>{$s("pinMsg").textContent=t;draw();setTimeout(()=>{$s("pinMsg").textContent=""},3000)};
   const chips=(el,arr,key)=>{el.innerHTML=arr.length?arr.map((t,i)=>`<span>${E(t)}<button data-i="${i}" aria-label="Remove">×</button></span>`).join(""):'<span class="mu" style="background:none;border:0;padding:0">None yet</span>';
