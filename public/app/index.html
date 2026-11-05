@@ -635,6 +635,11 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
 .zcb-links{display:grid;grid-template-columns:1fr;gap:8px;margin:0 0 12px}#tabPay #sCli,#tabPay #sRec{display:none!important}#tabPay .tabs.four{grid-template-columns:1fr 1fr!important}
 details.zmf{margin-bottom:8px}details.zmf>summary,details.zadv>summary{cursor:pointer;list-style:none;color:var(--ac);font-weight:700;font-size:14px;padding:8px 2px}details.zmf>summary::-webkit-details-marker,details.zadv>summary::-webkit-details-marker{display:none}details.zmf>summary::after,details.zadv>summary::after{content:" ▾"}details[open].zmf>summary::after,details[open].zadv>summary::after{content:" ▴"}
 details.zadv{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:6px 12px;margin:0 0 14px}details.zadv>summary small{display:block;font-weight:500;color:var(--mu);font-size:12px}
+.card.zcc{padding:0!important;overflow:hidden}.card.zcc>.zcb{display:none;padding:4px 14px 14px}.card.zcc.open>.zcb{display:block}
+.zcs{display:flex!important;align-items:center;gap:10px;width:100%;background:none!important;border:0!important;box-shadow:none!important;padding:12px 14px!important;min-height:0!important;text-align:start;color:var(--tx)!important;border-radius:0!important}
+.zcn{flex:1;min-width:0}.zcn b{font-size:15px;font-weight:700;display:inline}.zcn svg{width:15px;height:15px;vertical-align:-2px;margin-inline-end:5px}.zcn small{display:block;color:var(--mu);font-size:12.5px;font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.zct{font-style:normal;font-size:12px;font-weight:700;padding:4px 9px;border-radius:20px;white-space:nowrap;flex:none}.zct.g{background:rgba(21,128,61,.12);color:var(--grn)}.zct.o{background:rgba(234,88,12,.12);color:var(--org)}.zct.r{background:var(--redbg,rgba(198,40,40,.1));color:var(--red)}.zct.x{background:var(--soft,#eee);color:var(--mu)}
+.zcv{font-style:normal;color:var(--mu);font-size:20px;transition:transform .15s;flex:none}.card.zcc.open .zcv{transform:rotate(90deg)}.card.zcc.open .zcb .nm{display:none}
 </style>
 <div id="msg"></div>
 <div id="tabHome"><div id="zWm" aria-hidden="true"></div><style>
@@ -1943,6 +1948,8 @@ function renderCats(){renderCli();renderZp();
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-cat]");if(!b)return;
   $("cliQ").value="";$("cliCat").value=b.dataset.cat;showTab("cli");renderCli()});
+const zOpen=new Set();
+document.addEventListener("click",e=>{const b=e.target.closest("[data-zcs]");if(!b)return;const id=b.dataset.zcs,c=b.closest(".card");if(zOpen.has(id))zOpen.delete(id);else zOpen.add(id);c.classList.toggle("open",zOpen.has(id))});
 function render(){
   const q=$("q").value.trim().toLowerCase();
   const all=rows.slice().sort((a,b)=>(a.expiry||"9").localeCompare(b.expiry||"9"));
@@ -1964,12 +1971,13 @@ function render(){
     const cl=closureOf(r),cm=commOf(r);
     const cmln=pr>0?`<div class="mu" style="margin-bottom:8px">Commission: <b>${cm.usd()}</b> · ${cl.closed?'<b style="color:var(--grn)">Closed</b>':"Not closed"}</div>`:"";
     const tag=isCanc(r)?"Canceled":d===null?"":d<0?`Expired ${-d} day${-d===1?"":"s"} ago`:d===0?"Expires today":`${d} day${d===1?"":"s"} left`;
-    return `<div class="card ${cls}"><div class="top"><div><div class="nm">${isAct(r)?ICON_ON:ICON_OFF}${esc(r.name)}</div>
+    const st=isCanc(r)?["x","Canceled"]:d!==null&&d<0?["r","Expired"]:(pr>0&&bal>0)?["o","Owes "+bal.usd()]:d!==null&&d<=30?["o",d+"d left"]:(pr>0?["g","✓ Paid"]:["g",""]);
+    return `<div class="card ${cls} zcc${zOpen.has(r.id)?" open":""}"><button type="button" class="zcs" data-zcs="${esc(r.id)}"><span class="zcn">${isAct(r)?ICON_ON:ICON_OFF}<b>${esc(r.name)}</b><small>${esc(typeOf(r)||"")}${r.premium!=null?" · "+Number(r.premium).usd():""}</small></span>${st[1]?`<em class="zct ${st[0]}">${st[1]}</em>`:""}<i class="zcv">›</i></button><div class="zcb"><div class="top"><div><div class="nm">${isAct(r)?ICON_ON:ICON_OFF}${esc(r.name)}</div>
     <div class="mu">${[typeOf(r),r.company,r.phone].filter(Boolean).map(esc).join(" · ")}</div>${polLine(r)}</div>${tag?`<span class="tag ${cls}">${tag}</span>`:""}</div>
     <div class="dates"><div><span>Premium</span>${r.premium!=null?Number(r.premium).usd():"-"}</div><div><span>Start</span>${fmtD(r.start)}</div><div><span>Expiry</span>${fmtD(r.expiry)}</div><div><span>Renewal</span>${fmtD(r.renewal)}</div></div>
     ${payln}${cmln}${prevLine(r)}${r.note?`<div class="note">${esc(r.note)}</div>`:""}
     <div class="acts">${r.fileId?`<a href="/_blob/${esc(r.fileId)}" target="_blank" rel="noopener">Document</a>`:""}
-    <button class="g" data-p="${esc(r.id)}">Payments</button><button class="g" data-r="${esc(r.id)}">Renew</button><button class="g" data-c="${esc(r.id)}">${isCanc(r)?"Reactivate":"Cancel policy"}</button><button class="d" data-d="${esc(r.id)}">Delete</button></div></div>`}).join("")||`<div class="empty">No policies yet. Add a client in Client list, then click "+ Policy" or "+ New policy".</div>`;
+    <button class="g" data-p="${esc(r.id)}">Payments</button><button class="g" data-r="${esc(r.id)}">Renew</button><button class="g" data-c="${esc(r.id)}">${isCanc(r)?"Reactivate":"Cancel policy"}</button></div><div style="text-align:end;margin-top:10px"><button class="d" data-d="${esc(r.id)}" style="min-height:0;padding:5px 10px;font-size:12px">Delete policy</button></div></div></div>`}).join("")||`<div class="empty">No policies yet. Add a client in Client list, then click "+ Policy" or "+ New policy".</div>`;
   renderPF();renderPay();renderCol();renderPayList();renderHome();renderRen();renderDb();fillNames();
 }
 
