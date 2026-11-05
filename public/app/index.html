@@ -221,8 +221,7 @@ body.zc[data-tab="home"] #zHero{display:block;position:relative;z-index:2;height
 #zHero .zb3{position:absolute;top:30px;right:0;bottom:0;width:34%;background:repeating-linear-gradient(0deg,#6F95BC 0 4px,#A9C6E2 4px 9px);clip-path:polygon(0 18%,100% 0,100% 100%,0 100%)}
 #zHero .zm{position:absolute;left:18px;top:12px;display:flex;align-items:center;gap:6px;color:#fff;font-weight:800;font-size:13px;opacity:.92}
 #zHero .zt{position:absolute;left:18px;top:46px;color:#fff}
-#zHero .zy{font-family:"Montserrat","Manrope",sans-serif;font-weight:800;font-size:46px;line-height:1;letter-spacing:-1px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;position:relative;z-index:3}
-#zHero .zyc{font-size:18px;opacity:.6;letter-spacing:0}
+#zHero .zy{font-family:"Montserrat","Manrope",sans-serif;font-weight:800;font-size:46px;line-height:1;letter-spacing:-1px}
 #zHero .za{font-family:"Montserrat","Manrope",sans-serif;font-weight:500;font-size:17px;margin-top:4px;letter-spacing:.3px}
 #zHero .zp{position:absolute;left:30px;bottom:12px;width:44px;height:44px;min-height:0;padding:0;border-radius:50%;border:0;background:#E9EDF2;display:grid;place-items:center;box-shadow:none}
 #zHero .zp svg{width:14px;height:16px;fill:#0E2239}
@@ -1820,8 +1819,8 @@ function renewDialog(r){return new Promise(res=>{
 })}
 const isCanc=r=>r.status==="canceled";
 const isAct=r=>{if(isCanc(r))return false;const d=days(r.expiry);return d===null||d>=0};
-/* Home year filter: home numbers count only policies that started (or were renewed) in the chosen year. Tap the year to change. */
-const homeYr=()=>{let v=null;try{v=localStorage.getItem("zamat_home_year")}catch(e){}return v==="all"?"":(v||String(new Date().getFullYear()))};
+/* Home numbers count only active policies that started (or were renewed) in the current year. */
+const homeYr=()=>String(new Date().getFullYear());
 const inYr=r=>{const y=homeYr();return !y||String(r.start||"").slice(0,4)===y};
 const todayStr=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
 const paidOf=r=>(r.payments||[]).filter(p=>(p.term||1)===(r.term||1)).reduce((a,p)=>a+(Number(p.amount)||0),0);
@@ -2247,12 +2246,7 @@ try{const v=localStorage.getItem("zamat_ren_f");if(v&&[...$("rFilter").options].
 $("rFilter").onchange=()=>{try{localStorage.setItem("zamat_ren_f",$("rFilter").value)}catch(e){};renderRen();render()};
 $("dbQ").oninput=renderDb;
 $("dbNew").onclick=()=>openClient(null);
-function setHomeYr(){const y=homeYr();$("zYear").innerHTML=(y||"All years")+'<span class="zyc" aria-hidden="true">▾</span>'}
-setHomeYr();
-$("zYear").addEventListener("click",e=>{e.preventDefault();e.stopPropagation();
-  const now=String(new Date().getFullYear()),ys=[...new Set(rows.map(r=>String(r.start||"").slice(0,4)).filter(y=>/^\d{4}$/.test(y)).concat(now))].sort().reverse(),opts=ys.concat("");
-  const cur=homeYr(),nx=opts[(opts.indexOf(cur)+1)%opts.length];
-  try{localStorage.setItem("zamat_home_year",nx===""?"all":nx)}catch(x){}setHomeYr();renderCats()},true);
+$("zYear").textContent=homeYr();try{localStorage.removeItem("zamat_home_year")}catch(e){}
 $("zBk").addEventListener("click",()=>$("bkTile").click());
 
 /* starting balances: one-time entry of what is still left on each policy */
