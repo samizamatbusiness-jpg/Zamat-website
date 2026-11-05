@@ -1898,7 +1898,7 @@ function renderCats(){renderCli();renderZp();
   {const k=v=>"$"+Math.round(v).toLocaleString("en-US");const nw=rows.filter(isAct),np=nw.reduce((a,r)=>a+(Number(r.premium)||0),0);if($("zHN")){$("zHN").textContent=nw.length;$("zHNP").textContent=k(np)}document.querySelectorAll("#zHero .zyr").forEach(x=>x.textContent=homeYr())}
   {const yev=termEvents().filter(e=>e.date.slice(0,4)===homeYr()),act=yev.filter(e=>e.kind==="new"||e.kind==="ren"),pr=yev.reduce((a,e)=>a+e.prem,0);const ha=$("zHA"),hp=$("zHP");if(ha){ha.textContent=act.length;hp.textContent="$"+Math.round(pr).toLocaleString("en-US")}}
   const box=$("zCat");if(!box)return;
-  box.innerHTML=CATS.filter(c=>c.k!=="expat"||rows.some(r=>catOf(r)==="expat")).map(c=>{const act=rows.filter(r=>catOf(r)===c.k&&isAct(r)),sub=c.k==="motor"?`<small>${[["bi","BI"],["tp","TP"],["ar","AR"]].map(([k,n])=>`${n} ${act.filter(r=>subOf(r)===k).length}`).join(" · ")}</small>`:"";
+  box.innerHTML=CATS.map(c=>{const act=rows.filter(r=>catOf(r)===c.k&&isAct(r)),sub=c.k==="motor"?`<small>${[["bi","BI"],["tp","TP"],["ar","AR"]].map(([k,n])=>`${n} ${act.filter(r=>subOf(r)===k).length}`).join(" · ")}</small>`:"";
     return `<button class="g" data-cat="${c.k}" style="border-color:${c.c}"><svg viewBox="0 0 24 24" aria-hidden="true">${c.i}</svg><b>${esc(c.n)}</b><span class="zn"><i>${act.length}</i> active</span>${sub}</button>`}).join("");
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-cat]");if(!b)return;
