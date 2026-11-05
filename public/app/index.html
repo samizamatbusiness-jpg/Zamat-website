@@ -632,7 +632,10 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
 <div id="zPop" hidden><div class="zph"><b>Renewals within 1 month</b><span id="zPopN"></span></div><div id="zPopL"></div><button class="zpa" data-go="ren">See all renewals</button></div>
 <style id="zSimple">#zDrawer .zdn button.zi[data-go="db"],#zDrawer .zdn button.zi[data-go="pay"],#zDrawer .zdn button.zi[data-go="ren"],.home .tile[data-go="db"],.home .tile[data-go="pay"],.home .tile[data-go="ren"]{display:none!important}
 .zseg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--soft,#eef1f5);padding:4px;border-radius:12px;margin:0 0 12px}.zseg button{border:0;background:transparent;color:var(--mu);font-weight:700;padding:10px;border-radius:9px;min-height:0}.zseg button.on{background:var(--card,#fff);color:var(--tx);box-shadow:0 1px 3px rgba(0,0,0,.12)}
-.zcb-links{display:grid;grid-template-columns:1fr;gap:8px;margin:0 0 12px}</style>
+.zcb-links{display:grid;grid-template-columns:1fr;gap:8px;margin:0 0 12px}#tabPay #sCli,#tabPay #sRec{display:none!important}#tabPay .tabs.four{grid-template-columns:1fr 1fr!important}
+details.zmf{margin-bottom:8px}details.zmf>summary,details.zadv>summary{cursor:pointer;list-style:none;color:var(--ac);font-weight:700;font-size:14px;padding:8px 2px}details.zmf>summary::-webkit-details-marker,details.zadv>summary::-webkit-details-marker{display:none}details.zmf>summary::after,details.zadv>summary::after{content:" ▾"}details[open].zmf>summary::after,details[open].zadv>summary::after{content:" ▴"}
+details.zadv{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:6px 12px;margin:0 0 14px}details.zadv>summary small{display:block;font-weight:500;color:var(--mu);font-size:12px}
+</style>
 <div id="msg"></div>
 <div id="tabHome"><div id="zWm" aria-hidden="true"></div><style>
 #zAlt{display:none;padding-top:max(14px,env(safe-area-inset-top));padding-bottom:20px}
@@ -826,7 +829,7 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
   <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button id="bSave">Save</button><button class="d" id="bRemove">Remove logo</button></div>
 </div>
 <div class="panel" style="display:block"><label>Backup</label><div class="mu" id="setBk" style="margin:4px 0 10px"></div><button id="setBkBtn">Back up now</button></div>
-<div class="panel" style="display:block"><label>Data</label><div class="mu" style="margin:4px 0 10px">Import your clients and policies from an Excel file, or erase everything to start fresh.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="setImp">Import from Excel</button><button class="d" id="setErase">Erase all data</button></div></div>
+<div class="panel" style="display:block"><label>Data</label><div class="mu" style="margin:4px 0 10px">Import your clients and policies from an Excel file, or erase everything to start fresh.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="setImp">Import from Excel</button><button class="g" type="button" data-go="ob">Starting balances (first time)</button><button class="d" id="setErase">Erase all data</button></div></div>
 </div>
 <div id="tabPol" style="display:none">
 <div class="sech"><button class="g" data-go="home" style="padding:6px 12px;font-size:13px">← Home</button><h2>Clients</h2></div>
@@ -840,9 +843,8 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
 <div class="bar">
   <input id="q" type="search" placeholder="Search client, company, policy no., phone…">
 </div>
-<div class="row" style="margin-bottom:8px"><select id="selType"></select><select id="selComp"></select></div>
-<div class="row" style="margin-bottom:8px"><select id="selYear"></select><select id="selStat"><option value="">All statuses</option><option value="on">Active</option><option value="off">Non-active (canceled or expired)</option><option value="new">New</option><option value="ren">Renewed</option><option value="canc">Canceled</option></select></div>
-<select id="selCat"></select>
+<div class="row" style="margin-bottom:8px"><select id="selType"></select><select id="selStat"><option value="">All statuses</option><option value="on">Active</option><option value="off">Non-active (canceled or expired)</option><option value="new">New</option><option value="ren">Renewed</option><option value="canc">Canceled</option></select></div>
+<details class="zmf"><summary>More filters</summary><div class="row" style="margin:8px 0"><select id="selComp"></select><select id="selYear"></select></div><select id="selCat"></select></details>
 <div id="cnt"></div>
 <div id="list"></div>
 </div>
@@ -873,11 +875,11 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
     <div id="zpDone" class="zpok" hidden></div>
     <div class="zph2" id="zmL">Who paid</div>
     <div id="zpRecent"></div>
-    <button class="g" id="zpOb" type="button" data-go="ob">Starting balances (first time)</button>
-    <button class="g" id="zpMore" type="button">Reports &amp; commission</button>
+    
+    <button class="g" id="zpMore" type="button">Commission</button>
   </div>
   <div id="payBox" class="panel"></div>
-  <div class="tabs four"><button class="g on" id="sCol">Collected</button><button class="g" id="sCli">By person</button><button class="g" id="sCom">Commission</button><button class="g" id="sRec">Record</button></div>
+  <div class="tabs four"><button class="g on" id="sCol">Who paid</button><button class="g" id="sCli">By person</button><button class="g" id="sCom">Commission</button><button class="g" id="sRec">Record</button></div>
   <div id="colBox" class="panel" style="display:block">
     <div id="monthRow"><label>Month</label><input id="colM" type="month"></div>
     <div id="colOut" style="margin-top:12px"></div>
@@ -2392,7 +2394,7 @@ $("zPay").addEventListener("click",e=>{const b=e.target.closest("[data-zp]");
   if(e.target.id==="zpSave"){zpSave(false);return}
   if(e.target.id==="zpFull"){zpSave(true);return}
   if(e.target.id==="zpFix"){const r=rows.find(x=>x.id===zpId);showTab("ob");$("obQ").value=r?(r.policy||r.name):"";setTimeout(renderOb,0);return}
-  if(e.target.id==="zpMore"){$("tabPay").classList.toggle("more");$("zpMore").textContent=$("tabPay").classList.contains("more")?"Hide reports":"Reports & commission"}});
+  if(e.target.id==="zpMore"){$("tabPay").classList.toggle("more");$("zpMore").textContent=$("tabPay").classList.contains("more")?"Hide commission":"Commission"}});
 $("zPay").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="zpAmt")zpSave(false)});
 $("cliQ").addEventListener("input",renderCli);$("cliCat").addEventListener("change",renderCli);
 $("zCli").addEventListener("click",()=>{$("cliCat").value="";$("cliQ").value=""});
@@ -2898,6 +2900,7 @@ render();renderBrand();
   <div class="zbtns"><button id="zsPinSet"></button><button class="d" id="zsPinOff">Remove PIN</button></div>
   <div class="mu" id="pinMsg" style="margin-top:8px"></div>
 </div>
+<details class="zadv"><summary>Look &amp; design <small>colors, themes, layout, menu, home</small></summary>
 <h3>Designs</h3>
 <div class="panel" style="display:block">
   <div class="mu" style="margin:0 0 10px">Tap a design to try it. You can fine-tune colors, font and layout below.</div>
@@ -2952,6 +2955,7 @@ render();renderBrand();
   <label>Sections shown on Home</label>
   <div>${TILES.map(([k,l])=>`<div class="zrow"><span>${l}</span>${sw("zsT_"+k)}</div>`).join("")}</div>
 </div>
+</details>
 <h3>Lists</h3>
 <div class="panel" style="display:block">
   <label>Insurance types</label><div class="zchips" id="zsTypes"></div>
