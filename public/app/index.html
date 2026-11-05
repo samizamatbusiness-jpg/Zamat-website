@@ -1838,7 +1838,8 @@ function renewedMap(){
     if(best){m.set(r,best);used.add(best)}});
   renewedMap.r=rows;renewedMap.n=rows.length;renewedMap.m=m;return m}
 const isRenewed=r=>{try{return renewedMap().has(r)}catch(e){return false}};
-const isAct=r=>{if(isCanc(r))return false;const d=days(r.expiry||(r.start?shiftY(r.start,1):""));return d===null||d>0};
+/* Active = not canceled and inception after the same day last year, up to 31 Dec of this year (e.g. 06/11/2025 – 31/12/2026). */
+const isAct=r=>{if(isCanc(r))return false;const s=r.start||(r.expiry?shiftY(r.expiry,-1):"");if(!s)return true;return s>shiftY(todayStr(),-1)&&s<=homeYr()+"-12-31"};
 /* Home numbers count only active policies that started (or were renewed) in the current year. */
 const homeYr=()=>String(new Date().getFullYear());
 const inYr=r=>{const y=homeYr();return !y||String(r.start||"").slice(0,4)===y};
@@ -1854,11 +1855,11 @@ function termsOf(r){if(!r.start)return[];const T=r.term||1,o=[];for(let j=1;j<=T
 const CATS=[
  {k:"health",n:"Health",c:"#5E8C4A",re:/medical|health|hospital/i,i:'<path d="M12 20s-8-4.6-8-10.4A4.3 4.3 0 0 1 12 7.4a4.3 4.3 0 0 1 8 2.2C20 15.4 12 20 12 20z"/><path d="M7 12h2.5l1.3-2.5 1.9 4.4 1.3-1.9H17"/>'},
  {k:"motor",n:"Motor",c:"#7D80A8",re:/motor|\bbi\b|\btp\b|all\s*risk|third party|vehicle/i,i:'<path d="M3 15v-3l2.5-.7 2.5-3.8h8.5l3 3.8 1.5.7v3h-2"/><path d="M8.5 15h7"/><circle cx="6.5" cy="15.5" r="2"/><circle cx="17.5" cy="15.5" r="2"/>'},
- {k:"pcm",n:"PC&M",c:"#2E5F86",re:/pc&m|property|fire|marine|casualty|liability|engineering|cargo|burglary|workmen/i,i:'<path d="M4 20V8h7v12M11 20V4h9v16M2 20h20"/><path d="M6.5 11h2M6.5 14h2M6.5 17h2M14 7h3M14 10h3M14 13h3M14 16h3"/>'},
+ {k:"pcm",n:"PC&M",c:"#2E5F86",re:/pc\s*&\s*m|property|fire|marine|casualty|liability|engineering|cargo|burglary|workmen/i,i:'<path d="M4 20V8h7v12M11 20V4h9v16M2 20h20"/><path d="M6.5 11h2M6.5 14h2M6.5 17h2M14 7h3M14 10h3M14 13h3M14 16h3"/>'},
  {k:"life",n:"Life",c:"#5BB6C9",re:/life/i,i:'<circle cx="12" cy="4.5" r="2.2"/><path d="M5 8.5c2.5 1.8 4.5 2.4 7 2.4s4.5-.6 7-2.4"/><path d="M12 10.9c-1.3 3.8-3.6 6.4-5.6 9.6M12 10.9c1.3 3.8 3.6 6.4 5.6 9.6"/>'},
  {k:"travel",n:"Travel",c:"#E2BE5A",re:/travel/i,i:'<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>'},
  {k:"expat",n:"Expat",c:"#7A4A8C",re:/expat|residen|work permit|labou?r/i,i:'<rect x="5" y="2.5" width="14" height="19" rx="1.5"/><circle cx="12" cy="10" r="3.8"/><path d="M8.2 10h7.6M12 6.2c-1.3 1.3-1.3 6.3 0 7.6M12 6.2c1.3 1.3 1.3 6.3 0 7.6M8.5 17.5h7"/>'},
- {k:"pa",n:"Personal Accident",c:"#8B5A2B",re:/personal\s*accident|accident/i,i:'<path d="M12 3l8 3v6c0 4.6-3.4 8.2-8 9-4.6-.8-8-4.4-8-9V6z"/><path d="M12 8v5M9.5 10.5h5"/>'},
+ {k:"pa",n:"Personal Accident",c:"#8B5A2B",re:/personal\s*accident|accident|^\s*pa\s*$/i,i:'<path d="M12 3l8 3v6c0 4.6-3.4 8.2-8 9-4.6-.8-8-4.4-8-9V6z"/><path d="M12 8v5M9.5 10.5h5"/>'},
  {k:"plsw",n:"PLS & WCS",c:"#8A94A6",re:/\bpls\b|\bwcs\b|workmen/i,i:'<rect x="4" y="7" width="16" height="13" rx="2"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M4 12h16M11 12v2h2v-2"/>'}];
 /* Policy-number prefix → insurance type (from Sami's production report colours):
    red MB, MG, MV = Motor BI · yellow MF = Motor All Risk · orange MT = Motor TP · blue L = Health · grey TOS = Travel
@@ -1868,7 +1869,8 @@ function prefixRule(pol){const m=/^\s*([A-Z]{1,4}\d?)\s*\//.exec(String(pol||"")
 const MSUBS=[["bi","BI"],["tp","TP"],["ar","All Risk"]];
 const CAT_ORDER=["expat","travel","health","pa","plsw","life","pcm","motor"];
 function codeOf(r){const x=prefixRule(r.policy);return x?x:null}
-function catOf(r){const c=codeOf(r);if(c)return c[1];const t=typeOf(r);for(const k of CAT_ORDER){if(CATS.find(x=>x.k===k).re.test(t))return k}return"other"}
+function catOfText(t){t=String(t||"");for(const k of CAT_ORDER){if(CATS.find(x=>x.k===k).re.test(t))return k}return""}
+function catOf(r){const l=r.lob?catOfText(r.lob):"";if(l)return l;const c=codeOf(r);if(c)return c[1];return catOfText(typeOf(r))||"other"}
 function subOf(r){const c=codeOf(r);if(c)return c[2]||"";const t=typeOf(r);return /all\s*risk/i.test(t)?"ar":/\bbi\b/i.test(t)?"bi":/\btp\b|third party/i.test(t)?"tp":""}
 function matchCat(r,v){if(!v)return true;const[k,sub]=v.split(":");return catOf(r)===k&&(!sub||subOf(r)===sub)}
 function catOpts(){return '<option value="">All insurance types</option>'+CATS.map(c=>`<option value="${c.k}">${esc(c.n)}</option>`+(c.k==="motor"?MSUBS.map(([s,n])=>`<option value="motor:${s}">— Motor ${esc(n)}</option>`).join(""):"")).join("")+'<option value="other">Other</option>'}
@@ -1955,7 +1957,7 @@ function shiftY(d,n){let x=d;for(let i=0;i<Math.abs(n);i++)x=n>0?addYear(x):subY
 function termEvents(){
   const ev=[];
   rows.forEach(r=>{
-    if(Array.isArray(r.tx)&&r.tx.length){r.tx.forEach(t=>{if(t&&t.d)ev.push({date:t.d,kind:t.k,prem:Number(t.p)||0,r})});return}
+    if(Array.isArray(r.tx)&&r.tx.length){r.tx.forEach(t=>{if(t&&(t.i||t.d))ev.push({date:t.i||t.d,kind:t.k,prem:Number(t.p)||0,r})});return}
     if(!r.start)return;const T=r.term||1;
     for(let j=1;j<=T;j++){
       const h=(r.hist||[]).find(x=>x.term===j);
@@ -2553,14 +2555,14 @@ const impNum=v=>{v=String(v??"").replace(/[^\d.\-]/g,"");return v===""||v==="-"|
 /* Insurer production report: every row is a transaction (New, Renew, Cancel., Endors.) of a policy number.
    Rows are grouped by policy number: New/Renew rows are the yearly terms, Cancel. cancels the term, Endors. adds premium to it. */
 function prodHead(row){const h=(row||[]).map(x=>String(x||"").trim().toLowerCase());const f=n=>h.indexOf(n);
-  const C={type:f("type"),pol:f("policy"),st:f("policy status"),sub:f("subscription status"),iss:f("issue date"),pin:f("pin"),name:f("policy holder"),inc:f("inception"),exp:f("expiry"),tot:h.findIndex(x=>x==="total"||x==="premium"),reg:f("registration"),use:f("usage")};
+  const C={type:f("type"),pol:f("policy"),st:f("policy status"),sub:f("subscription status"),iss:f("issue date"),pin:f("pin"),name:f("policy holder"),inc:f("inception"),exp:f("expiry"),tot:h.findIndex(x=>x==="total"||x==="premium"),reg:f("registration"),use:f("usage"),lob:h.findIndex(x=>/^(insurance(\s*(type|class|line|branch))?|line of business|lob|branch|class|product)$/.test(x))};
   return C.pol>=0&&C.st>=0&&C.iss>=0&&C.inc>=0&&C.exp>=0&&C.tot>=0&&C.type>=0&&C.name>=0?C:null}
 function prodBuild(R,hi,C){
   const G=new Map(),bad=[];
   R.slice(hi+1).forEach((r,j)=>{const pol=String(r[C.pol]??"").trim();if(!pol)return;
     const tp=String(r[C.type]??"").trim().toLowerCase(),k=/^ren/.test(tp)?"ren":/^can/.test(tp)?"can":/^end/.test(tp)?"end":"new";
     const x={k,i:j,pol,st:String(r[C.st]??"").trim().toLowerCase(),paid:/^paid/i.test(String(C.sub>=0?r[C.sub]??"":"").trim()),iss:normDate2(r[C.iss]),inc:normDate2(r[C.inc]),exp:normDate2(r[C.exp]),
-      p:impNum(r[C.tot]),name:String(r[C.name]??"").replace(/\s+/g," ").trim(),pin:String(C.pin>=0?r[C.pin]??"":"").trim(),reg:C.reg>=0?String(r[C.reg]??"").trim():"",use:C.use>=0?String(r[C.use]??"").trim():""};
+      p:impNum(r[C.tot]),name:String(r[C.name]??"").replace(/\s+/g," ").trim(),pin:String(C.pin>=0?r[C.pin]??"":"").trim(),reg:C.reg>=0?String(r[C.reg]??"").trim():"",use:C.use>=0?String(r[C.use]??"").trim():"",lob:C.lob>=0?String(r[C.lob]??"").replace(/\s+/g," ").trim():""};
     if(!x.inc||!x.exp||x.p===null||isNaN(x.p)){bad.push(`row ${hi+j+2}`);return}
     if(!x.iss)x.iss=x.inc;(G.get(pol)||G.set(pol,[]).get(pol)).push(x)});
   const recs=[],pid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
@@ -2569,14 +2571,16 @@ function prodBuild(R,hi,C){
     const by={};L.filter(x=>x.k==="new"||x.k==="ren").forEach(x=>{by[x.inc]=x});/* same inception twice = the later row wins */
     const T=Object.values(by).sort((a,b)=>a.inc.localeCompare(b.inc));if(!T.length)return;
     const terms=T.map((t,n)=>{const end=L.filter(x=>x.k==="end"&&x.inc>=t.inc&&x.inc<t.exp&&(!T[n+1]||x.inc<T[n+1].inc)).reduce((a,x)=>a+x.p,0);
-      return{t,prem:Math.round((t.p+end)*100)/100,canc:/cancel/.test(t.st)}});
+      const cx=L.some(x=>x.k==="can"&&x.inc>=t.inc&&x.inc<t.exp&&(!T[n+1]||x.inc<T[n+1].inc));
+      return{t,prem:Math.round((t.p+end)*100)/100,canc:/cancel/.test(t.st)||cx}});
     const cur=terms[terms.length-1],c=cur.t,rule=prefixRule(pol),nm=(L.filter(x=>x.name).pop()||c).name;
     const cOf=p=>p>0?p*commDef/100:0;
-    recs.push({name:nm,phone:"",type:rule&&rule[3]?rule[3]:(/^(PLS|WCS)/i.test(pol)?pol.slice(0,3).toUpperCase():""),company:"",policy:pol,pin:c.pin||"",premium:cur.prem,start:c.inc,expiry:c.exp,renewal:c.exp,commission:null,commtype:"pct",
+    const lob=(L.filter(x=>x.lob).pop()||{}).lob||"",ptype=rule&&rule[3]?rule[3]:(/^(PLS|WCS)/i.test(pol)?pol.slice(0,3).toUpperCase():""),lc=lob?catOfText(lob):"",pc=rule?rule[1]:catOfText(ptype);
+    recs.push({name:nm,phone:"",type:lob&&lc&&lc!==pc?lob:ptype||lob,lob:lob||undefined,company:"",policy:pol,pin:c.pin||"",premium:cur.prem,start:c.inc,expiry:c.exp,renewal:c.exp,commission:null,commtype:"pct",
       hist:terms.slice(0,-1).map((h,n)=>({term:n+1,start:h.t.inc,expiry:h.t.exp,policy:pol,company:"",closed:h.t.paid&&!h.canc,date:h.t.iss,paid:h.t.paid?h.prem:0,comm:cOf(h.prem),premium:h.prem,canceled:h.canc||undefined})),
       closedTerm:null,closedDate:null,note:[c.reg?"Registration: "+c.reg:"",c.use?"Usage: "+c.use:""].filter(Boolean).join(" · "),fileId:null,status:cur.canc?"canceled":null,term:terms.length,
       payments:c.paid&&cur.prem>0?[{id:pid(),date:c.iss,amount:cur.prem,payer:nm,note:"Imported",term:terms.length}]:[],
-      tx:L.map(x=>({d:x.iss,k:x.k,p:x.p})),issued:c.iss,_bk:true,_prod:true,updated:Date.now()});
+      tx:L.map(x=>({d:x.iss,i:x.inc,k:x.k,p:x.p})),issued:c.iss,_bk:true,_prod:true,updated:Date.now()});
   });
   return{recs,bad};
 }
