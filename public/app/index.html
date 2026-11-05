@@ -1877,7 +1877,7 @@ function renewedMap(){
   renewedMap.r=rows;renewedMap.n=rows.length;renewedMap.m=m;return m}
 const isRenewed=r=>{try{return renewedMap().has(r)}catch(e){return false}};
 /* Active = not canceled and inception after the same day last year, up to 31 Dec of this year (e.g. 06/11/2025 – 31/12/2026). */
-const isAct=r=>{if(isCanc(r))return false;const s=r.start||(r.expiry?shiftY(r.expiry,-1):"");if(!s)return true;return s>shiftY(todayStr(),-1)&&s<=homeYr()+"-12-31"};
+const isAct=r=>{if(isCanc(r))return false;const s=r.start||(r.expiry?shiftY(r.expiry,-1):"");if(r.expiry&&/^\d{4}-\d{2}-\d{2}/.test(r.expiry)&&r.expiry.slice(0,10)<todayStr())return false;if(!s)return true;return s>shiftY(todayStr(),-1)&&s<=homeYr()+"-12-31"};
 /* Home numbers count only active policies that started (or were renewed) in the current year. */
 const homeYr=()=>String(new Date().getFullYear());
 const inYr=r=>{const y=homeYr();return !y||String(r.start||"").slice(0,4)===y};
