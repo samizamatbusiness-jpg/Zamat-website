@@ -2539,7 +2539,7 @@ function mapHeads(h){
   return m;
 }
 function normDate2(v){
-  v=String(v||"").trim();if(!v)return"";
+  v=String(v||"").trim().replace(/^(mon|tue|wed|thu|fri|sat|sun)[a-z]*\.?,?\s+/i,"").replace(/^(\d{1,2})(st|nd|rd|th)\b/i,"$1");if(!v)return"";
   if(/^\d{4,5}(\.\d+)?$/.test(v)&&+v>20000&&+v<80000)return serialToISO(+v,false);
   let m=v.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/);if(m)return`${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}`;
   m=v.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2}|\d{4})$/);
