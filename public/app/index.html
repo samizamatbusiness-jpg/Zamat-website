@@ -221,7 +221,8 @@ body.zc[data-tab="home"] #zHero{display:block;position:relative;z-index:2;height
 #zHero .zb3{position:absolute;top:30px;right:0;bottom:0;width:34%;background:repeating-linear-gradient(0deg,#6F95BC 0 4px,#A9C6E2 4px 9px);clip-path:polygon(0 18%,100% 0,100% 100%,0 100%)}
 #zHero .zm{position:absolute;left:18px;top:12px;display:flex;align-items:center;gap:6px;color:#fff;font-weight:800;font-size:13px;opacity:.92}
 #zHero .zt{position:absolute;left:18px;top:46px;color:#fff}
-#zHero .zy{font-family:"Montserrat","Manrope",sans-serif;font-weight:800;font-size:46px;line-height:1;letter-spacing:-1px}
+#zHero .zy{font-family:"Montserrat","Manrope",sans-serif;font-weight:800;font-size:46px;line-height:1;letter-spacing:-1px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;position:relative;z-index:3}
+#zHero .zyc{font-size:18px;opacity:.6;letter-spacing:0}
 #zHero .za{font-family:"Montserrat","Manrope",sans-serif;font-weight:500;font-size:17px;margin-top:4px;letter-spacing:.3px}
 #zHero .zp{position:absolute;left:30px;bottom:12px;width:44px;height:44px;min-height:0;padding:0;border-radius:50%;border:0;background:#E9EDF2;display:grid;place-items:center;box-shadow:none}
 #zHero .zp svg{width:14px;height:16px;fill:#0E2239}
@@ -719,7 +720,7 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
   const nice=s=>{if(!s)return"";const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c).toLocaleDateString("en-GB",{day:"numeric",month:"short"})};
   function data(){
     const R=typeof rows!=="undefined"?rows:[],t=todayStr(),m=t.slice(0,7);
-    const act=R.filter(r=>{try{return isAct(r)}catch(e){return r.status!=="canceled"}});
+    const act=R.filter(r=>{try{return isAct(r)&&inYr(r)}catch(e){return r.status!=="canceled"}});
     const ap=act.reduce((a,r)=>a+(Number(r.premium)||0),0);
     let clients=0;try{clients=Object.keys(clientsMap()).length}catch(e){}
     const ren=act.map(r=>({r,d:days(r.renewal||r.expiry)})).filter(x=>x.d!==null&&x.d<=30).sort((a,b)=>a.d-b.d);
@@ -1819,6 +1820,9 @@ function renewDialog(r){return new Promise(res=>{
 })}
 const isCanc=r=>r.status==="canceled";
 const isAct=r=>{if(isCanc(r))return false;const d=days(r.expiry);return d===null||d>=0};
+/* Home year filter: home numbers count only policies that started (or were renewed) in the chosen year. Tap the year to change. */
+const homeYr=()=>{let v=null;try{v=localStorage.getItem("zamat_home_year")}catch(e){}return v==="all"?"":(v||String(new Date().getFullYear()))};
+const inYr=r=>{const y=homeYr();return !y||String(r.start||"").slice(0,4)===y};
 const todayStr=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
 const paidOf=r=>(r.payments||[]).filter(p=>(p.term||1)===(r.term||1)).reduce((a,p)=>a+(Number(p.amount)||0),0);
 let lastBackup=null,payId=null,sub="col",brand={},receipts=[],customers=[],commDef=0,cEdit=null;
@@ -1867,9 +1871,9 @@ function renderCats(){renderCli();renderZp();
   {const dl=rows.filter(r=>{if(isCanc(r))return false;const d=days(r.renewal||r.expiry);return d!==null&&d>=0&&d<=30}).sort((a,b)=>(a.renewal||a.expiry).localeCompare(b.renewal||b.expiry));
    $("zBellN").textContent=dl.length||"";$("zPopN").textContent=dl.length?dl.length+(dl.length===1?" client":" clients"):"";
    $("zPopL").innerHTML=dl.length?dl.map(r=>{const d=days(r.renewal||r.expiry);return `<button class="zpi" data-zr="${esc(r.id)}"><div><b>${esc(r.name)}</b><small>${[typeOf(r),r.policy?"No. "+r.policy:"",fmtD(r.renewal||r.expiry)].filter(Boolean).map(esc).join(" · ")}</small></div><em>${d===0?"Today":d+(d===1?" day":" days")}</em></button>`}).join(""):'<div class="zpe">No renewals in the next month.</div>';}
-  {const act=rows.filter(isAct),pr=act.reduce((a,r)=>a+(Number(r.premium)||0),0);const ha=$("zHA"),hp=$("zHP");if(ha){ha.textContent=act.length;hp.textContent=pr>=1e4?"$"+(Math.round(pr/100)/10).toLocaleString("en-US")+"k":pr.usd()}}
+  {const act=rows.filter(r=>isAct(r)&&inYr(r)),pr=act.reduce((a,r)=>a+(Number(r.premium)||0),0);const ha=$("zHA"),hp=$("zHP");if(ha){ha.textContent=act.length;hp.textContent=pr>=1e4?"$"+(Math.round(pr/100)/10).toLocaleString("en-US")+"k":pr.usd()}}
   const box=$("zCat");if(!box)return;
-  box.innerHTML=CATS.map(c=>{const all=rows.filter(r=>catOf(r)===c.k),a=all.filter(isAct).length;
+  box.innerHTML=CATS.map(c=>{const all=rows.filter(r=>catOf(r)===c.k&&inYr(r)),a=all.filter(isAct).length;
     const act=all.filter(isAct),sub=c.k==="motor"?`<small>${[["bi","BI"],["tp","TP"],["ar","AR"]].map(([k,n])=>`${n} ${act.filter(r=>subOf(r)===k).length}`).join(" · ")}</small>`:"";
     return `<button class="g" data-cat="${c.k}" style="border-color:${c.c}"><svg viewBox="0 0 24 24" aria-hidden="true">${c.i}</svg><b>${esc(c.n)}</b><span class="zn"><i>${act.length}</i> active</span>${sub}</button>`}).join("");
 }
@@ -2243,7 +2247,12 @@ try{const v=localStorage.getItem("zamat_ren_f");if(v&&[...$("rFilter").options].
 $("rFilter").onchange=()=>{try{localStorage.setItem("zamat_ren_f",$("rFilter").value)}catch(e){};renderRen();render()};
 $("dbQ").oninput=renderDb;
 $("dbNew").onclick=()=>openClient(null);
-$("zYear").textContent=new Date().getFullYear();
+function setHomeYr(){const y=homeYr();$("zYear").innerHTML=(y||"All years")+'<span class="zyc" aria-hidden="true">▾</span>'}
+setHomeYr();
+$("zYear").addEventListener("click",e=>{e.preventDefault();e.stopPropagation();
+  const now=String(new Date().getFullYear()),ys=[...new Set(rows.map(r=>String(r.start||"").slice(0,4)).filter(y=>/^\d{4}$/.test(y)).concat(now))].sort().reverse(),opts=ys.concat("");
+  const cur=homeYr(),nx=opts[(opts.indexOf(cur)+1)%opts.length];
+  try{localStorage.setItem("zamat_home_year",nx===""?"all":nx)}catch(x){}setHomeYr();renderCats()},true);
 $("zBk").addEventListener("click",()=>$("bkTile").click());
 
 /* starting balances: one-time entry of what is still left on each policy */
