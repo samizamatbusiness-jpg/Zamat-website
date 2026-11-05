@@ -799,7 +799,7 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
 <div id="zHero" data-go="pf" role="link" aria-label="Open portfolio"><div class="zg"></div><div class="zlogo" id="zHeroLogo"></div><div class="zsky"></div><div class="zb2"></div><div class="zb3"></div>
   <div class="zm">By Sami Zamat Group</div>
   <div class="zt"><div class="zy" id="zYear"></div></div>
-  <div class="zs"><div><b id="zHA">0</b>active policies</div><div><b id="zHP">$0</b>active premium</div></div>
+  <div class="zs"><div><b id="zHA">0</b>policies this year</div><div><b id="zHP">$0</b>premium this year</div></div>
   <span class="zgo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></span>
 </div>
 <div class="home">
@@ -1870,11 +1870,11 @@ function renderCats(){renderCli();renderZp();
   {const dl=rows.filter(r=>{if(isCanc(r))return false;const d=days(r.renewal||r.expiry);return d!==null&&d>=0&&d<=30}).sort((a,b)=>(a.renewal||a.expiry).localeCompare(b.renewal||b.expiry));
    $("zBellN").textContent=dl.length||"";$("zPopN").textContent=dl.length?dl.length+(dl.length===1?" client":" clients"):"";
    $("zPopL").innerHTML=dl.length?dl.map(r=>{const d=days(r.renewal||r.expiry);return `<button class="zpi" data-zr="${esc(r.id)}"><div><b>${esc(r.name)}</b><small>${[typeOf(r),r.policy?"No. "+r.policy:"",fmtD(r.renewal||r.expiry)].filter(Boolean).map(esc).join(" · ")}</small></div><em>${d===0?"Today":d+(d===1?" day":" days")}</em></button>`}).join(""):'<div class="zpe">No renewals in the next month.</div>';}
-  {const act=rows.filter(r=>isAct(r)&&inYr(r)),pr=act.reduce((a,r)=>a+(Number(r.premium)||0),0);const ha=$("zHA"),hp=$("zHP");if(ha){ha.textContent=act.length;hp.textContent=pr>=1e4?"$"+(Math.round(pr/100)/10).toLocaleString("en-US")+"k":pr.usd()}}
+  {const yev=termEvents().filter(e=>e.date.slice(0,4)===homeYr()),act=yev,pr=yev.reduce((a,e)=>a+e.prem,0);const ha=$("zHA"),hp=$("zHP");if(ha){ha.textContent=act.length;hp.textContent=pr>=1e4?"$"+(Math.round(pr/100)/10).toLocaleString("en-US")+"k":pr.usd()}}
   const box=$("zCat");if(!box)return;
-  box.innerHTML=CATS.map(c=>{const all=rows.filter(r=>catOf(r)===c.k&&inYr(r)),a=all.filter(isAct).length;
-    const act=all.filter(isAct),sub=c.k==="motor"?`<small>${[["bi","BI"],["tp","TP"],["ar","AR"]].map(([k,n])=>`${n} ${act.filter(r=>subOf(r)===k).length}`).join(" · ")}</small>`:"";
-    return `<button class="g" data-cat="${c.k}" style="border-color:${c.c}"><svg viewBox="0 0 24 24" aria-hidden="true">${c.i}</svg><b>${esc(c.n)}</b><span class="zn"><i>${act.length}</i> active</span>${sub}</button>`}).join("");
+  const yev=termEvents().filter(e=>e.date.slice(0,4)===homeYr());
+  box.innerHTML=CATS.map(c=>{const act=yev.filter(e=>catOf(e.r)===c.k).map(e=>e.r),sub=c.k==="motor"?`<small>${[["bi","BI"],["tp","TP"],["ar","AR"]].map(([k,n])=>`${n} ${act.filter(r=>subOf(r)===k).length}`).join(" · ")}</small>`:"";
+    return `<button class="g" data-cat="${c.k}" style="border-color:${c.c}"><svg viewBox="0 0 24 24" aria-hidden="true">${c.i}</svg><b>${esc(c.n)}</b><span class="zn"><i>${act.length}</i> ${act.length===1?"policy":"policies"}</span>${sub}</button>`}).join("");
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-cat]");if(!b)return;
   $("cliQ").value="";$("cliCat").value=b.dataset.cat;showTab("cli");renderCli()});
@@ -1934,7 +1934,7 @@ function termEvents(){
     for(let j=1;j<=T;j++){
       const h=(r.hist||[]).find(x=>x.term===j);
       const pr=j===T?r.premium:(h?h.premium:null);
-      ev.push({date:j===T?r.start:(h&&h.start)||shiftY(r.start,j-T),kind:j===1?"new":"ren",prem:Number(pr)||0});
+      ev.push({date:j===T?r.start:(h&&h.start)||shiftY(r.start,j-T),kind:j===1?"new":"ren",prem:Number(pr)||0,r});
     }
   });
   return ev;
