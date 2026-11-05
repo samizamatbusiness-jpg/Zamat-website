@@ -1957,7 +1957,9 @@ function shiftY(d,n){let x=d;for(let i=0;i<Math.abs(n);i++)x=n>0?addYear(x):subY
 function termEvents(){
   const ev=[];
   rows.forEach(r=>{
-    if(Array.isArray(r.tx)&&r.tx.length){r.tx.forEach(t=>{if(t&&(t.i||t.d))ev.push({date:t.i||t.d,kind:t.k,prem:Number(t.p)||0,r})});return}
+    if(Array.isArray(r.tx)&&r.tx.length){r.tx.forEach(t=>{if(t&&(t.i||t.d))ev.push({date:t.i||t.d,kind:t.k,prem:Number(t.p)||0,r})});
+      /* renewed inside Zamat after the import: count the new term too */
+      if(r.start&&r.tx.some(t=>t&&t.i)&&!r.tx.some(t=>t&&t.i===r.start))ev.push({date:r.start,kind:"ren",prem:Number(r.premium)||0,r});return}
     if(!r.start)return;const T=r.term||1;
     for(let j=1;j<=T;j++){
       const h=(r.hist||[]).find(x=>x.term===j);
@@ -2769,10 +2771,11 @@ const listClick=async e=>{
     if(v){
       if((v.premium!=null&&!(v.premium>=0))||(v.commission!=null&&!(v.commission>=0))){$("msg").textContent="Enter valid amounts.";return}
       const cl0=closureOf(r),hist=(r.hist||[]).slice();
-      hist.push({term:r.term||1,closed:cl0.closed,date:cl0.date||null,paid:cl0.paid,comm:commOf(r),premium:r.premium!=null?Number(r.premium):null});
+      hist.push({term:r.term||1,start:r.start||null,expiry:r.expiry||null,closed:cl0.closed,date:cl0.date||null,paid:cl0.paid,comm:commOf(r),premium:r.premium!=null?Number(r.premium):null});
       const upd={start:ns,expiry:ne,renewal:ne,term:(r.term||1)+1,hist,closedTerm:null,closedDate:null,updated:Date.now()};
       if(v.premium!=null)upd.premium=v.premium;
       if(v.commission!=null)upd.commission=v.commission;
+      if(Array.isArray(r.tx)&&r.tx.length)upd.tx=r.tx.concat([{d:todayStr(),i:ns,k:"ren",p:Number(upd.premium!=null?upd.premium:r.premium)||0}]);
       try{await db.collection("clients").doc(rn).update(upd);$("msg").textContent=""}catch(x){$("msg").textContent="Could not save the renewal."}
     }
   }
