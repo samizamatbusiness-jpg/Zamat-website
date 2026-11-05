@@ -1022,7 +1022,7 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
 </style>
 <div id="tabTgt" style="display:none">
   <div class="sech"><button class="g" data-go="home" style="padding:6px 12px;font-size:13px">← Home</button><h2>Targets</h2></div>
-  <div class="zt-sw"><button type="button" data-ztv="plan" class="on">5-Year Targets</button><button type="button" data-ztv="day">Daily Tracker</button></div>
+  <div class="zt-sw"><button type="button" data-ztv="plan" class="on">5-Year Targets</button><button type="button" data-ztv="day">Daily Plan</button></div>
   <div id="ztPlan"></div>
   <div id="ztDay" style="display:none"></div>
 </div>
@@ -1092,29 +1092,58 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
   }
 
   function weekStart(d){const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return x}
-  function renderDay(){
-    const d=parse(day),y=d.getFullYear(),m=d.getMonth(),t=tg(y),warm=y<2027;
-    const ws=iso(weekStart(d)),we=iso(new Date(weekStart(d).getTime()+6*864e5)),mp=y+"-"+pad(m+1),yp=String(y);
-    const ev=events(),nw=ev.filter(e=>e.kind==="new"),sum=a=>a.reduce((s,e)=>s+e.premium,0);
-    const P=[["Today",nw.filter(e=>e.date===day),t.prem/288,t.pol/288],["This week",nw.filter(e=>e.date>=ws&&e.date<=we),t.prem/48,t.pol/48],[MON[m],nw.filter(e=>e.date.startsWith(mp)),t.prem/12,t.pol/12],[warm?"Nov–Dec "+y:"Year "+y,nw.filter(e=>e.date.startsWith(yp)),warm?t.prem/6:t.prem,warm?t.pol/6:t.pol]];
-    const mo=ev.filter(e=>e.date.startsWith(mp)).sort((a,b)=>b.date.localeCompare(a.date));
-    const a=act[day]||{};const LG=window.zLogItems?window.zLogItems():[];const lc=(dd,k)=>LG.filter(i=>(dd===null||i.date===dd)&&(k==="calls"?(i.kind==="Call"||i.kind==="WhatsApp"):k==="meetings"?(i.kind==="Visit"||i.kind==="Meeting"):false)).length;let wc=0,wm=0,wq=0;Object.keys(act).forEach(k=>{if(k>=ws&&k<=we){wc+=act[k].calls||0;wm+=act[k].meetings||0;wq+=act[k].quotes||0}});LG.forEach(i=>{if(i.date>=ws&&i.date<=we){if(i.kind==="Call"||i.kind==="WhatsApp")wc++;else if(i.kind==="Visit"||i.kind==="Meeting")wm++}});
-    const byT={};mo.forEach(e=>byT[e.type]=(byT[e.type]||0)+e.premium);const tk=Object.keys(byT).sort((p,q)=>byT[q]-byT[p]),tmax=Math.max(1,...Object.values(byT));
-    const nice=d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
-    el("ztDay").innerHTML=`
-    <div class="zt-hint">Every policy you add in <b>Clients &amp; Policies</b> counts here automatically, on its start date. Renewals show separately and don't count toward the new-sales target.</div>
-    <div class="zt-card zt-day"><b>Day</b><input type="date" id="ztDate" value="${day}"></div>
-    <div class="zt-card"><div class="zt-h">Progress vs target <small>${warm?"2027 targets · "+y+" = warm-up":y+" targets"}</small></div><div class="zt-2">
-      ${P.map(([l,arr,pt,polt])=>{const v=sum(arr),pc=pt?v/pt*100:0;return `<div class="zt-p"><div class="zt-lbl">${l}</div><div class="v">${M(v)}</div><div class="zt-note" style="margin:0">of ${M(pt)} · ${Math.round(pc)}%</div><div class="zt-pb"><i class="${pc>=100?"done":""}" style="width:${Math.min(100,pc)}%"></i></div><div style="font-size:12.5px"><b>${arr.length}</b> / ${F(polt)} policies</div></div>`}).join("")}</div>
-      <div class="zt-row" style="margin-top:8px"><span>Est. commission ${MON[m]} (~15% of new + renewals)</span><b>${M(sum(mo)*0.15)}</b></div></div>
-    <div class="zt-card"><div class="zt-h">Activity <small>${nice}</small></div><div class="zt-acts">
-      ${[["calls","Calls & msgs",t.calls],["meetings","Meetings",t.meet/6],["quotes","Quotes",t.quotes/6]].map(([k,l,g])=>`<div class="zt-act"><div class="zt-lbl">${l}</div><div class="c"><button type="button" class="g" data-zta="${k}" data-d="-1">−</button><b>${(a[k]||0)+lc(day,k)}</b><button type="button" data-zta="${k}" data-d="1">+</button></div><div class="zt-note" style="margin:0">goal ${F(g)}/day${lc(day,k)?`<br>${lc(day,k)} from Daily Log`:""}</div></div>`).join("")}</div>
-      <div style="margin-top:8px"><div class="zt-row"><span>Calls this week</span><b>${wc} / ${t.calls*6}</b></div><div class="zt-row"><span>Meetings this week</span><b>${wm} / ${t.meet}</b></div><div class="zt-row"><span>Quotes this week</span><b>${wq} / ${t.quotes}</b></div><div class="zt-row"><span>New policies this week</span><b>${P[1][1].length} / ${F(t.pol/48)}</b></div></div></div>
-    <div class="zt-card"><div class="zt-h">${MON[m]} by type</div>${tk.length?tk.map(k=>`<div style="display:flex;align-items:center;gap:8px;margin:7px 0;font-size:13px"><span style="width:110px;flex:none">${E(k)}</span><div class="zt-pb" style="flex:1;margin:0"><i style="width:${byT[k]/tmax*100}%"></i></div><b style="width:76px;text-align:right">${M(byT[k])}</b></div>`).join(""):`<div class="zt-empty">Nothing yet this month.</div>`}</div>
-    <div class="zt-card"><div class="zt-h">Policies in ${MON[m]} <small>${mo.filter(e=>e.kind==="new").length} new · ${mo.filter(e=>e.kind!=="new").length} renewals</small></div>
-      ${mo.length?mo.map(e=>`<div class="zt-row"><div><b>${E(e.name)}</b><span class="zt-tag ${e.kind==="new"?"n":"r"}">${e.kind==="new"?"New":"Renewal"}</span><div class="zt-note" style="margin:2px 0 0">${parse(e.date).toLocaleDateString("en-GB",{day:"numeric",month:"short"})} · ${E(e.type)}${e.company?" · "+E(e.company):""}</div></div><b>${M(e.premium)}</b></div>`).join(""):`<div class="zt-empty">No policies started this month yet. Add them in Clients &amp; Policies.</div>`}</div>`;
-    const di=el("ztDate");if(di)di.onchange=e=>{if(e.target.value){day=e.target.value;renderDay()}};
+  /* Daily Tracker = work plan for each day (Mon–Sat). Tasks per weekday are editable; ticks saved per date. */
+  const DP_DEF={
+    1:{t:"Renewals day",l:["Call clients whose policies renew in the next 30 days","Send renewal quotes","Plan this week's visits"]},
+    2:{t:"New clients day",l:["12 calls or messages to new people","Ask 3 clients for referrals","Post on Instagram"]},
+    3:{t:"Visits day",l:["2–3 visits or meetings","Follow up yesterday's calls","Send quotes from the meetings"]},
+    4:{t:"Follow-up day",l:["Follow up every open quote","Call clients who still owe payments","12 calls or messages"]},
+    5:{t:"Office day",l:["Add new policies and payments in Zamat","Pay the companies and update Cash Book","Check late renewals"]},
+    6:{t:"Review day",l:["Check the week: sales vs target","Send thank-you / birthday messages","Plan next week"]},
+    0:{t:"Day off",l:[]}
+  };
+  const WD=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  let dpT=null,dpDone={},dpEdit=false;
+  try{dpT=JSON.parse(localStorage.getItem("zamat_dp_t")||"null");dpDone=JSON.parse(localStorage.getItem("zamat_dp_d")||"{}")}catch(e){}
+  const tpl=()=>dpT||DP_DEF;
+  function dpSave(kind,id,val){
+    try{localStorage.setItem(kind==="t"?"zamat_dp_t":"zamat_dp_d",JSON.stringify(kind==="t"?dpT:dpDone))}catch(e){}
+    if(db){try{db.collection("dayplan").doc(id).set(val)}catch(e){}}
   }
+  function renderDay(){
+    const d=parse(day),wd=d.getDay(),P=tpl()[wd]||{t:"",l:[]},done=dpDone[day]||{};
+    const ws=weekStart(d),week=[...Array(6)].map((_,i)=>new Date(ws.getTime()+i*864e5));
+    const today=iso(new Date());
+    const n=P.l.filter((_,i)=>done[i]).length;
+    const in30=pols.filter(r=>r&&r.status!=="canceled").map(r=>({r,dt:String(r.renewal||r.expiry||"").slice(0,10)})).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x.dt)).map(x=>({...x,dd:Math.round((parse(x.dt)-parse(day))/864e5)})).filter(x=>x.dd>=-7&&x.dd<=7).sort((a,b)=>a.dd-b.dd);
+    const nw=events().filter(e=>e.kind==="new"&&e.date>=iso(ws)&&e.date<=iso(week[5]));
+    el("ztDay").innerHTML=`
+    <div class="zt-card" style="padding:10px"><div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px">${week.map(x=>{const k=iso(x),on=k===day,dn=dpDone[k]||{},tl=(tpl()[x.getDay()]||{l:[]}).l.length,c=Object.keys(dn).filter(i=>dn[i]&&i<tl).length;return `<button type="button" data-zdd="${k}" style="min-height:0;padding:8px 0;border-radius:10px;border:0;${on?"background:var(--ac);color:var(--onac,#fff)":"background:var(--soft,var(--bg));color:var(--tx)"};font-size:12px;line-height:1.3">${WD[x.getDay()].slice(0,3)}<br><b style="font-size:16px">${x.getDate()}</b><br><span style="font-size:10px;opacity:.8">${k===today?"today":tl?c+"/"+tl:""}</span></button>`}).join("")}</div>
+      <div style="display:flex;justify-content:space-between;margin-top:8px"><button type="button" class="g" data-zdw="-7" style="min-height:0;padding:6px 12px;font-size:13px">‹ Last week</button><button type="button" class="g" data-zdd="${today}" style="min-height:0;padding:6px 12px;font-size:13px">Today</button><button type="button" class="g" data-zdw="7" style="min-height:0;padding:6px 12px;font-size:13px">Next week ›</button></div></div>
+    <div class="zt-card"><div class="zt-h">${WD[wd]} · ${d.getDate()} ${MON[d.getMonth()].slice(0,3)}<small>${P.l.length?n+" of "+P.l.length+" done":""}</small></div>
+      <div style="font-size:20px;font-weight:800;color:var(--gold);margin:-4px 0 10px">${E(P.t||"")}</div>
+      ${P.l.length?`<div class="zt-pb" style="margin-bottom:10px"><i class="${n===P.l.length?"done":""}" style="width:${n/P.l.length*100}%"></i></div>`:""}
+      ${P.l.map((x,i)=>`<label style="display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid var(--bd);font-size:15px;margin:0;color:var(--tx);font-weight:500;${done[i]?"opacity:.55;text-decoration:line-through":""}"><input type="checkbox" data-zdc="${i}" ${done[i]?"checked":""} style="width:22px;height:22px;min-height:0;flex:none;margin:0;accent-color:var(--ac)"><span style="flex:1">${E(x)}</span>${dpEdit?`<button type="button" class="d" data-zdx="${i}" style="min-height:0;padding:4px 10px">✕</button>`:""}</label>`).join("")||`<div class="zt-empty">No tasks for this day.</div>`}
+      ${dpEdit?`<div style="margin-top:10px"><label style="margin-top:0">Day name</label><input id="zdTitle" value="${E(P.t||"")}" placeholder="e.g. Visits day"><div style="display:flex;gap:8px;margin-top:8px"><input id="zdNew" placeholder="New task for every ${WD[wd]}"><button type="button" id="zdAdd" style="flex:none">Add</button></div>
+        <div style="display:flex;gap:8px;margin-top:10px"><button type="button" id="zdOk">Done</button><button type="button" class="g" id="zdReset">Reset ${WD[wd]} to default</button></div></div>`
+      :`<button type="button" class="g" id="zdEd" style="margin-top:10px;min-height:0;padding:8px 12px;font-size:13px">✎ Edit ${WD[wd]} tasks</button>`}</div>
+    <div class="zt-card"><div class="zt-h">Renewals around this day<small>±7 days</small></div>
+      ${in30.length?in30.slice(0,8).map(x=>`<div class="zt-row"><div><b>${E(x.r.name)}</b><div class="zt-note" style="margin:2px 0 0">${E(x.r.type||"")}${x.r.phone?" · "+E(x.r.phone):""}</div></div><span class="zt-tag ${x.dd<0?"r":"n"}" style="align-self:center">${x.dd<0?-x.dd+"d late":x.dd===0?"Today":"in "+x.dd+"d"}</span></div>`).join(""):`<div class="zt-empty">No renewals this week.</div>`}</div>
+    <div class="zt-card"><div class="zt-row" style="border:0;padding:0"><span>New policies this week</span><b>${nw.length} · ${M(nw.reduce((s,e)=>s+e.premium,0))}</b></div></div>`;
+  }
+  function dpSetT(wd,P){dpT=JSON.parse(JSON.stringify(tpl()));dpT[wd]=P;dpSave("t","template",{days:dpT})}
+  document.addEventListener("change",e=>{const c=e.target.closest("#ztDay [data-zdc]");if(!c)return;const o=Object.assign({},dpDone[day]||{});o[c.dataset.zdc]=c.checked;if(!c.checked)delete o[c.dataset.zdc];dpDone[day]=o;dpSave("d",day,{done:o});renderDay()});
+  document.addEventListener("click",e=>{
+    if(!e.target.closest("#ztDay"))return;
+    const d=e.target.closest("[data-zdd]");if(d){day=d.dataset.zdd;dpEdit=false;renderDay();return}
+    const w=e.target.closest("[data-zdw]");if(w){day=iso(new Date(parse(day).getTime()+(+w.dataset.zdw)*864e5+36e5));dpEdit=false;renderDay();return}
+    const wd=parse(day).getDay(),P=JSON.parse(JSON.stringify(tpl()[wd]||{t:"",l:[]}));
+    const x=e.target.closest("[data-zdx]");if(x){e.preventDefault();P.l.splice(+x.dataset.zdx,1);dpSetT(wd,P);renderDay();return}
+    if(e.target.id==="zdEd"){dpEdit=true;renderDay();return}
+    if(e.target.id==="zdAdd"){const v=el("zdNew").value.trim();if(!v)return;P.t=el("zdTitle").value.trim();P.l.push(v);dpSetT(wd,P);renderDay();el("zdNew")&&el("zdNew").focus();return}
+    if(e.target.id==="zdOk"){P.t=el("zdTitle").value.trim();dpSetT(wd,P);dpEdit=false;renderDay();return}
+    if(e.target.id==="zdReset"){dpSetT(wd,JSON.parse(JSON.stringify(DP_DEF[wd])));renderDay();return}
+  });
 
   function render(){
     if(!el("tabTgt"))return;
@@ -1142,6 +1171,7 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
     if(!db)return;
     const vis=()=>el("tabTgt")&&el("tabTgt").style.display!=="none";
     db.collection("clients").onSnapshot(s=>{pols=s.docs.map(d=>({id:d.id,...d.data()}));if(vis())render()});
+    db.collection("dayplan").onSnapshot(s=>{const n={};let t=null;s.docs.forEach(d=>{const v=d.data();if(d.id==="template")t=v.days||null;else if(v&&v.done)n[d.id]=v.done});if(t)dpT=t;dpDone=Object.assign({},dpDone,n);try{localStorage.setItem("zamat_dp_t",JSON.stringify(dpT));localStorage.setItem("zamat_dp_d",JSON.stringify(dpDone))}catch(e){}if(vis()&&view==="day"&&!dpEdit)renderDay()});
     db.collection("activity").onSnapshot(s=>{const n={};s.docs.forEach(d=>n[d.id]=d.data());Object.keys(pend).forEach(k=>n[k]=pend[k]);act=n;if(vis()&&view==="day")renderDay()});
   })();
 })();
