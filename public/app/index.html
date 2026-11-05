@@ -723,7 +723,7 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
     const act=R.filter(r=>{try{return isAct(r)&&inYr(r)}catch(e){return r.status!=="canceled"}});
     const ap=act.reduce((a,r)=>a+(Number(r.premium)||0),0);
     let clients=0;try{clients=Object.keys(clientsMap()).length}catch(e){}
-    const ren=act.map(r=>({r,d:days(r.renewal||r.expiry)})).filter(x=>x.d!==null&&x.d<=30).sort((a,b)=>a.d-b.d);
+    const ren=act.filter(r=>{try{return !isRenewed(r)}catch(e){return true}}).map(r=>({r,d:days(r.renewal||r.expiry)})).filter(x=>x.d!==null&&x.d<=30).sort((a,b)=>a.d-b.d);
     const ev=window.zEvents?window.zEvents():[],mn=ev.filter(e=>e.kind==="new"&&e.date.startsWith(m)),ms=mn.reduce((a,e)=>a+e.premium,0);
     const mt=window.zTgt?window.zTgt(new Date().getFullYear()).prem/12:7500;
     let col=0;try{col=allPays().filter(p=>(p.date||"").slice(0,7)===m).reduce((a,p)=>a+(Number(p.amount)||0),0)}catch(e){}
@@ -1819,6 +1819,25 @@ function renewDialog(r){return new Promise(res=>{
   document.body.appendChild(o);setTimeout(()=>{const i=o.querySelector("#rnPrem");if(i){i.focus();i.select()}},30);
 })}
 const isCanc=r=>r.status==="canceled";
+/* A policy counts as renewed when the same client (same PIN, or same name) took a new policy of the same insurance type
+   under a new number around its expiry date — e.g. Health LDF renewed as LSC. Motor needs the new policy to be a Renew. */
+const pNorm=n=>String(n||"").toLowerCase().replace(/^(mr|mrs|miss|ms|dr|messrs|mme)\.?\s+/,"").replace(/[^a-z0-9\u0600-\u06ff]+/g," ").trim();
+function renewedMap(){
+  if(renewedMap.r===rows&&renewedMap.n===rows.length)return renewedMap.m;
+  const m=new Map(),used=new Set(),dd=(a,b)=>Math.abs((new Date(a)-new Date(b))/864e5);
+  const born=r=>Array.isArray(r.tx)&&r.tx.length?r.tx.filter(t=>t.k==="new"||t.k==="ren").sort((a,b)=>String(a.d).localeCompare(String(b.d)))[0]?.k==="ren":/renew/i.test(r.biz||"");
+  const first=r=>(r.hist&&r.hist.length?r.hist[0].start:r.start)||"";
+  const cand=rows.filter(q=>!isCanc(q)&&q.start&&born(q));
+  rows.slice().sort((a,b)=>(a.expiry||"").localeCompare(b.expiry||"")).forEach(r=>{
+    if(isCanc(r)||!r.expiry)return;const k=catOf(r),sb=subOf(r),pn=pNorm(r.name);let best=null,bd=61;
+    rows.forEach(q=>{if(q===r||used.has(q)||isCanc(q)||!q.start||(q.policy&&q.policy===r.policy))return;
+      if(catOf(q)!==k||(k==="motor"&&subOf(q)!==sb))return;
+      if(!((r.pin&&q.pin&&String(r.pin)===String(q.pin))||(pn&&pNorm(q.name)===pn)))return;
+      if(k==="motor"&&!cand.includes(q))return;
+      const f=first(q);if(!f||f<=r.start)return;const g=dd(f,r.expiry);if(g<bd){bd=g;best=q}});
+    if(best){m.set(r,best);used.add(best)}});
+  renewedMap.r=rows;renewedMap.n=rows.length;renewedMap.m=m;return m}
+const isRenewed=r=>{try{return renewedMap().has(r)}catch(e){return false}};
 const isAct=r=>{if(isCanc(r))return false;const d=days(r.expiry||(r.start?shiftY(r.start,1):""));return d===null||d>0};
 /* Home numbers count only active policies that started (or were renewed) in the current year. */
 const homeYr=()=>String(new Date().getFullYear());
@@ -1861,7 +1880,7 @@ async function fixTypes(){if(typesFixed||!db)return;typesFixed=true;
   if(!ups.length)return;const cc=db.collection("clients");
   try{if(cc.updateMany)await cc.updateMany(ups);else for(const[id,u]of ups)await cc.doc(id).update(u)}catch(e){}}
 function pinOf(r){if(r.pin)return r.pin;const m=/(?:^|·\s*)[^·:]*\bpin\b[^·:]*:\s*([^·]+)/i.exec(r.note||"");return m?m[1].trim():""}
-function polLine(r){const T=r.term||1,ch=isCanc(r)?'<span class="stc x">Canceled</span>':T>1?`<span class="stc r">Renewed${T>2?" ×"+(T-1):""}</span>`:'<span class="stc n">New</span>';return `<div class="pno">${ch}<span>Policy No. <b>${r.policy?esc(r.policy):"–"}</b></span><span>PIN <b>${pinOf(r)?esc(pinOf(r)):"–"}</b></span></div>`}
+function polLine(r){const T=r.term||1,ch=isCanc(r)?'<span class="stc x">Canceled</span>':T>1?`<span class="stc r">Renewed${T>2?" ×"+(T-1):""}</span>`:'<span class="stc n">New</span>';const rv=isRenewed(r)?renewedMap().get(r):null;return `<div class="pno">${ch}${rv?`<span class="stc r">Renewed as ${esc(rv.policy||"new policy")}</span>`:""}<span>Policy No. <b>${r.policy?esc(r.policy):"–"}</b></span><span>PIN <b>${pinOf(r)?esc(pinOf(r)):"–"}</b></span></div>`}
 function renderCli(){
   const b=$("cliBody");if(!b)return;const q=($("cliQ").value||"").trim().toLowerCase();
   const cs=$("cliCat");if(!cs.options.length)cs.innerHTML=catOpts();const cv=cs.value;
@@ -1873,7 +1892,7 @@ function renderCli(){
 }
 function renderCats(){renderCli();renderZp();
   const sel=$("selCat");if(sel&&!sel.options.length)sel.innerHTML=catOpts();
-  {const dl=rows.filter(r=>{if(isCanc(r))return false;const d=days(r.renewal||r.expiry);return d!==null&&d>=0&&d<=30}).sort((a,b)=>(a.renewal||a.expiry).localeCompare(b.renewal||b.expiry));
+  {const dl=rows.filter(r=>{if(isCanc(r)||isRenewed(r))return false;const d=days(r.renewal||r.expiry);return d!==null&&d>=0&&d<=30}).sort((a,b)=>(a.renewal||a.expiry).localeCompare(b.renewal||b.expiry));
    $("zBellN").textContent=dl.length||"";$("zPopN").textContent=dl.length?dl.length+(dl.length===1?" client":" clients"):"";
    $("zPopL").innerHTML=dl.length?dl.map(r=>{const d=days(r.renewal||r.expiry);return `<button class="zpi" data-zr="${esc(r.id)}"><div><b>${esc(r.name)}</b><small>${[typeOf(r),r.policy?"No. "+r.policy:"",fmtD(r.renewal||r.expiry)].filter(Boolean).map(esc).join(" · ")}</small></div><em>${d===0?"Today":d+(d===1?" day":" days")}</em></button>`}).join(""):'<div class="zpe">No renewals in the next month.</div>';}
   {const k=v=>"$"+Math.round(v).toLocaleString("en-US");const nw=rows.filter(isAct),np=nw.reduce((a,r)=>a+(Number(r.premium)||0),0);if($("zHN")){$("zHN").textContent=nw.length;$("zHNP").textContent=k(np)}document.querySelectorAll("#zHero .zyr").forEach(x=>x.textContent=homeYr())}
@@ -1949,7 +1968,7 @@ function termEvents(){
 function renderPF(){
   if($("pf").style.display!=="block")return;
   const sum=l=>l.reduce((a,r)=>a+(Number(r.premium)||0),0);
-  const act=rows.filter(isAct),exp=rows.filter(r=>!isCanc(r)&&!isAct(r)),cnl=rows.filter(isCanc);
+  const act=rows.filter(isAct),exp=rows.filter(r=>!isCanc(r)&&!isAct(r)&&!isRenewed(r)),cnl=rows.filter(isCanc);
   const ta=sum(act),miss=rows.filter(r=>r.premium==null).length;
   const byT=grp(act,r=>r.type).sort((a,b)=>b[1]-a[1]),byC=grp(act,r=>r.company).sort((a,b)=>b[1]-a[1]);
   const yv={};termEvents().forEach(e=>{const y=e.date.slice(0,4);yv[y]=(yv[y]||0)+e.prem});const byY=Object.entries(yv).map(([y,v])=>[y,Math.round(v*100)/100]).sort((a,b)=>a[0].localeCompare(b[0])),ty=byY.reduce((a,x)=>a+x[1],0);
@@ -2006,7 +2025,7 @@ function renderHome(){
   const out=rows.filter(r=>isAct(r)&&r.premium!=null).reduce((a,r)=>a+Math.max(0,Number(r.premium)-paidOf(r)),0);
   $("hCol").textContent=`This month: ${col.usd()} · Outstanding: ${out.usd()}`;
   const dd=r=>days(r.renewal||r.expiry);
-  const due=rows.filter(r=>{const d=dd(r);return!isCanc(r)&&d!==null&&d>=0&&d<=30}).length,over=rows.filter(r=>{const d=dd(r);return!isCanc(r)&&d!==null&&d<0}).length;
+  const due=rows.filter(r=>{const d=dd(r);return!isCanc(r)&&!isRenewed(r)&&d!==null&&d>=0&&d<=30}).length,over=rows.filter(r=>{const d=dd(r);return!isCanc(r)&&d!==null&&d<0}).length;
   $("hRen").textContent=`${due} due within 1 month`;
   $("hPf").textContent=`${ap.usd()} across ${actv.length} active polic${actv.length===1?"y":"ies"}`;
 }
@@ -2085,7 +2104,7 @@ async function saveClient(){
 function renderRen(){
   const f=$("rFilter").value;
   const dd=r=>days(r.renewal||r.expiry);
-  const l=rows.filter(r=>{const d=dd(r);if(d===null||isCanc(r))return false;return d>=0&&(f==="all"||d<=Number(f))}).sort((a,b)=>(a.renewal||a.expiry).localeCompare(b.renewal||b.expiry));
+  const l=rows.filter(r=>{const d=dd(r);if(d===null||isCanc(r)||isRenewed(r))return false;return d>=0&&(f==="all"||d<=Number(f))}).sort((a,b)=>(a.renewal||a.expiry).localeCompare(b.renewal||b.expiry));
   const tot=l.reduce((a,r)=>a+(Number(r.premium)||0),0);
   $("rCnt").textContent=`${l.length} polic${l.length===1?"y":"ies"}`+(tot?` · Premium: ${tot.usd()}`:"");
   let cur="",html="";
