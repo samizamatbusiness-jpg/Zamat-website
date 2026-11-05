@@ -1819,7 +1819,7 @@ function renewDialog(r){return new Promise(res=>{
   document.body.appendChild(o);setTimeout(()=>{const i=o.querySelector("#rnPrem");if(i){i.focus();i.select()}},30);
 })}
 const isCanc=r=>r.status==="canceled";
-const isAct=r=>{if(isCanc(r))return false;const d=days(r.expiry||(r.start?shiftY(r.start,1):""));return d===null||d>=0};
+const isAct=r=>{if(isCanc(r))return false;const d=days(r.expiry||(r.start?shiftY(r.start,1):""));return d===null||d>0};
 /* Home numbers count only active policies that started (or were renewed) in the current year. */
 const homeYr=()=>String(new Date().getFullYear());
 const inYr=r=>{const y=homeYr();return !y||String(r.start||"").slice(0,4)===y};
@@ -1836,16 +1836,21 @@ const CATS=[
  {k:"health",n:"Health",c:"#5E8C4A",re:/medical|health|hospital/i,i:'<path d="M12 20s-8-4.6-8-10.4A4.3 4.3 0 0 1 12 7.4a4.3 4.3 0 0 1 8 2.2C20 15.4 12 20 12 20z"/><path d="M7 12h2.5l1.3-2.5 1.9 4.4 1.3-1.9H17"/>'},
  {k:"motor",n:"Motor",c:"#7D80A8",re:/motor|\bbi\b|\btp\b|all\s*risk|third party|vehicle/i,i:'<path d="M3 15v-3l2.5-.7 2.5-3.8h8.5l3 3.8 1.5.7v3h-2"/><path d="M8.5 15h7"/><circle cx="6.5" cy="15.5" r="2"/><circle cx="17.5" cy="15.5" r="2"/>'},
  {k:"pcm",n:"PC&M",c:"#2E5F86",re:/pc&m|property|fire|marine|casualty|liability|engineering|cargo|burglary|workmen/i,i:'<path d="M4 20V8h7v12M11 20V4h9v16M2 20h20"/><path d="M6.5 11h2M6.5 14h2M6.5 17h2M14 7h3M14 10h3M14 13h3M14 16h3"/>'},
- {k:"life",n:"Life",c:"#5BB6C9",re:/life|accident/i,i:'<circle cx="12" cy="4.5" r="2.2"/><path d="M5 8.5c2.5 1.8 4.5 2.4 7 2.4s4.5-.6 7-2.4"/><path d="M12 10.9c-1.3 3.8-3.6 6.4-5.6 9.6M12 10.9c1.3 3.8 3.6 6.4 5.6 9.6"/>'},
+ {k:"life",n:"Life",c:"#5BB6C9",re:/life/i,i:'<circle cx="12" cy="4.5" r="2.2"/><path d="M5 8.5c2.5 1.8 4.5 2.4 7 2.4s4.5-.6 7-2.4"/><path d="M12 10.9c-1.3 3.8-3.6 6.4-5.6 9.6M12 10.9c1.3 3.8 3.6 6.4 5.6 9.6"/>'},
  {k:"travel",n:"Travel",c:"#E2BE5A",re:/travel/i,i:'<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>'},
- {k:"expat",n:"Expat",c:"#7A4A8C",re:/expat|residen|work permit|labou?r/i,i:'<rect x="5" y="2.5" width="14" height="19" rx="1.5"/><circle cx="12" cy="10" r="3.8"/><path d="M8.2 10h7.6M12 6.2c-1.3 1.3-1.3 6.3 0 7.6M12 6.2c1.3 1.3 1.3 6.3 0 7.6M8.5 17.5h7"/>'}];
-const CODECAT={MBY:"motor",MFB:"motor",MFA:"motor",MT:"motor",TOS:"travel",LAF:"health",LDF:"health",LSC:"health",WCS:"pcm",PLS:"pcm",TS:"pcm"};
-const CODESUB={MBY:"bi",MFB:"ar",MFA:"ar",MT:"tp"};
+ {k:"expat",n:"Expat",c:"#7A4A8C",re:/expat|residen|work permit|labou?r/i,i:'<rect x="5" y="2.5" width="14" height="19" rx="1.5"/><circle cx="12" cy="10" r="3.8"/><path d="M8.2 10h7.6M12 6.2c-1.3 1.3-1.3 6.3 0 7.6M12 6.2c1.3 1.3 1.3 6.3 0 7.6M8.5 17.5h7"/>'},
+ {k:"pa",n:"Personal Accident",c:"#8B5A2B",re:/personal\s*accident|accident/i,i:'<path d="M12 3l8 3v6c0 4.6-3.4 8.2-8 9-4.6-.8-8-4.4-8-9V6z"/><path d="M12 8v5M9.5 10.5h5"/>'},
+ {k:"plsw",n:"PLS & WCS",c:"#8A94A6",re:/\bpls\b|\bwcs\b|workmen/i,i:'<rect x="4" y="7" width="16" height="13" rx="2"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M4 12h16M11 12v2h2v-2"/>'}];
+/* Policy-number prefix → insurance type (from Sami's production report colours):
+   red MB, MG, MV = Motor BI · yellow MF = Motor All Risk · orange MT = Motor TP · blue L = Health · grey TOS = Travel
+   purple TS = PC&M · green TL = Life · brown PA, MCU = Personal Accident · white PLS / WCS */
+const PREFIX_RULES=[[/^(MB|MG|MV)/,"motor","bi","BI"],[/^MF/,"motor","ar","Motor All Risk"],[/^MT/,"motor","tp","TP"],[/^TOS/,"travel","","Travel Insurance"],[/^TL/,"life","","Life Insurance"],[/^TS/,"pcm","","PC&M"],[/^(PA|MCU)/,"pa","","Personal Accident"],[/^(PLS|WCS)/,"plsw","",""],[/^L/,"health","","Medical Insurance"]];
+function prefixRule(pol){const m=/^\s*([A-Z]{1,4}\d?)\s*\//.exec(String(pol||"").toUpperCase());if(!m)return null;const c=m[1];return PREFIX_RULES.find(x=>x[0].test(c))||null}
 const MSUBS=[["bi","BI"],["tp","TP"],["ar","All Risk"]];
-const CAT_ORDER=["expat","travel","health","life","pcm","motor"];
-function codeOf(r){const hay=[r.policy,r.type].filter(Boolean).join(" ").toUpperCase();for(const c of ["MBY","MFB","MFA","TOS","LAF","LDF","LSC","WCS","PLS","MT","TS"]){if(new RegExp("(^|[^A-Z])"+c+"(?![A-Z])").test(hay))return c}return""}
-function catOf(r){const c=codeOf(r);if(c)return CODECAT[c];const t=typeOf(r);for(const k of CAT_ORDER){if(CATS.find(x=>x.k===k).re.test(t))return k}return"other"}
-function subOf(r){const c=codeOf(r);if(c)return CODESUB[c]||"";const t=typeOf(r);return /all\s*risk/i.test(t)?"ar":/\bbi\b/i.test(t)?"bi":/\btp\b|third party/i.test(t)?"tp":""}
+const CAT_ORDER=["expat","travel","health","pa","plsw","life","pcm","motor"];
+function codeOf(r){const x=prefixRule(r.policy);return x?x:null}
+function catOf(r){const c=codeOf(r);if(c)return c[1];const t=typeOf(r);for(const k of CAT_ORDER){if(CATS.find(x=>x.k===k).re.test(t))return k}return"other"}
+function subOf(r){const c=codeOf(r);if(c)return c[2]||"";const t=typeOf(r);return /all\s*risk/i.test(t)?"ar":/\bbi\b/i.test(t)?"bi":/\btp\b|third party/i.test(t)?"tp":""}
 function matchCat(r,v){if(!v)return true;const[k,sub]=v.split(":");return catOf(r)===k&&(!sub||subOf(r)===sub)}
 function catOpts(){return '<option value="">All insurance types</option>'+CATS.map(c=>`<option value="${c.k}">${esc(c.n)}</option>`+(c.k==="motor"?MSUBS.map(([s,n])=>`<option value="motor:${s}">— Motor ${esc(n)}</option>`).join(""):"")).join("")+'<option value="other">Other</option>'}
 function noteType(r){const m=/(?:^|·\s*)[^·:]*insurance\s*type[^·:]*:\s*([^·]+)/i.exec(r.note||"");return m?m[1].trim():""}
@@ -1871,10 +1876,10 @@ function renderCats(){renderCli();renderZp();
   {const dl=rows.filter(r=>{if(isCanc(r))return false;const d=days(r.renewal||r.expiry);return d!==null&&d>=0&&d<=30}).sort((a,b)=>(a.renewal||a.expiry).localeCompare(b.renewal||b.expiry));
    $("zBellN").textContent=dl.length||"";$("zPopN").textContent=dl.length?dl.length+(dl.length===1?" client":" clients"):"";
    $("zPopL").innerHTML=dl.length?dl.map(r=>{const d=days(r.renewal||r.expiry);return `<button class="zpi" data-zr="${esc(r.id)}"><div><b>${esc(r.name)}</b><small>${[typeOf(r),r.policy?"No. "+r.policy:"",fmtD(r.renewal||r.expiry)].filter(Boolean).map(esc).join(" · ")}</small></div><em>${d===0?"Today":d+(d===1?" day":" days")}</em></button>`}).join(""):'<div class="zpe">No renewals in the next month.</div>';}
-  {const k=v=>v>=1e4?"$"+(Math.round(v/100)/10).toLocaleString("en-US")+"k":v.usd();const nw=rows.filter(isAct),np=nw.reduce((a,r)=>a+(Number(r.premium)||0),0);if($("zHN")){$("zHN").textContent=nw.length;$("zHNP").textContent=k(np)}document.querySelectorAll("#zHero .zyr").forEach(x=>x.textContent=homeYr())}
-  {const yev=termEvents().filter(e=>e.date.slice(0,4)===homeYr()),act=yev,pr=yev.reduce((a,e)=>a+e.prem,0);const ha=$("zHA"),hp=$("zHP");if(ha){ha.textContent=act.length;hp.textContent=pr>=1e4?"$"+(Math.round(pr/100)/10).toLocaleString("en-US")+"k":pr.usd()}}
+  {const k=v=>"$"+Math.round(v).toLocaleString("en-US");const nw=rows.filter(isAct),np=nw.reduce((a,r)=>a+(Number(r.premium)||0),0);if($("zHN")){$("zHN").textContent=nw.length;$("zHNP").textContent=k(np)}document.querySelectorAll("#zHero .zyr").forEach(x=>x.textContent=homeYr())}
+  {const yev=termEvents().filter(e=>e.date.slice(0,4)===homeYr()),act=yev.filter(e=>e.kind==="new"||e.kind==="ren"),pr=yev.reduce((a,e)=>a+e.prem,0);const ha=$("zHA"),hp=$("zHP");if(ha){ha.textContent=act.length;hp.textContent="$"+Math.round(pr).toLocaleString("en-US")}}
   const box=$("zCat");if(!box)return;
-  box.innerHTML=CATS.map(c=>{const act=rows.filter(r=>catOf(r)===c.k&&isAct(r)),sub=c.k==="motor"?`<small>${[["bi","BI"],["tp","TP"],["ar","AR"]].map(([k,n])=>`${n} ${act.filter(r=>subOf(r)===k).length}`).join(" · ")}</small>`:"";
+  box.innerHTML=CATS.filter(c=>c.k!=="expat"||rows.some(r=>catOf(r)==="expat")).map(c=>{const act=rows.filter(r=>catOf(r)===c.k&&isAct(r)),sub=c.k==="motor"?`<small>${[["bi","BI"],["tp","TP"],["ar","AR"]].map(([k,n])=>`${n} ${act.filter(r=>subOf(r)===k).length}`).join(" · ")}</small>`:"";
     return `<button class="g" data-cat="${c.k}" style="border-color:${c.c}"><svg viewBox="0 0 24 24" aria-hidden="true">${c.i}</svg><b>${esc(c.n)}</b><span class="zn"><i>${act.length}</i> active</span>${sub}</button>`}).join("");
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-cat]");if(!b)return;
@@ -1917,12 +1922,12 @@ function nrBlock(){
   if(!pfYear||!ys.includes(pfYear))pfYear=cy;
   const inY=ev.filter(e=>e.date.slice(0,4)===pfYear);
   const agg=l=>({n:l.length,p:l.reduce((a,e)=>a+e.prem,0)});
-  const N=agg(inY.filter(e=>e.kind==="new")),R=agg(inY.filter(e=>e.kind==="ren"));
+  const N=agg(inY.filter(e=>e.kind==="new")),R=agg(inY.filter(e=>e.kind==="ren")),Cn=agg(inY.filter(e=>e.kind==="can")),En=agg(inY.filter(e=>e.kind==="end")),Net=agg(inY);
   const mn=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   const mrows=mn.map((m,i)=>{const k=pfYear+"-"+String(i+1).padStart(2,"0"),l=inY.filter(e=>e.date.slice(0,7)===k),n=agg(l.filter(e=>e.kind==="new")),r=agg(l.filter(e=>e.kind==="ren"));
     return `<div class="prow"><div><b>${m}</b></div><div style="text-align:end;font-size:13px">New <b>${n.n}</b>${n.n?" · "+n.p.usd():""}<br>Renewed <b>${r.n}</b>${r.n?" · "+r.p.usd():""}</div></div>`}).join("");
   return `<div class="pft" style="display:flex;justify-content:space-between;align-items:center;gap:10px">New vs renewed policies<select id="pfYear" style="width:auto;min-height:36px;padding:6px 10px">${ys.map(y=>`<option${y===pfYear?" selected":""}>${y}</option>`).join("")}</select></div>
-  <div class="pfh"><div>New in ${pfYear}<b>${N.n}</b>${N.p.usd()} premium</div><div>Renewed in ${pfYear}<b>${R.n}</b>${R.p.usd()} premium</div></div>
+  <div class="pfh"><div>New in ${pfYear}<b>${N.n}</b>${N.p.usd()} premium</div><div>Renewed in ${pfYear}<b>${R.n}</b>${R.p.usd()} premium</div></div>${Cn.n||En.n?`<div class="prow"><div>Cancellations <b>${Cn.n}</b></div><div style="text-align:end">${Cn.p.usd()}</div></div><div class="prow"><div>Endorsements <b>${En.n}</b></div><div style="text-align:end">${En.p.usd()}</div></div>`:""}<div class="prow"><div><b>Net production ${pfYear}</b></div><div style="text-align:end"><b>${Net.p.usd()}</b></div></div>
   ${mrows}
   <div class="mu" style="margin-top:6px">A policy counts as new in the month its first term started, and as renewed in the month each later term started.</div>`;
 }
@@ -1931,6 +1936,7 @@ function shiftY(d,n){let x=d;for(let i=0;i<Math.abs(n);i++)x=n>0?addYear(x):subY
 function termEvents(){
   const ev=[];
   rows.forEach(r=>{
+    if(Array.isArray(r.tx)&&r.tx.length){r.tx.forEach(t=>{if(t&&t.d)ev.push({date:t.d,kind:t.k,prem:Number(t.p)||0,r})});return}
     if(!r.start)return;const T=r.term||1;
     for(let j=1;j<=T;j++){
       const h=(r.hist||[]).find(x=>x.term===j);
@@ -1946,12 +1952,12 @@ function renderPF(){
   const act=rows.filter(isAct),exp=rows.filter(r=>!isCanc(r)&&!isAct(r)),cnl=rows.filter(isCanc);
   const ta=sum(act),miss=rows.filter(r=>r.premium==null).length;
   const byT=grp(act,r=>r.type).sort((a,b)=>b[1]-a[1]),byC=grp(act,r=>r.company).sort((a,b)=>b[1]-a[1]);
-  const nc=rows.filter(r=>!isCanc(r));const byY=grp(nc,r=>r.start?r.start.slice(0,4):"").sort((a,b)=>a[0].localeCompare(b[0])),ty=sum(nc);
+  const yv={};termEvents().forEach(e=>{const y=e.date.slice(0,4);yv[y]=(yv[y]||0)+e.prem});const byY=Object.entries(yv).map(([y,v])=>[y,Math.round(v*100)/100]).sort((a,b)=>a[0].localeCompare(b[0])),ty=byY.reduce((a,x)=>a+x[1],0);
   $("pf").innerHTML=`<div class="pfh" style="grid-template-columns:repeat(3,1fr)"><div>Active portfolio<b>${ta.usd()}</b>${act.length} active ${act.length===1?"policy":"policies"}</div><div>Expired / not renewed<b>${sum(exp).usd()}</b>${exp.length} ${exp.length===1?"policy":"policies"}</div><div>Canceled<b>${sum(cnl).usd()}</b>${cnl.length} ${cnl.length===1?"policy":"policies"}</div></div>
   ${nrBlock()}
   <div class="pft">Active premium by insurance type</div>${bars(byT,ta)}
   <div class="pft">Active premium by company</div>${bars(byC,ta)}
-  <div class="pft">Premium written by year (start date)</div>${bars(byY,ty)}
+  <div class="pft">Net production by year</div>${bars(byY,ty)}
   <div class="mu" style="margin-top:10px">Premium is treated as the annual premium of each policy.${miss?` ${miss} ${miss===1?"policy has":"policies have"} no premium entered and count as 0.`:""}</div>`;
 }
 function renderBrand(){
@@ -2525,8 +2531,40 @@ function normDate2(v){
   return null;
 }
 const impNum=v=>{v=String(v??"").replace(/[^\d.\-]/g,"");return v===""||v==="-"||v==="."?null:Number(v)};
+/* Insurer production report: every row is a transaction (New, Renew, Cancel., Endors.) of a policy number.
+   Rows are grouped by policy number: New/Renew rows are the yearly terms, Cancel. cancels the term, Endors. adds premium to it. */
+function prodHead(row){const h=(row||[]).map(x=>String(x||"").trim().toLowerCase());const f=n=>h.indexOf(n);
+  const C={type:f("type"),pol:f("policy"),st:f("policy status"),sub:f("subscription status"),iss:f("issue date"),pin:f("pin"),name:f("policy holder"),inc:f("inception"),exp:f("expiry"),tot:h.findIndex(x=>x==="total"||x==="premium"),reg:f("registration"),use:f("usage")};
+  return C.pol>=0&&C.st>=0&&C.iss>=0&&C.inc>=0&&C.exp>=0&&C.tot>=0&&C.type>=0&&C.name>=0?C:null}
+function prodBuild(R,hi,C){
+  const G=new Map(),bad=[];
+  R.slice(hi+1).forEach((r,j)=>{const pol=String(r[C.pol]??"").trim();if(!pol)return;
+    const tp=String(r[C.type]??"").trim().toLowerCase(),k=/^ren/.test(tp)?"ren":/^can/.test(tp)?"can":/^end/.test(tp)?"end":"new";
+    const x={k,i:j,pol,st:String(r[C.st]??"").trim().toLowerCase(),paid:/^paid/i.test(String(C.sub>=0?r[C.sub]??"":"").trim()),iss:normDate2(r[C.iss]),inc:normDate2(r[C.inc]),exp:normDate2(r[C.exp]),
+      p:impNum(r[C.tot]),name:String(r[C.name]??"").replace(/\s+/g," ").trim(),pin:String(C.pin>=0?r[C.pin]??"":"").trim(),reg:C.reg>=0?String(r[C.reg]??"").trim():"",use:C.use>=0?String(r[C.use]??"").trim():""};
+    if(!x.inc||!x.exp||x.p===null||isNaN(x.p)){bad.push(`row ${hi+j+2}`);return}
+    if(!x.iss)x.iss=x.inc;(G.get(pol)||G.set(pol,[]).get(pol)).push(x)});
+  const recs=[],pid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+  G.forEach((L,pol)=>{
+    L.sort((a,b)=>a.iss.localeCompare(b.iss)||a.i-b.i);
+    const by={};L.filter(x=>x.k==="new"||x.k==="ren").forEach(x=>{by[x.inc]=x});/* same inception twice = the later row wins */
+    const T=Object.values(by).sort((a,b)=>a.inc.localeCompare(b.inc));if(!T.length)return;
+    const terms=T.map((t,n)=>{const end=L.filter(x=>x.k==="end"&&x.inc>=t.inc&&x.inc<t.exp&&(!T[n+1]||x.inc<T[n+1].inc)).reduce((a,x)=>a+x.p,0);
+      return{t,prem:Math.round((t.p+end)*100)/100,canc:/cancel/.test(t.st)}});
+    const cur=terms[terms.length-1],c=cur.t,rule=prefixRule(pol),nm=(L.filter(x=>x.name).pop()||c).name;
+    const cOf=p=>p>0?p*commDef/100:0;
+    recs.push({name:nm,phone:"",type:rule&&rule[3]?rule[3]:(/^(PLS|WCS)/i.test(pol)?pol.slice(0,3).toUpperCase():""),company:"",policy:pol,pin:c.pin||"",premium:cur.prem,start:c.inc,expiry:c.exp,renewal:c.exp,commission:null,commtype:"pct",
+      hist:terms.slice(0,-1).map((h,n)=>({term:n+1,start:h.t.inc,expiry:h.t.exp,policy:pol,company:"",closed:h.t.paid&&!h.canc,date:h.t.iss,paid:h.t.paid?h.prem:0,comm:cOf(h.prem),premium:h.prem,canceled:h.canc||undefined})),
+      closedTerm:null,closedDate:null,note:[c.reg?"Registration: "+c.reg:"",c.use?"Usage: "+c.use:""].filter(Boolean).join(" · "),fileId:null,status:cur.canc?"canceled":null,term:terms.length,
+      payments:c.paid&&cur.prem>0?[{id:pid(),date:c.iss,amount:cur.prem,payer:nm,note:"Imported",term:terms.length}]:[],
+      tx:L.map(x=>({d:x.iss,k:x.k,p:x.p})),issued:c.iss,_bk:true,_prod:true,updated:Date.now()});
+  });
+  return{recs,bad};
+}
 function impBuild(sheets){
   const recs=[],bad=[],recGood=[],custGood=[],logGood=[],cashGood=[],agGood=[];let backup=false,found=false;
+  {let hit=false;sheets.forEach(sh=>{for(let i=0;i<Math.min(15,sh.rows.length);i++){const C=prodHead(sh.rows[i]);if(C){const o=prodBuild(sh.rows,i,C);recs.push(...o.recs);bad.push(...o.bad.map(b=>(sheets.length>1?sh.name+" ":"")+b));hit=true;break}}});
+   if(hit)return{recs,bad,recGood,custGood,logGood,cashGood,agGood,backup,found:true,prod:true}}
   sheets.forEach(sh=>{
     const R=sh.rows;let hi=-1,best=0,M=null;
     for(let i=0;i<Math.min(15,R.length);i++){const m=mapHeads(R[i]);const sc=["name","expiry","start","premium","policy","type","company","renewal","phone"].filter(k=>m[k]!==undefined).length;if(m.name!==undefined&&(m.expiry!==undefined||m.start!==undefined)&&sc>best){best=sc;hi=i;M=m}}
@@ -2598,7 +2636,7 @@ function impChain(recs){
     const rec={...cur,...inh,term:T,hist,payments:paid>0?[{id:pid(),date:cur.start<=today?cur.start:today,amount:paid,payer:cur.name,note:"Imported",term:T}]:[]};
     out.push(rec);
   });
-  return out.map(r=>{const o={...r};delete o._paid;delete o._bk;return o});
+  return out.map(r=>{const o={...r};delete o._paid;delete o._bk;delete o._prod;return o});
 }
 async function eraseAll(skipAsk){
   if(!db)return false;
@@ -2648,6 +2686,27 @@ $("impGo").onclick=async()=>{
   if(!B.found){$("msg").textContent="Could not find the column headers. The first rows must have titles like Client name, Policy no., Premium, Start date, Expiry date.";return}
   const recs=impChain(B.recs);
   if(!recs.length&&!B.recGood.length&&!B.custGood.length&&!(B.logGood||[]).length&&!(B.cashGood||[]).length&&!(B.agGood||[]).length){$("msg").textContent="No valid rows."+(B.bad.length?" Rows with problems: "+B.bad.slice(0,15).join(", "):"");return}
+  if(B.prod){
+    if(!await ask(`Production report: ${recs.length} policies found.\n\nYour policies will be rebuilt from this report so every number matches it. Payments, commissions, phone numbers and documents you added in Zamat are kept. Cash Book, Agenda, Daily Log and Customer Database are not touched. A backup file is saved first.`+(B.bad.length?`\n\n${B.bad.length} row(s) with problems will be skipped.`:"")+"\n\nContinue?","Update policies"))return;
+    try{if(rows.length)await exportBackup()}catch(e){}
+    try{
+      $("msg").textContent="Updating policies…";
+      const old={};rows.forEach(r=>{if(r.policy)(old[r.policy]=old[r.policy]||[]).push(r)});
+      const out=recs.map(n=>{const O=old[n.policy]||[];if(!O.length)return n;
+        const o=O.slice().sort((a,b)=>((b.payments||[]).length-(a.payments||[]).length))[0],x={...n};
+        ["phone","company","fileId"].forEach(k=>{if(!x[k]&&o[k])x[k]=o[k]});
+        if(o.commission!=null){x.commission=o.commission;x.commtype=o.commtype||"pct"}
+        if(o.closedTerm&&o.start===x.start){x.closedTerm=x.term;x.closedDate=o.closedDate||null}
+        const starts=[...(x.hist||[]).map(h=>h.start),x.start];
+        const man=[];O.forEach(r=>(r.payments||[]).forEach(p=>{if(p&&p.note!=="Imported"&&Number(p.amount)){let t=1;starts.forEach((st,i)=>{if((p.date||"")>=st)t=i+1});man.push({...p,term:t})}}));
+        if(man.length){const mt=new Set(man.map(p=>p.term));x.payments=(x.payments||[]).filter(p=>!mt.has(p.term)).concat(man)}
+        return x});
+      const cc=db.collection("clients");await cc.clear();
+      if(cc.setMany)await cc.setMany(out);else for(const g of out)await cc.doc().set(g);
+    }catch(e){$("msg").textContent="Import stopped: "+(e.message||e.code||"error");return}
+    $("msg").textContent=`Updated ${recs.length} policies from the production report.`+(B.bad.length?` Skipped: ${B.bad.slice(0,10).join(", ")}`:"");
+    impSheets=null;$("impText").value="";$("impFile").value="";$("impRep").checked=false;$("impBox").style.display="none";return;
+  }
   const rep=$("impRep").checked;
   const linked=B.recs.length-recs.length;
   const ys={};B.recs.forEach(r=>{const y=r.start.slice(0,4);ys[y]=(ys[y]||0)+1});
