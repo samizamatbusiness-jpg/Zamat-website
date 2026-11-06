@@ -3317,6 +3317,7 @@ render();renderBrand();
   function build(P){
     const nav=document.getElementById("nav"),home=document.getElementById("zHome");if(!nav||!home)return;
     const N=Object.assign({l1:"",l2:"cli",r1:"pay",r2:""},(P&&P.nav)||{});
+    {const ks=["l1","l2","r1","r2"],vs=ks.map(k=>N[k]);if(P&&!P.navMig1&&vs.includes("tgt")&&vs.includes("log")&&!vs.includes("pol")){ks.forEach(k=>{if(N[k]==="tgt")N[k]="pol"});if(!window.zNavMigBusy){window.zNavMigBusy=1;try{const Q=zPrefs.load();Q.nav=Object.assign({},N);Q.navMig1=1;zPrefs.save(Q)}catch(e){}window.zNavMigBusy=0}}}
     nav.querySelectorAll(".zy:not(#zHome)").forEach(b=>b.remove());
     const mk=k=>{if(!k||!LB[k])return null;const b=document.createElement("button");b.className="g zy";if(k==="bk")b.dataset.zaq="bk";else b.dataset.go=k;if(k==="cli")b.id="zCli";b.innerHTML=IC[k]+LB[k];return b};
     const L=[mk(N.l1),mk(N.l2)].filter(Boolean),R=[mk(N.r1),mk(N.r2)].filter(Boolean);
