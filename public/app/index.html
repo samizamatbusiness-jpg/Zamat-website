@@ -2975,7 +2975,7 @@ render();renderBrand();
   <div class="zrow" style="margin-top:10px"><span>Logo on the main card</span>${sw("zsHLogo")}</div>
   <label>Bottom bar buttons</label>
   <div class="mu" style="margin:0 0 6px">Choose what shows on each side of the Home button.</div>
-  <div class="znav">${[["l1","Left · outer"],["l2","Left · next to Home"],["r1","Right · next to Home"],["r2","Right · outer"]].map(([k,l])=>`<div><small>${l}</small><select data-nv="${k}"><option value="">— None —</option>${Object.entries({cli:"Clients",pay:"Payments",pol:"Policies",db:"Database",ren:"Renewals",pf:"Portfolio",log:"Daily Plan",cash:"Cash Book",tgt:"Targets",set:"Settings",bk:"Backup"}).map(([v,t])=>`<option value="${v}">${t}</option>`).join("")}</select></div>`).join("")}</div>
+  <div class="znav">${[["l1","Left · outer"],["l2","Left · next to Home"],["r1","Right · next to Home"],["r2","Right · outer"]].map(([k,l])=>`<div><small>${l}</small><select data-nv="${k}"><option value="">— None —</option>${Object.entries({cli:"Clients",pay:"Payments",pol:"Clients",db:"Database",ren:"Renewals",pf:"Portfolio",log:"Daily Plan",cash:"Cash Book",tgt:"Targets",set:"Settings",bk:"Backup"}).map(([v,t])=>`<option value="${v}">${t}</option>`).join("")}</select></div>`).join("")}</div>
   <label>Sections shown on Home</label>
   <div>${TILES.map(([k,l])=>`<div class="zrow"><span>${l}</span>${sw("zsT_"+k)}</div>`).join("")}</div>
 </div>
@@ -3312,7 +3312,7 @@ render();renderBrand();
     set:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>',
     bk:'<svg viewBox="0 0 24 24"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>'
   };
-  const LB={cli:"Clients",pay:"Payments",pol:"Policies",db:"Database",ren:"Renewals",pf:"Portfolio",log:"Daily Plan",cash:"Cash Book",tgt:"Targets",set:"Settings",bk:"Backup"};
+  const LB={cli:"Clients",pay:"Payments",pol:"Clients",db:"Database",ren:"Renewals",pf:"Portfolio",log:"Daily Plan",cash:"Cash Book",tgt:"Targets",set:"Settings",bk:"Backup"};
   window.zNavOpts=LB;
   function build(P){
     const nav=document.getElementById("nav"),home=document.getElementById("zHome");if(!nav||!home)return;
@@ -3335,6 +3335,11 @@ render();renderBrand();
     order.slice().reverse().forEach(k=>{const b=get(k);if(b)nav.insertBefore(b,nav.firstChild)});}
   window.zBuildMenu=menu;
   try{menu(zPrefs.load())}catch(e){}
+  try{const P=zPrefs.load();
+    if(P&&!P.navMig1){const N=Object.assign({l1:"",l2:"cli",r1:"pay",r2:""},P.nav||{});
+      const ks=["l1","l2","r1","r2"],vs=ks.map(k=>N[k]);
+      if(vs.includes("tgt")&&vs.includes("log")&&!vs.includes("pol")){ks.forEach(k=>{if(N[k]==="tgt")N[k]="pol"});P.nav=N}
+      P.navMig1=1;zPrefs.save(P)}}catch(e){}
   try{build(zPrefs.load())}catch(e){}
 })();
 </script>
