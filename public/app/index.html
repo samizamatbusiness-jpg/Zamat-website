@@ -640,6 +640,7 @@ details.zadv{background:var(--card);border:1px solid var(--bd);border-radius:14p
 .zcn{flex:1;min-width:0}.zcn b{font-size:15px;font-weight:700;display:inline}.zcn svg{width:15px;height:15px;vertical-align:-2px;margin-inline-end:5px}.zcn small{display:block;color:var(--mu);font-size:12.5px;font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .zct{font-style:normal;font-size:12px;font-weight:700;padding:4px 9px;border-radius:20px;white-space:nowrap;flex:none}.zct.g{background:rgba(21,128,61,.12);color:var(--grn)}.zct.o{background:rgba(234,88,12,.12);color:var(--org)}.zct.r{background:var(--redbg,rgba(198,40,40,.1));color:var(--red)}.zct.x{background:var(--soft,#eee);color:var(--mu)}
 .zcv{font-style:normal;color:var(--mu);font-size:20px;transition:transform .15s;flex:none}.card.zcc.open .zcv{transform:rotate(90deg)}.card.zcc.open .zcb .nm{display:none}
+#zCat .zsold{display:block;font-size:12px;color:var(--gold,#b8892f);font-weight:600;margin-top:4px}#zCat .zsold i{font-style:normal;font-weight:800}
 </style>
 <div id="msg"></div>
 <div id="tabHome"><div id="zWm" aria-hidden="true"></div><style>
@@ -1958,8 +1959,9 @@ function renderCats(){renderCli();renderZp();
   {const k=v=>"$"+Math.round(v).toLocaleString("en-US");const nw=rows.filter(isAct),np=nw.reduce((a,r)=>a+(Number(r.premium)||0),0);if($("zHN")){$("zHN").textContent=nw.length;$("zHNP").textContent=k(np)}document.querySelectorAll("#zHero .zyr").forEach(x=>x.textContent=homeYr())}
   {const yev=termEvents().filter(e=>e.date.slice(0,4)===homeYr()),act=yev.filter(e=>e.kind==="new"||e.kind==="ren"),pr=yev.reduce((a,e)=>a+e.prem,0);const ha=$("zHA"),hp=$("zHP");if(ha){ha.textContent=act.length;hp.textContent="$"+Math.round(pr).toLocaleString("en-US")}}
   const box=$("zCat");if(!box)return;
-  box.innerHTML=CATS.map(c=>{const act=rows.filter(r=>catOf(r)===c.k&&isAct(r)),sub=c.k==="motor"?`<small>${[["bi","BI"],["tp","TP"],["ar","AR"]].map(([k,n])=>`${n} ${act.filter(r=>subOf(r)===k).length}`).join(" · ")}</small>`:"";
-    return `<button class="g" data-cat="${c.k}" style="border-color:${c.c}"><svg viewBox="0 0 24 24" aria-hidden="true">${c.i}</svg><b>${esc(c.n)}</b><span class="zn"><i>${act.length}</i> active</span>${sub}</button>`}).join("");
+  const ysold=termEvents().filter(e=>e.date.slice(0,4)===homeYr()&&(e.kind==="new"||e.kind==="ren")&&e.r);
+  box.innerHTML=CATS.map(c=>{const act=rows.filter(r=>catOf(r)===c.k&&isAct(r)),sold=ysold.filter(e=>catOf(e.r)===c.k).length,sub=c.k==="motor"?`<small>${[["bi","BI"],["tp","TP"],["ar","AR"]].map(([k,n])=>`${n} ${act.filter(r=>subOf(r)===k).length}`).join(" · ")}</small>`:"";
+    return `<button class="g" data-cat="${c.k}" style="border-color:${c.c}"><svg viewBox="0 0 24 24" aria-hidden="true">${c.i}</svg><b>${esc(c.n)}</b><span class="zn"><i>${act.length}</i> active</span>${sub}<span class="zsold"><i>${sold}</i> sold in ${homeYr()}</span></button>`}).join("");
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-cat]");if(!b)return;
   $("cliQ").value="";$("cliCat").value=b.dataset.cat;showTab("cli");renderCli()});
