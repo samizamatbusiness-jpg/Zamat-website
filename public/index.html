@@ -409,5 +409,17 @@ document.querySelectorAll(".card[data-slide]").forEach(c=>{
 });
 buildSlides();
 </script>
+<script>
+/* visit counter (own server, no outside services) */
+(function(){try{
+var q=new URLSearchParams(location.search),src=(q.has("wa")||q.get("from")==="status")?"status":(q.get("from")||"");
+var id=Math.random().toString(36).slice(2)+Date.now().toString(36),t0=Date.now();
+var b=function(d){var x=JSON.stringify(d);if(navigator.sendBeacon&&navigator.sendBeacon("/__v",x))return;fetch("/__v",{method:"POST",body:x,keepalive:true}).catch(function(){})};
+b({id:id,s:src,r:document.referrer||""});
+document.addEventListener("visibilitychange",function(){if(document.visibilityState==="hidden")b({id:id,d:Math.round((Date.now()-t0)/1000)})});
+[["wa","wa"],["c-wa","wa"],["c-phone","call"]].forEach(function(x){var el=document.getElementById(x[0]);if(el)el.addEventListener("click",function(){b({id:id,a:x[1],d:Math.round((Date.now()-t0)/1000)})})});
+if(src&&history.replaceState)history.replaceState(null,"",location.pathname+location.hash);
+}catch(e){}})();
+</script>
 </body>
 </html>
