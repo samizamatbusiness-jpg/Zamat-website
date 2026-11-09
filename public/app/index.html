@@ -282,7 +282,7 @@ body.zc #nav button.g.zy{min-height:50px!important;padding:2px 0 4px!important;j
 #zHero .zs{position:absolute;left:18px;bottom:14px;display:flex;gap:16px;color:#fff}
 #zHero .zs div{font-size:11px;font-weight:600;color:rgba(255,255,255,.75);line-height:1.25}
 #zHero .zs b{display:block;font-size:17px;font-weight:800;color:#fff;letter-spacing:-.01em}
-#zHero .zs{gap:13px;right:56px}#zHero .zs div{white-space:nowrap}#zHero .zs .zhsep{border-left:1px solid rgba(255,255,255,.3);padding-left:13px}
+#zHero .zt{display:flex;align-items:center;gap:18px}#zHero .zcm{border-left:1px solid rgba(255,255,255,.3);padding-left:16px;line-height:1.15}#zHero .zcm b{display:block;font-size:24px;font-weight:800;color:#E2BE5A;letter-spacing:-.01em}#zHero .zcm span{font-size:11px;font-weight:600;color:rgba(255,255,255,.8);white-space:nowrap}#zHero .zcm i{font-style:normal}#zHero .zs{gap:13px;right:56px}#zHero .zs div{white-space:nowrap}#zHero .zs .zhsep{border-left:1px solid rgba(255,255,255,.3);padding-left:13px}
 #zHero .zgo{position:absolute;right:14px;bottom:14px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center}
 #zHero .zgo svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 body.zc[data-tab="home"] .zcat button.g{box-shadow:0 1px 2px rgba(14,34,57,.04),0 6px 16px -10px rgba(14,34,57,.25);transition:transform .1s ease,box-shadow .1s ease}
@@ -812,7 +812,7 @@ details.zadv{background:var(--card);border:1px solid var(--bd);border-radius:14p
 <div class="today" id="todayLine"></div>
 <div id="zHero" data-go="pf" role="link" aria-label="Open portfolio"><div class="zg"></div><div class="zlogo" id="zHeroLogo"></div><div class="zsky"></div><div class="zb2"></div><div class="zb3"></div>
   <div class="zm">By Sami Zamat Group</div>
-  <div class="zt"><div class="zy" id="zYear"></div></div>
+  <div class="zt"><div class="zy" id="zYear"></div><div class="zcm"><b id="zHC">$0</b><span>commission <i class="zyr"></i></span></div></div>
   <div class="zs"><div><b id="zHA">0</b>sold this year</div><div><b id="zHP">$0</b>sold (net)</div><div class="zhsep"><b id="zHN">0</b>active now</div><div><b id="zHNP">$0</b>active value</div></div>
   <span class="zgo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></span>
 </div>
@@ -1930,6 +1930,8 @@ const CATS=[
    purple TS = PC&M · green TL = Life · brown PA, MCU = Personal Accident · white PLS / WCS */
 const PREFIX_RULES=[[/^(MB|MG|MV)/,"motor","bi","BI"],[/^MF/,"motor","ar","Motor All Risk"],[/^MT/,"motor","tp","TP"],[/^TOS/,"travel","","Travel Insurance"],[/^TL/,"life","","Life Insurance"],[/^TS/,"pcm","","PC&M"],[/^(PA|MCU)/,"pa","","Personal Accident"],[/^(PLS|WCS)/,"plsw","",""],[/^L/,"health","","Medical Insurance"]];
 function prefixRule(pol){const m=/^\s*([A-Z]{1,4}\d?)\s*\//.exec(String(pol||"").toUpperCase());if(!m)return null;const c=m[1];return PREFIX_RULES.find(x=>x[0].test(c))||null}
+/* Sami's commission rates per category (on the year's net premium) */
+const COMM_RATE={motor:.25,health:.18,life:.40,pa:.40,pcm:.25,travel:.30,expat:.30,plsw:.30};
 const MSUBS=[["bi","BI"],["tp","TP"],["ar","All Risk"]];
 const CAT_ORDER=["expat","travel","health","pa","plsw","life","pcm","motor"];
 function codeOf(r){const x=prefixRule(r.policy);return x?x:null}
@@ -1969,7 +1971,7 @@ function renderCats(){renderCli();renderZp();
    $("zBellN").textContent=dl.length||"";$("zPopN").textContent=dl.length?dl.length+(dl.length===1?" client":" clients"):"";
    $("zPopL").innerHTML=dl.length?dl.map(r=>{const d=days(r.renewal||r.expiry);return `<button class="zpi" data-zr="${esc(r.id)}"><div><b>${esc(r.name)}</b><small>${[typeOf(r),r.policy?"No. "+r.policy:"",fmtD(r.renewal||r.expiry)].filter(Boolean).map(esc).join(" · ")}</small></div><em>${d===0?"Today":d+(d===1?" day":" days")}</em></button>`}).join(""):'<div class="zpe">No renewals in the next month.</div>';}
   {const k=v=>"$"+Math.round(v).toLocaleString("en-US");const nw=rows.filter(isAct),np=nw.reduce((a,r)=>a+(Number(r.premium)||0),0);if($("zHN")){$("zHN").textContent=nw.length;$("zHNP").textContent=k(np)}document.querySelectorAll("#zHero .zyr").forEach(x=>x.textContent=homeYr())}
-  {const yev=termEvents().filter(e=>e.date.slice(0,4)===homeYr()),act=yev.filter(e=>e.kind==="new"||e.kind==="ren"),pr=yev.reduce((a,e)=>a+e.prem,0);const ha=$("zHA"),hp=$("zHP");if(ha){ha.textContent=act.length;hp.textContent="$"+Math.round(pr).toLocaleString("en-US")}}
+  {const yev=termEvents().filter(e=>e.date.slice(0,4)===homeYr()),act=yev.filter(e=>e.kind==="new"||e.kind==="ren"),pr=yev.reduce((a,e)=>a+e.prem,0);const ha=$("zHA"),hp=$("zHP");if(ha){ha.textContent=act.length;hp.textContent="$"+Math.round(pr).toLocaleString("en-US")}const hc=$("zHC");if(hc){const cm=yev.reduce((x,e)=>x+e.prem*(e.r?(COMM_RATE[catOf(e.r)]||0):0),0);hc.textContent="$"+Math.round(cm).toLocaleString("en-US")}}
   const box=$("zCat");if(!box)return;
   const yev2=termEvents().filter(e=>e.date.slice(0,4)===homeYr()&&e.r);
   const $k=v=>(v<0?"-$":"$")+Math.abs(Math.round(v)).toLocaleString("en-US"),SUBS=[["bi","BI"],["tp","TP"],["ar","AR"]];
