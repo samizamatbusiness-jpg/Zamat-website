@@ -282,7 +282,7 @@ body.zc #nav button.g.zy{min-height:50px!important;padding:2px 0 4px!important;j
 #zHero .zs{position:absolute;left:18px;bottom:14px;display:flex;gap:16px;color:#fff}
 #zHero .zs div{font-size:11px;font-weight:600;color:rgba(255,255,255,.75);line-height:1.25}
 #zHero .zs b{display:block;font-size:17px;font-weight:800;color:#fff;letter-spacing:-.01em}
-#zHero .zt{display:flex;align-items:center;gap:18px}#zHero .zcm{border-left:1px solid rgba(255,255,255,.3);padding-left:16px;line-height:1.15}#zHero .zcm b{display:block;font-size:24px;font-weight:800;color:#E2BE5A;letter-spacing:-.01em}#zHero .zcm span{font-size:11px;font-weight:600;color:rgba(255,255,255,.8);white-space:nowrap}#zHero .zcm i{font-style:normal}#zHero .zs{gap:13px;right:56px}#zHero .zs div{white-space:nowrap}#zHero .zs .zhsep{border-left:1px solid rgba(255,255,255,.3);padding-left:13px}
+#zHero .zt{display:flex;align-items:center;gap:18px}#zHero .zcm{border-left:1px solid rgba(255,255,255,.3);padding-left:16px;line-height:1.15}#zHero .zcm b{display:block;font-size:24px;font-weight:800;color:#E2BE5A;letter-spacing:-.01em}#zHero .zcm span{font-size:11px;font-weight:600;color:rgba(255,255,255,.8);white-space:nowrap}#zHero .zcm i{font-style:normal}.zcomm{display:grid;grid-template-columns:1fr;gap:0}.zcomm .zcr{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0;font-weight:600;font-size:14px}.zcomm .zci{display:flex;align-items:center;gap:4px;font-weight:700}.zcomm input{width:64px;padding:6px 8px;text-align:right;margin:0}#zHero .zs{gap:13px;right:56px}#zHero .zs div{white-space:nowrap}#zHero .zs .zhsep{border-left:1px solid rgba(255,255,255,.3);padding-left:13px}
 #zHero .zgo{position:absolute;right:14px;bottom:14px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center}
 #zHero .zgo svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 body.zc[data-tab="home"] .zcat button.g{box-shadow:0 1px 2px rgba(14,34,57,.04),0 6px 16px -10px rgba(14,34,57,.25);transition:transform .1s ease,box-shadow .1s ease}
@@ -1932,6 +1932,7 @@ const PREFIX_RULES=[[/^(MB|MG|MV)/,"motor","bi","BI"],[/^MF/,"motor","ar","Motor
 function prefixRule(pol){const m=/^\s*([A-Z]{1,4}\d?)\s*\//.exec(String(pol||"").toUpperCase());if(!m)return null;const c=m[1];return PREFIX_RULES.find(x=>x[0].test(c))||null}
 /* Sami's commission rates per category (on the year's net premium) */
 const COMM_RATE={motor:.25,health:.18,life:.40,pa:.40,pcm:.25,travel:.30,expat:.30,plsw:.30};
+function commRate(k){try{const c=(window.zPrefs&&zPrefs.load().comm)||{};if(c[k]!=null&&c[k]!==""&&isFinite(c[k]))return Number(c[k])/100}catch(e){}return COMM_RATE[k]||0}
 const MSUBS=[["bi","BI"],["tp","TP"],["ar","All Risk"]];
 const CAT_ORDER=["expat","travel","health","pa","plsw","life","pcm","motor"];
 function codeOf(r){const x=prefixRule(r.policy);return x?x:null}
@@ -1971,7 +1972,7 @@ function renderCats(){renderCli();renderZp();
    $("zBellN").textContent=dl.length||"";$("zPopN").textContent=dl.length?dl.length+(dl.length===1?" client":" clients"):"";
    $("zPopL").innerHTML=dl.length?dl.map(r=>{const d=days(r.renewal||r.expiry);return `<button class="zpi" data-zr="${esc(r.id)}"><div><b>${esc(r.name)}</b><small>${[typeOf(r),r.policy?"No. "+r.policy:"",fmtD(r.renewal||r.expiry)].filter(Boolean).map(esc).join(" · ")}</small></div><em>${d===0?"Today":d+(d===1?" day":" days")}</em></button>`}).join(""):'<div class="zpe">No renewals in the next month.</div>';}
   {const k=v=>"$"+Math.round(v).toLocaleString("en-US");const nw=rows.filter(isAct),np=nw.reduce((a,r)=>a+(Number(r.premium)||0),0);if($("zHN")){$("zHN").textContent=nw.length;$("zHNP").textContent=k(np)}document.querySelectorAll("#zHero .zyr").forEach(x=>x.textContent=homeYr())}
-  {const yev=termEvents().filter(e=>e.date.slice(0,4)===homeYr()),act=yev.filter(e=>e.kind==="new"||e.kind==="ren"),pr=yev.reduce((a,e)=>a+e.prem,0);const ha=$("zHA"),hp=$("zHP");if(ha){ha.textContent=act.length;hp.textContent="$"+Math.round(pr).toLocaleString("en-US")}const hc=$("zHC");if(hc){const cm=yev.reduce((x,e)=>x+e.prem*(e.r?(COMM_RATE[catOf(e.r)]||0):0),0);hc.textContent="$"+Math.round(cm).toLocaleString("en-US")}}
+  {const yev=termEvents().filter(e=>e.date.slice(0,4)===homeYr()),act=yev.filter(e=>e.kind==="new"||e.kind==="ren"),pr=yev.reduce((a,e)=>a+e.prem,0);const ha=$("zHA"),hp=$("zHP");if(ha){ha.textContent=act.length;hp.textContent="$"+Math.round(pr).toLocaleString("en-US")}const hc=$("zHC");if(hc){const cm=yev.reduce((x,e)=>x+e.prem*(e.r?commRate(catOf(e.r)):0),0);hc.textContent="$"+Math.round(cm).toLocaleString("en-US")}}
   const box=$("zCat");if(!box)return;
   const yev2=termEvents().filter(e=>e.date.slice(0,4)===homeYr()&&e.r);
   const $k=v=>(v<0?"-$":"$")+Math.abs(Math.round(v)).toLocaleString("en-US"),SUBS=[["bi","BI"],["tp","TP"],["ar","AR"]];
@@ -3018,6 +3019,8 @@ render();renderBrand();
   <div>${TILES.map(([k,l])=>`<div class="zrow"><span>${l}</span>${sw("zsT_"+k)}</div>`).join("")}</div>
 </div>
 </details>
+<h3>Commission rates</h3>
+<div class="panel" style="display:block"><div class="mu" style="margin-bottom:10px">Used for the commission on the main card (this year's net sales × rate).</div><div id="zsComm" class="zcomm"></div></div>
 <h3>Lists</h3>
 <div class="panel" style="display:block">
   <label>Insurance types</label><div class="zchips" id="zsTypes"></div>
@@ -3039,6 +3042,7 @@ render();renderBrand();
     $s("zsCp").value=c.p;$s("zsCa").value=c.a;$s("zsCg").value=c.g;
     [["zsMode","mode"],["zsFont","font"],["zsSize","size"],["zsCorn","corners"],["zsLay","layout"],["zsStyle","style"]].forEach(([id,k])=>document.querySelectorAll("#"+id+" button").forEach(b=>b.classList.toggle("on",b.dataset.v===(p[k]||(k==="style"?"classic":"")))));
     $s("zsHLogo").checked=!!p.heroLogo;
+    {const cm=p.comm||{};$s("zsComm").innerHTML=CATS.map(c=>{const v=cm[c.k]!=null&&cm[c.k]!==""?cm[c.k]:Math.round((COMM_RATE[c.k]||0)*100);return `<label class="zcr"><span>${E(c.n)}</span><span class="zci"><input type="number" inputmode="decimal" min="0" max="100" step="0.5" data-cm="${c.k}" value="${E(String(v))}">%</span></label>`}).join("")}
     {const M=p.menu||{},MI={log:"Daily Plan",cash:"Cash Book",pol:"Clients",pf:"Portfolio",tgt:"Targets",bk:"Backup"},ord=(M.order||[]).filter(k=>MI[k]).concat(Object.keys(MI).filter(k=>!(M.order||[]).includes(k))),hid=M.hidden||[];
       $s("zsMenu").innerHTML=ord.map((k,i)=>`<div class="zmr"><span>${MI[k]}</span><button class="g zma" data-mu="${k}" ${i===0?"disabled":""}>↑</button><button class="g zma" data-md="${k}" ${i===ord.length-1?"disabled":""}>↓</button><label class="zsw" style="margin:0"><input type="checkbox" data-mt="${k}" ${hid.includes(k)?"":"checked"}><b></b></label></div>`).join("");
       document.querySelectorAll("#zsMSize button").forEach(b=>b.classList.toggle("on",b.dataset.v===(M.size||"s")))}
@@ -3054,6 +3058,7 @@ render();renderBrand();
   [["zsCp","p"],["zsCa","a"],["zsCg","g"]].forEach(([id,k])=>$s(id).oninput=e=>{const p=P(),c=zPrefs.colors(p);p.custom={p:c.p,a:c.a,g:c.g,[k]:e.target.value};S(p);draw()});
   const MKEYS=["log","cash","pol","db","pay","ren","pf","tgt","bk"],mOrd=p=>{const o=((p.menu||{}).order||[]).filter(k=>MKEYS.includes(k));return o.concat(MKEYS.filter(k=>!o.includes(k)))};
   $s("zsHLogo").onchange=e=>{const p=P();p.heroLogo=e.target.checked;S(p)};
+  $s("zsComm").onchange=e=>{const i=e.target.closest("input[data-cm]");if(!i)return;let v=parseFloat(i.value);const p=P();p.comm=Object.assign({},p.comm||{});if(!isFinite(v)||v<0){delete p.comm[i.dataset.cm]}else{p.comm[i.dataset.cm]=Math.min(100,v)}S(p);draw();if(typeof renderCats==="function")try{renderCats()}catch(x){}};
   $s("zsMSize").onclick=e=>{const b=e.target.closest("button[data-v]");if(!b)return;const p=P();p.menu=Object.assign({},p.menu||{},{size:b.dataset.v});S(p);draw()};
   $s("zsMenu").onclick=e=>{const u=e.target.closest("[data-mu],[data-md]");if(!u)return;const p=P(),o=mOrd(p),k=u.dataset.mu||u.dataset.md,i=o.indexOf(k),j=u.dataset.mu?i-1:i+1;if(j<0||j>=o.length)return;[o[i],o[j]]=[o[j],o[i]];p.menu=Object.assign({},p.menu||{},{order:o});S(p);draw()};
   $s("zsMenu").onchange=e=>{const t=e.target.closest("input[data-mt]");if(!t)return;const p=P(),h=new Set((p.menu||{}).hidden||[]);t.checked?h.delete(t.dataset.mt):h.add(t.dataset.mt);p.menu=Object.assign({},p.menu||{},{hidden:[...h]});S(p)};
