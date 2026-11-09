@@ -909,6 +909,7 @@ details.zadv{background:var(--card);border:1px solid var(--bd);border-radius:14p
 <div class="zseg"><button type="button" data-go="pol">Policies</button><button type="button" data-go="db" class="on">Client list · + New</button></div>
   <div class="stats"><div class="stat"><b id="dbN">0</b>Clients</div><div class="stat"><b id="dbA">0</b>Active policies</div><div class="stat"><b id="dbT" style="font-size:18px">$0</b>Active premium (USD)</div></div>
   <div class="bar"><input id="dbQ" type="search" placeholder="Search clients"><button id="dbNew">+ New client</button></div>
+  <select id="dbSort" aria-label="Order of clients" style="margin-bottom:8px"><option value="old">Order: Old → New (as entered)</option><option value="new">Order: New → Old</option><option value="exp">Order: By expiry date</option><option value="name">Order: By client name (A–Z)</option></select>
   <div id="cForm" class="panel">
     <label>Client name *</label><input id="cName">
     <label>Phone</label><input id="cPhone" inputmode="tel">
@@ -2105,10 +2106,11 @@ function renderHome(){
 }
 function clientsMap(){
   const g={};
-  customers.forEach(c=>{const k=(c.name||"").trim().toLowerCase();if(!k)return;g[k]={name:c.name.trim(),phone:c.phone||"",notes:c.notes||"",custId:c.id,n:0,a:0,prem:0,bal:0}});
+  customers.forEach(c=>{const k=(c.name||"").trim().toLowerCase();if(!k)return;g[k]={name:c.name.trim(),phone:c.phone||"",notes:c.notes||"",custId:c.id,n:0,a:0,prem:0,bal:0,t:entT(c)||0,s:"",x:""}});
   rows.forEach(r=>{
     const k=(r.name||"").trim().toLowerCase();if(!k)return;
-    const o=g[k]||(g[k]={name:(r.name||"").trim(),phone:"",notes:"",custId:null,n:0,a:0,prem:0,bal:0});
+    const o=g[k]||(g[k]={name:(r.name||"").trim(),phone:"",notes:"",custId:null,n:0,a:0,prem:0,bal:0,t:0,s:"",x:""});
+    {const t=entT(r);if(t&&(!o.t||t<o.t))o.t=t;if(r.start&&(!o.s||r.start<o.s))o.s=r.start;if(isAct(r)&&r.expiry&&(!o.x||r.expiry<o.x))o.x=r.expiry}
     o.n++;if(!o.phone&&r.phone)o.phone=r.phone;
     if(isAct(r)){o.a++;o.prem+=Number(r.premium)||0;if(r.premium!=null)o.bal+=Math.max(0,Number(r.premium)-paidOf(r))}
   });
@@ -2119,7 +2121,7 @@ function renderDb(){
   const q=($("dbQ").value||"").trim().toLowerCase();
   const g=clientsMap(),all=Object.entries(g);
   $("dbN").textContent=all.length;$("dbA").textContent=all.reduce((a,[k,o])=>a+o.a,0);$("dbT").textContent=all.reduce((a,[k,o])=>a+o.prem,0).usd();
-  const l=all.filter(([k,o])=>!q||(o.name+" "+o.phone).toLowerCase().includes(q)).sort((a,b)=>a[1].name.localeCompare(b[1].name));
+  const l=all.filter(([k,o])=>!q||(o.name+" "+o.phone).toLowerCase().includes(q));{const m=sortMode(),A=a=>a[1],st=(a,b)=>(A(a).s||"9").localeCompare(A(b).s||"9");l.sort(m==="name"?(a,b)=>A(a).name.localeCompare(A(b).name):m==="exp"?(a,b)=>(A(a).x||"9").localeCompare(A(b).x||"9")||A(a).name.localeCompare(A(b).name):m==="new"?(a,b)=>(A(b).t||0)-(A(a).t||0)||st(b,a):(a,b)=>(A(a).t||9e15)-(A(b).t||9e15)||st(a,b))}
   $("dbList").innerHTML=l.length?`<div class="clist">`+l.map(([k,o])=>{
     const open=openCli.has(k);
     const body=open?`<div class="cbody">${o.notes?`<div class="mu" style="margin:0 0 10px">${esc(o.notes)}</div>`:""}<div class="acts" style="margin-bottom:6px"><button class="g" data-ce="${esc(k)}">Edit client</button><button class="g" data-cp="${esc(k)}">+ Policy</button><button class="g" data-cv="${esc(k)}">View policies</button></div>${sortPols(rows.filter(r=>(r.name||"").trim().toLowerCase()===k)).map(r=>`<div class="prow" style="padding:8px 0"><div style="min-width:0">${isAct(r)?ICON_ON:ICON_OFF}<b>${esc(typeOf(r)||"No type")}</b>${polLine(r)}<div class="mu">${esc(r.company||"-")} · ${fmtD(r.expiry)} · ${r.premium!=null?Number(r.premium).usd():"-"} · Commission ${commOf(r).usd()}${closureOf(r).closed?" ✓":""}</div></div><button class="g" style="padding:4px 10px;font-size:12px" data-pe="${esc(r.id)}">Edit</button></div>`).join("")}</div>`:"";
@@ -2504,7 +2506,7 @@ $("bSave").onclick=async()=>{
 $("moreBtn").onclick=()=>{const m=$("fMore");m.style.display=m.style.display==="block"?"none":"block"};
 $("cancel").onclick=closeForm;
 $("save").onclick=save;
-(()=>{const m=sortMode();["selSort","cliSort"].forEach(k=>{const x=$(k);if(!x)return;x.value=m;x.addEventListener("change",()=>{try{localStorage.setItem("zamat_sort",x.value)}catch(e){}["selSort","cliSort"].forEach(o=>{if($(o))$(o).value=x.value});render()})})})();$("q").oninput=render;$("selType").onchange=render;$("selComp").onchange=render;$("selStat").onchange=render;$("selYear").onchange=render;$("selCat").onchange=render;
+(()=>{const m=sortMode();["selSort","cliSort","dbSort"].forEach(k=>{const x=$(k);if(!x)return;x.value=m;x.addEventListener("change",()=>{try{localStorage.setItem("zamat_sort",x.value)}catch(e){}["selSort","cliSort","dbSort"].forEach(o=>{if($(o))$(o).value=x.value});render()})})})();$("q").oninput=render;$("selType").onchange=render;$("selComp").onchange=render;$("selStat").onchange=render;$("selYear").onchange=render;$("selCat").onchange=render;
 
 async function exportBackup(){
   const csv="\uFEFF"+[COLS.join(",")].concat(rows.slice().sort((a,b)=>(a.expiry||"").localeCompare(b.expiry||"")).map(r=>COLS.map(c=>cell(r[c])).join(",")).concat(receipts.map(x=>{const o={name:x.name,type:x.type,company:x.payer,premium:x.amount,start:x.date,note:x.note,status:"receipt"};return COLS.map(c=>cell(o[c])).join(",")})).concat(customers.map(x=>{const o={name:x.name,phone:x.phone,note:x.notes,status:"customer"};return COLS.map(c=>cell(o[c])).join(",")})).concat((window.zCashItems?window.zCashItems():[]).map(x=>{const o={name:x.name,type:x.type,company:x.company,premium:x.received,policy:x.paid==null?"":String(x.paid),commission:x.commission,start:x.date,note:x.note,phone:x.status||"",renewal:x.method||"",pin:x.kind==="personal"?["personal",x.category||"",x.dir||"in"].join("|"):"",status:"cash"};return COLS.map(c=>cell(o[c])).join(",")})).concat((window.zLogItems?window.zLogItems():[]).map(x=>{const o={name:x.name,phone:x.phone,type:x.interest,company:x.kind,policy:x.status,premium:x.premium,start:x.date,renewal:x.followup,note:x.note,status:"log"};return COLS.map(c=>cell(o[c])).join(",")})).concat((window.zAgendaItems?window.zAgendaItems():[]).map(x=>{const o={name:"Agenda",start:x.date,note:x.text,status:"agenda"};return COLS.map(c=>cell(o[c])).join(",")}))).join("\r\n");
