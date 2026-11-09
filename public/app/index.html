@@ -851,6 +851,7 @@ details.zadv{background:var(--card);border:1px solid var(--bd);border-radius:14p
 </div>
 <div class="row" style="margin-bottom:8px"><select id="selType"></select><select id="selStat"><option value="">All statuses</option><option value="on">Active</option><option value="off">Non-active (canceled or expired)</option><option value="new">New</option><option value="ren">Renewed</option><option value="canc">Canceled</option></select></div>
 <details class="zmf"><summary>More filters</summary><div class="row" style="margin:8px 0"><select id="selComp"></select><select id="selYear"></select></div><select id="selCat"></select></details>
+<select id="selSort" aria-label="Order of policies" style="margin:8px 0"><option value="old">Order: Old → New (as entered)</option><option value="new">Order: New → Old</option><option value="exp">Order: By expiry date</option><option value="name">Order: By client name (A–Z)</option></select>
 <div id="cnt"></div>
 <div id="list"></div>
 </div>
@@ -859,6 +860,7 @@ details.zadv{background:var(--card);border:1px solid var(--bd);border-radius:14p
   <div class="sech"><button class="g" data-go="home" style="padding:6px 12px;font-size:13px">← Home</button><h2>Clients</h2></div>
   <select id="cliCat" aria-label="Insurance type" style="margin-bottom:8px"></select>
   <input id="cliQ" type="search" placeholder="Search name, type, policy no. or PIN" aria-label="Search clients">
+  <select id="cliSort" aria-label="Order of policies" style="margin-top:8px"><option value="old">Order: Old → New (as entered)</option><option value="new">Order: New → Old</option><option value="exp">Order: By expiry date</option><option value="name">Order: By client name (A–Z)</option></select>
   <div id="cliCnt" class="mu" style="margin:10px 2px"></div>
   <div class="ctw"><table class="ctab"><thead><tr><th>Client</th><th>Insurance type</th><th>Policy No.</th><th>PIN</th></tr></thead><tbody id="cliBody"></tbody></table></div>
 </div>
@@ -1942,10 +1944,13 @@ async function fixTypes(){if(typesFixed||!db)return;typesFixed=true;
   try{if(cc.updateMany)await cc.updateMany(ups);else for(const[id,u]of ups)await cc.doc(id).update(u)}catch(e){}}
 function pinOf(r){if(r.pin)return r.pin;const m=/(?:^|·\s*)[^·:]*\bpin\b[^·:]*:\s*([^·]+)/i.exec(r.note||"");return m?m[1].trim():""}
 function polLine(r){const T=r.term||1,ch=isCanc(r)?'<span class="stc x">Canceled</span>':T>1?`<span class="stc r">Renewed${T>2?" ×"+(T-1):""}</span>`:'<span class="stc n">New</span>';const rv=isRenewed(r)?renewedMap().get(r):null;return `<div class="pno">${ch}${rv?`<span class="stc r">Renewed as ${esc(rv.policy||"new policy")}</span>`:""}<span>Policy No. <b>${r.policy?esc(r.policy):"–"}</b></span><span>PIN <b>${pinOf(r)?esc(pinOf(r)):"–"}</b></span></div>`}
+function entT(r){if(r&&r.created)return Number(r.created)||0;const m=/^[0-9a-z]{8}/.exec(String(r&&r.id||""));if(!m)return 0;const t=parseInt(m[0],36);return t>1.5e12&&t<Date.now()+864e5?t:0}
+function sortMode(){try{return localStorage.getItem("zamat_sort")||"old"}catch(e){return"old"}}
+function sortPols(l,m){m=m||sortMode();const st=(a,b)=>(a.start||"").localeCompare(b.start||"");const f=m==="new"?(a,b)=>entT(b)-entT(a)||st(b,a):m==="exp"?(a,b)=>(a.expiry||"9").localeCompare(b.expiry||"9"):m==="name"?(a,b)=>(a.name||"").localeCompare(b.name||"")||typeOf(a).localeCompare(typeOf(b)):(a,b)=>entT(a)-entT(b)||st(a,b);return l.sort(f)}
 function renderCli(){
   const b=$("cliBody");if(!b)return;const q=($("cliQ").value||"").trim().toLowerCase();
   const cs=$("cliCat");if(!cs.options.length)cs.innerHTML=catOpts();const cv=cs.value;
-  const l=rows.filter(r=>matchCat(r,cv)).filter(r=>!q||[r.name,r.type,typeOf(r),r.policy,pinOf(r)].join(" ").toLowerCase().includes(q)).sort((a,c)=>(a.name||"").localeCompare(c.name||"")||typeOf(a).localeCompare(typeOf(c)));
+  const l=rows.filter(r=>matchCat(r,cv)).filter(r=>!q||[r.name,r.type,typeOf(r),r.policy,pinOf(r)].join(" ").toLowerCase().includes(q));sortPols(l);
   const n=new Set(l.map(r=>(r.name||"").trim().toLowerCase())).size;
   const na=l.filter(isAct).length;
   $("cliCnt").textContent=`${n} client${n===1?"":"s"} · ${l.length} polic${l.length===1?"y":"ies"} · ${na} active`;
@@ -1977,7 +1982,7 @@ function render(){
   fill($("selComp"),[...new Set(all.map(r=>r.company).filter(Boolean))].sort(),"All companies");
   fill($("selYear"),[...new Set(all.flatMap(r=>termsOf(r).map(x=>x.y)))].filter(Boolean).sort().reverse(),"All years");
   renderCats();const t=$("selType").value,c=$("selComp").value,st=$("selStat").value,yr=$("selYear").value,cat=$("selCat").value;
-  const list=all.filter(r=>(!yr||termsOf(r).some(x=>x.y===yr))&&(!q||[r.name,r.policy,pinOf(r),r.type,typeOf(r),r.phone,r.company].join(" ").toLowerCase().includes(q))&&(!t||r.type===t)&&(!c||r.company===c)&&(!st||(st==="new"?(r.term||1)===1&&!isCanc(r):st==="ren"?(r.term||1)>1&&!isCanc(r):st==="canc"?isCanc(r):(st==="on")===isAct(r)))&&matchCat(r,cat));
+  const list=all.filter(r=>(!yr||termsOf(r).some(x=>x.y===yr))&&(!q||[r.name,r.policy,pinOf(r),r.type,typeOf(r),r.phone,r.company].join(" ").toLowerCase().includes(q))&&(!t||r.type===t)&&(!c||r.company===c)&&(!st||(st==="new"?(r.term||1)===1&&!isCanc(r):st==="ren"?(r.term||1)>1&&!isCanc(r):st==="canc"?isCanc(r):(st==="on")===isAct(r)))&&matchCat(r,cat));sortPols(list);
   const tot=list.reduce((a,r)=>a+(yr?termsOf(r).filter(x=>x.y===yr).reduce((b,x)=>b+(Number(x.p)||0),0):(Number(r.premium)||0)),0);
   $("cnt").textContent=`${list.length} ${list.length===1?"policy":"policies"}`+(yr?` in ${yr}`:"")+(tot?` · Total premium${yr?" "+yr:""}: ${tot.usd()}`:"");
   $("list").innerHTML=list.map(r=>{
@@ -2117,7 +2122,7 @@ function renderDb(){
   const l=all.filter(([k,o])=>!q||(o.name+" "+o.phone).toLowerCase().includes(q)).sort((a,b)=>a[1].name.localeCompare(b[1].name));
   $("dbList").innerHTML=l.length?`<div class="clist">`+l.map(([k,o])=>{
     const open=openCli.has(k);
-    const body=open?`<div class="cbody">${o.notes?`<div class="mu" style="margin:0 0 10px">${esc(o.notes)}</div>`:""}<div class="acts" style="margin-bottom:6px"><button class="g" data-ce="${esc(k)}">Edit client</button><button class="g" data-cp="${esc(k)}">+ Policy</button><button class="g" data-cv="${esc(k)}">View policies</button></div>${rows.filter(r=>(r.name||"").trim().toLowerCase()===k).sort((a,b)=>(a.expiry||"9").localeCompare(b.expiry||"9")).map(r=>`<div class="prow" style="padding:8px 0"><div style="min-width:0">${isAct(r)?ICON_ON:ICON_OFF}<b>${esc(typeOf(r)||"No type")}</b>${polLine(r)}<div class="mu">${esc(r.company||"-")} · ${fmtD(r.expiry)} · ${r.premium!=null?Number(r.premium).usd():"-"} · Commission ${commOf(r).usd()}${closureOf(r).closed?" ✓":""}</div></div><button class="g" style="padding:4px 10px;font-size:12px" data-pe="${esc(r.id)}">Edit</button></div>`).join("")}</div>`:"";
+    const body=open?`<div class="cbody">${o.notes?`<div class="mu" style="margin:0 0 10px">${esc(o.notes)}</div>`:""}<div class="acts" style="margin-bottom:6px"><button class="g" data-ce="${esc(k)}">Edit client</button><button class="g" data-cp="${esc(k)}">+ Policy</button><button class="g" data-cv="${esc(k)}">View policies</button></div>${sortPols(rows.filter(r=>(r.name||"").trim().toLowerCase()===k)).map(r=>`<div class="prow" style="padding:8px 0"><div style="min-width:0">${isAct(r)?ICON_ON:ICON_OFF}<b>${esc(typeOf(r)||"No type")}</b>${polLine(r)}<div class="mu">${esc(r.company||"-")} · ${fmtD(r.expiry)} · ${r.premium!=null?Number(r.premium).usd():"-"} · Commission ${commOf(r).usd()}${closureOf(r).closed?" ✓":""}</div></div><button class="g" style="padding:4px 10px;font-size:12px" data-pe="${esc(r.id)}">Edit</button></div>`).join("")}</div>`:"";
     return `<div class="crow${open?" open":""}"><div class="chead" data-tog="${esc(k)}"><div class="cav">${esc((o.name||"?").trim().charAt(0).toUpperCase())}</div><div class="cmain"><div class="nm">${esc(o.name)}</div><div class="mu">${o.phone?esc(o.phone)+" · ":""}${o.n} polic${o.n===1?"y":"ies"} · ${o.a} active</div></div><div class="cr"><b>${o.prem.usd()}</b>${o.bal>0?`<div class="mu" style="color:var(--org);margin:0">Due ${o.bal.usd()}</div>`:""}</div><span class="chev">›</span></div>${body}</div>`;
   }).join("")+`</div>`:'<div class="empty">No clients yet. Click "+ New client".</div>';
 }
@@ -2499,7 +2504,7 @@ $("bSave").onclick=async()=>{
 $("moreBtn").onclick=()=>{const m=$("fMore");m.style.display=m.style.display==="block"?"none":"block"};
 $("cancel").onclick=closeForm;
 $("save").onclick=save;
-$("q").oninput=render;$("selType").onchange=render;$("selComp").onchange=render;$("selStat").onchange=render;$("selYear").onchange=render;$("selCat").onchange=render;
+(()=>{const m=sortMode();["selSort","cliSort"].forEach(k=>{const x=$(k);if(!x)return;x.value=m;x.addEventListener("change",()=>{try{localStorage.setItem("zamat_sort",x.value)}catch(e){}["selSort","cliSort"].forEach(o=>{if($(o))$(o).value=x.value});render()})})})();$("q").oninput=render;$("selType").onchange=render;$("selComp").onchange=render;$("selStat").onchange=render;$("selYear").onchange=render;$("selCat").onchange=render;
 
 async function exportBackup(){
   const csv="\uFEFF"+[COLS.join(",")].concat(rows.slice().sort((a,b)=>(a.expiry||"").localeCompare(b.expiry||"")).map(r=>COLS.map(c=>cell(r[c])).join(",")).concat(receipts.map(x=>{const o={name:x.name,type:x.type,company:x.payer,premium:x.amount,start:x.date,note:x.note,status:"receipt"};return COLS.map(c=>cell(o[c])).join(",")})).concat(customers.map(x=>{const o={name:x.name,phone:x.phone,note:x.notes,status:"customer"};return COLS.map(c=>cell(o[c])).join(",")})).concat((window.zCashItems?window.zCashItems():[]).map(x=>{const o={name:x.name,type:x.type,company:x.company,premium:x.received,policy:x.paid==null?"":String(x.paid),commission:x.commission,start:x.date,note:x.note,phone:x.status||"",renewal:x.method||"",pin:x.kind==="personal"?["personal",x.category||"",x.dir||"in"].join("|"):"",status:"cash"};return COLS.map(c=>cell(o[c])).join(",")})).concat((window.zLogItems?window.zLogItems():[]).map(x=>{const o={name:x.name,phone:x.phone,type:x.interest,company:x.kind,policy:x.status,premium:x.premium,start:x.date,renewal:x.followup,note:x.note,status:"log"};return COLS.map(c=>cell(o[c])).join(",")})).concat((window.zAgendaItems?window.zAgendaItems():[]).map(x=>{const o={name:"Agenda",start:x.date,note:x.text,status:"agenda"};return COLS.map(c=>cell(o[c])).join(",")}))).join("\r\n");
