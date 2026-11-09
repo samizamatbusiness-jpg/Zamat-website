@@ -145,6 +145,7 @@ button[style*="padding:4px"],button[style*="padding:5px"],button[style*="padding
 .bk.warn{background:var(--orgbg);color:var(--org);border-color:transparent}
 .bk button{min-height:34px;padding:6px 12px;font-size:13px}
 .clist{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.csug{border:1px solid var(--bd);border-radius:12px;background:var(--card);margin-top:6px;overflow:hidden}.csug button{display:flex;width:100%;align-items:center;gap:10px;text-align:start;background:none;border:0;border-bottom:1px solid var(--bd);border-radius:0;padding:10px 12px;color:var(--tx);font:inherit;min-height:0}.csug button:last-child{border-bottom:0}.csug small{display:block;color:var(--mu);font-size:12px}.csug .cav{width:30px;height:30px;font-size:13px}
 .crow{border-bottom:1px solid var(--bd)}.crow:last-child{border-bottom:0}
 .chead{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer}
 .cav{width:38px;height:38px;border-radius:50%;background:var(--soft);color:var(--ac);display:grid;place-items:center;font-weight:800;flex:none;border:1px solid var(--bd)}
@@ -912,7 +913,7 @@ details.zadv{background:var(--card);border:1px solid var(--bd);border-radius:14p
   <div class="bar"><input id="dbQ" type="search" placeholder="Search clients"><button id="dbNew">+ New client</button></div>
   <select id="dbSort" aria-label="Order of clients" style="margin-bottom:8px"><option value="old">Order: Old → New (as entered / renewed)</option><option value="new">Order: New → Old</option><option value="exp">Order: By expiry date</option><option value="name">Order: By client name (A–Z)</option></select>
   <div id="cForm" class="panel">
-    <label>Client name *</label><input id="cName">
+    <label>Client name *</label><input id="cName" autocomplete="off" placeholder="Type the name — existing clients will show"><div id="cSug" class="csug" hidden></div><div id="cEx" class="mu" hidden style="margin:6px 2px 0;color:var(--grn)"></div>
     <label>Phone</label><input id="cPhone" inputmode="tel">
     <div id="cPolWrap">
       <div class="pft">First policy (optional)</div>
@@ -2141,6 +2142,7 @@ function openClient(key){
   $("cDel").style.display=o&&o.n===0&&o.custId?"inline-block":"none";
   $("cPolWrap").style.display=key?"none":"block";
   ["cType","cComp","cPrem","cExp","cComm","cPol","cPin"].forEach(id=>$(id).value="");$("cCommT").value="pct";
+  $("cSug").hidden=true;$("cEx").hidden=true;
   $("cForm").style.display="block";$("cName").focus();
 }
 async function saveClient(){
@@ -2165,7 +2167,7 @@ async function saveClient(){
       }
       if(wantPol){
         const exp=$("cExp").value||addYear(todayStr());
-        await db.collection("clients").doc().set({payments:[],term:1,name,phone,commission:comm===""?null:Number(comm),commtype:$("cCommT").value,hist:[],status:null,type,policy:cpol,pin:cpin,company:comp,premium:prem===""?null:Number(prem),start:subYear(exp),expiry:exp,renewal:exp,note:"",fileId:null,updated:Date.now()});
+        await db.collection("clients").doc().set({payments:[],term:1,name:ex?ex.name:name,phone:ex?(ex.phone||phone):phone,commission:comm===""?null:Number(comm),commtype:$("cCommT").value,hist:[],status:null,type,policy:cpol,pin:cpin,company:comp,premium:prem===""?null:Number(prem),start:subYear(exp),expiry:exp,renewal:exp,note:"",fileId:null,updated:Date.now()});
       }
     }else{
       const old=g[cEdit];
@@ -2355,6 +2357,15 @@ try{const v=localStorage.getItem("zamat_ren_f");if(v&&[...$("rFilter").options].
 $("rFilter").onchange=()=>{try{localStorage.setItem("zamat_ren_f",$("rFilter").value)}catch(e){};renderRen();render()};
 $("dbQ").oninput=renderDb;
 $("dbNew").onclick=()=>openClient(null);
+(()=>{const nz=v=>String(v||"").toLowerCase().replace(/\b(mr|mrs|miss|ms|dr|sheikh)\b\.?/g," ").replace(/[^\p{L}\p{N}]+/gu," ").trim();
+  const exNote=()=>{const g=clientsMap(),o=g[$("cName").value.trim().toLowerCase()];const e=$("cEx");if(!cEdit&&o){e.hidden=false;e.textContent=`✓ Already your client (${o.n} polic${o.n===1?"y":"ies"}). A policy you add here goes under ${o.name}.`}else e.hidden=true};
+  const sug=()=>{const box=$("cSug");if(cEdit){box.hidden=true;return}const q=nz($("cName").value);if(q.length<2){box.hidden=true;exNote();return}
+    const w=q.split(" "),g=clientsMap();const l=Object.entries(g).filter(([k,o])=>{const t=nz(o.name+" "+(o.phone||""));return w.every(x=>t.includes(x))}).sort((a,b)=>a[1].name.localeCompare(b[1].name)).slice(0,6);
+    if(!l.length||(l.length===1&&l[0][0]===$("cName").value.trim().toLowerCase())){box.hidden=true;exNote();return}
+    box.innerHTML=l.map(([k,o])=>`<button type="button" data-csk="${esc(k)}"><span class="cav">${esc(o.name.charAt(0).toUpperCase())}</span><span><b>${esc(o.name)}</b><small>${o.phone?esc(o.phone)+" · ":""}${o.n} polic${o.n===1?"y":"ies"} · ${o.a} active</small></span></button>`).join("");box.hidden=false;exNote()};
+  $("cName").addEventListener("input",sug);
+  $("cSug").addEventListener("click",e=>{const b=e.target.closest("[data-csk]");if(!b)return;const o=clientsMap()[b.dataset.csk];if(!o)return;$("cName").value=o.name;if(!$("cPhone").value)$("cPhone").value=o.phone||"";$("cSug").hidden=true;exNote();const t=$("cType");if(t&&$("cPolWrap").style.display!=="none")t.focus()});
+})();
 $("zYear").textContent=homeYr();try{localStorage.removeItem("zamat_home_year")}catch(e){}
 $("zBk").addEventListener("click",()=>$("bkTile").click());
 
