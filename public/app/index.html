@@ -853,6 +853,7 @@ details.zadv{background:var(--card);border:1px solid var(--bd);border-radius:14p
 <details class="zmf"><summary>More filters</summary><div class="row" style="margin:8px 0"><select id="selComp"></select><select id="selYear"></select></div><select id="selCat"></select></details>
 <select id="selSort" aria-label="Order of policies" style="margin:8px 0"><option value="old">Order: Old → New (as entered / renewed)</option><option value="new">Order: New → Old</option><option value="exp">Order: By expiry date</option><option value="name">Order: By client name (A–Z)</option></select>
 <div id="cnt"></div>
+<button type="button" id="zLast" class="g" hidden style="width:100%;text-align:start;margin:0 0 10px;padding:10px 12px;font-size:13px"></button>
 <div id="list"></div>
 </div>
 
@@ -2005,6 +2006,8 @@ function render(){
     ${payln}${cmln}${prevLine(r)}${r.note?`<div class="note">${esc(r.note)}</div>`:""}
     <div class="acts">${r.fileId?`<a href="/_blob/${esc(r.fileId)}" target="_blank" rel="noopener">Document</a>`:""}
     <button class="g" data-p="${esc(r.id)}">Payments</button><button class="g" data-r="${esc(r.id)}">Renew</button><button class="g" data-c="${esc(r.id)}">${isCanc(r)?"Reactivate":"Cancel policy"}</button></div><div style="text-align:end;margin-top:10px"><button class="d" data-d="${esc(r.id)}" style="min-height:0;padding:5px 10px;font-size:12px">Delete policy</button></div></div></div>`}).join("")||`<div class="empty">No policies yet. Add a client in Client list, then click "+ Policy" or "+ New policy".</div>`;
+  {const zl=$("zLast"),lp=rows.slice().sort((a,b)=>entT(b)-entT(a)||(b.start||"").localeCompare(a.start||""))[0];
+   if(zl){if(lp){zl.hidden=false;zl.dataset.id=lp.id;zl.innerHTML=`↓ Last policy: <b>${esc(lp.name||"")}</b> · ${esc(typeOf(lp)||"")}${(lp.term||1)>1?" (renewed)":""} · ${fmtD(lp.start)}`}else zl.hidden=true}}
   renderPF();renderPay();renderCol();renderPayList();renderHome();renderRen();renderDb();fillNames();
 }
 
@@ -2510,7 +2513,8 @@ $("bSave").onclick=async()=>{
 $("moreBtn").onclick=()=>{const m=$("fMore");m.style.display=m.style.display==="block"?"none":"block"};
 $("cancel").onclick=closeForm;
 $("save").onclick=save;
-(()=>{const m=sortMode();["selSort","cliSort","dbSort"].forEach(k=>{const x=$(k);if(!x)return;x.value=m;x.addEventListener("change",()=>{try{localStorage.setItem("zamat_sort",x.value)}catch(e){}["selSort","cliSort","dbSort"].forEach(o=>{if($(o))$(o).value=x.value});render()})})})();$("q").oninput=render;$("selType").onchange=render;$("selComp").onchange=render;$("selStat").onchange=render;$("selYear").onchange=render;$("selCat").onchange=render;
+(()=>{const m=sortMode();["selSort","cliSort","dbSort"].forEach(k=>{const x=$(k);if(!x)return;x.value=m;x.addEventListener("change",()=>{try{localStorage.setItem("zamat_sort",x.value)}catch(e){}["selSort","cliSort","dbSort"].forEach(o=>{if($(o))$(o).value=x.value});render()})})})();$("zLast").addEventListener("click",()=>{const id=$("zLast").dataset.id;if(!id)return;const go=()=>{const b=document.querySelector(`#list [data-zcs="${CSS.escape(id)}"]`);if(!b)return false;zOpen.add(id);b.closest(".card").classList.add("open");b.scrollIntoView({behavior:"smooth",block:"center"});return true};
+  if(!go()){$("q").value="";["selType","selComp","selStat","selYear","selCat"].forEach(k=>{if($(k))$(k).value=""});["selSort","cliSort","dbSort"].forEach(k=>{if($(k))$(k).value="old"});try{localStorage.setItem("zamat_sort","old")}catch(e){}render();setTimeout(go,50)}});$("q").oninput=render;$("selType").onchange=render;$("selComp").onchange=render;$("selStat").onchange=render;$("selYear").onchange=render;$("selCat").onchange=render;
 
 async function exportBackup(){
   const csv="\uFEFF"+[COLS.join(",")].concat(rows.slice().sort((a,b)=>(a.expiry||"").localeCompare(b.expiry||"")).map(r=>COLS.map(c=>cell(r[c])).join(",")).concat(receipts.map(x=>{const o={name:x.name,type:x.type,company:x.payer,premium:x.amount,start:x.date,note:x.note,status:"receipt"};return COLS.map(c=>cell(o[c])).join(",")})).concat(customers.map(x=>{const o={name:x.name,phone:x.phone,note:x.notes,status:"customer"};return COLS.map(c=>cell(o[c])).join(",")})).concat((window.zCashItems?window.zCashItems():[]).map(x=>{const o={name:x.name,type:x.type,company:x.company,premium:x.received,policy:x.paid==null?"":String(x.paid),commission:x.commission,start:x.date,note:x.note,phone:x.status||"",renewal:x.method||"",pin:x.kind==="personal"?["personal",x.category||"",x.dir||"in"].join("|"):"",status:"cash"};return COLS.map(c=>cell(o[c])).join(",")})).concat((window.zLogItems?window.zLogItems():[]).map(x=>{const o={name:x.name,phone:x.phone,type:x.interest,company:x.kind,policy:x.status,premium:x.premium,start:x.date,renewal:x.followup,note:x.note,status:"log"};return COLS.map(c=>cell(o[c])).join(",")})).concat((window.zAgendaItems?window.zAgendaItems():[]).map(x=>{const o={name:"Agenda",start:x.date,note:x.text,status:"agenda"};return COLS.map(c=>cell(o[c])).join(",")}))).join("\r\n");
