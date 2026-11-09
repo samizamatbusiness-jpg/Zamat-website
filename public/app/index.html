@@ -1373,7 +1373,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
     const d=T.closest("[data-zld]");if(d&&db){const it=items.find(i=>i.id===d.dataset.zld);if(it&&await ask(`Delete the entry for ${it.name}?`,"Delete")){try{await db.collection("log").doc(it.id).delete()}catch(y){}}return}
     const c=T.closest("[data-zlc]");if(c&&db){const it=items.find(i=>i.id===c.dataset.zlc);if(!it)return;
       try{await db.collection("log").doc(it.id).update({status:"cli",followup:"",updated:Date.now()})}catch(y){}
-      showTab("pol");setTimeout(()=>{try{openForm(null);el("fName").value=it.name;if(it.interest)el("fType").value=it.interest;if(it.premium)el("fPrem").value=it.premium;el("fStart").value=tday();el("form").scrollIntoView({behavior:"smooth",block:"start"})}catch(y){}},50);return}
+      showTab("pol");setTimeout(()=>{try{openForm(null);el("fName").value=it.name;try{autoPin("fName","fPin")}catch(z){}if(it.interest)el("fType").value=it.interest;if(it.premium)el("fPrem").value=it.premium;el("fStart").value=tday();el("form").scrollIntoView({behavior:"smooth",block:"start"})}catch(y){}},50);return}
   });
   el("zlQ").addEventListener("input",render);
   el("zlDate").addEventListener("change",fuSeg);el("zlFuDate").addEventListener("change",fuSeg);
@@ -2143,6 +2143,7 @@ function openClient(key){
   $("cPolWrap").style.display=key?"none":"block";
   ["cType","cComp","cPrem","cExp","cComm","cPol","cPin"].forEach(id=>$(id).value="");$("cCommT").value="pct";
   $("cSug").hidden=true;$("cEx").hidden=true;
+  $("cPin").dataset.auto="";
   $("cForm").style.display="block";$("cName").focus();
 }
 async function saveClient(){
@@ -2319,7 +2320,7 @@ function renderCol(){
 function openForm(r){
   editing=r?r.id:null;editingFile=r?r.fileId||null:null;
   $("fName").value=r?.name||"";$("fType").value=r?.type||"";
-  $("fPol").value=r?.policy||"";$("fPin").value=r?.pin||"";$("fComp").value=r?.company||"";$("fComm").value=r?.commission??"";$("fCommT").value=r?.commtype||"pct";$("fPrem").value=r?.premium??"";
+  $("fPol").value=r?.policy||"";$("fPin").value=r?.pin||"";$("fPin").dataset.auto="";$("fComp").value=r?.company||"";$("fComm").value=r?.commission??"";$("fCommT").value=r?.commtype||"pct";$("fPrem").value=r?.premium??"";
   $("fStart").value=r?.start||"";$("fExp").value=r?.expiry||"";
   $("fRen").value=r?.renewal||"";$("fNote").value=r?.note||"";$("fFile").value="";
   $("fPaid").value="";$("fPaidWrap").style.display=r?"none":"block";$("fMore").style.display=r?"block":"none";
@@ -2357,6 +2358,9 @@ try{const v=localStorage.getItem("zamat_ren_f");if(v&&[...$("rFilter").options].
 $("rFilter").onchange=()=>{try{localStorage.setItem("zamat_ren_f",$("rFilter").value)}catch(e){};renderRen();render()};
 $("dbQ").oninput=renderDb;
 $("dbNew").onclick=()=>openClient(null);
+function pinFor(name){const k=String(name||"").trim().toLowerCase();if(!k)return"";const l=rows.filter(r=>(r.name||"").trim().toLowerCase()===k&&pinOf(r)).sort((a,b)=>entT(b)-entT(a));return l.length?pinOf(l[0]):""}
+function autoPin(nId,pId){const n=$(nId),p=$(pId);if(!n||!p)return;const v=pinFor(n.value);if(!p.value.trim()||p.dataset.auto==="1"){p.value=v;p.dataset.auto=v?"1":""}}
+[["cName","cPin"],["fName","fPin"]].forEach(([n,p])=>{$(n).addEventListener("input",()=>autoPin(n,p));$(n).addEventListener("change",()=>autoPin(n,p));$(p).addEventListener("input",()=>{$(p).dataset.auto=""})});
 (()=>{const nz=v=>String(v||"").toLowerCase().replace(/\b(mr|mrs|miss|ms|dr|sheikh)\b\.?/g," ").replace(/[^\p{L}\p{N}]+/gu," ").trim();
   const exNote=()=>{const g=clientsMap(),o=g[$("cName").value.trim().toLowerCase()];const e=$("cEx");if(!cEdit&&o){e.hidden=false;e.textContent=`✓ Already your client (${o.n} polic${o.n===1?"y":"ies"}). A policy you add here goes under ${o.name}.`}else e.hidden=true};
   const sug=()=>{const box=$("cSug");if(cEdit){box.hidden=true;return}const q=nz($("cName").value);if(q.length<2){box.hidden=true;exNote();return}
@@ -2364,7 +2368,7 @@ $("dbNew").onclick=()=>openClient(null);
     if(!l.length||(l.length===1&&l[0][0]===$("cName").value.trim().toLowerCase())){box.hidden=true;exNote();return}
     box.innerHTML=l.map(([k,o])=>`<button type="button" data-csk="${esc(k)}"><span class="cav">${esc(o.name.charAt(0).toUpperCase())}</span><span><b>${esc(o.name)}</b><small>${o.phone?esc(o.phone)+" · ":""}${o.n} polic${o.n===1?"y":"ies"} · ${o.a} active</small></span></button>`).join("");box.hidden=false;exNote()};
   $("cName").addEventListener("input",sug);
-  $("cSug").addEventListener("click",e=>{const b=e.target.closest("[data-csk]");if(!b)return;const o=clientsMap()[b.dataset.csk];if(!o)return;$("cName").value=o.name;if(!$("cPhone").value)$("cPhone").value=o.phone||"";$("cSug").hidden=true;exNote();const t=$("cType");if(t&&$("cPolWrap").style.display!=="none")t.focus()});
+  $("cSug").addEventListener("click",e=>{const b=e.target.closest("[data-csk]");if(!b)return;const o=clientsMap()[b.dataset.csk];if(!o)return;$("cName").value=o.name;if(!$("cPhone").value)$("cPhone").value=o.phone||"";$("cSug").hidden=true;exNote();autoPin("cName","cPin");const t=$("cType");if(t&&$("cPolWrap").style.display!=="none")t.focus()});
 })();
 $("zYear").textContent=homeYr();try{localStorage.removeItem("zamat_home_year")}catch(e){}
 $("zBk").addEventListener("click",()=>$("bkTile").click());
@@ -2470,7 +2474,7 @@ $("dbList").onclick=e=>{
   const T=e.target,g=clientsMap();
   const tg=T.closest("[data-tog]");if(tg){const k=tg.dataset.tog;openCli.has(k)?openCli.delete(k):openCli.add(k);renderDb();return}
   if(T.dataset.ce){openClient(T.dataset.ce);$("cForm").scrollIntoView({behavior:"smooth",block:"start"})}
-  if(T.dataset.cp&&g[T.dataset.cp]){const nm=g[T.dataset.cp].name;openForm(null);$("fName").value=nm;$("form").scrollIntoView({behavior:"smooth",block:"start"})}
+  if(T.dataset.cp&&g[T.dataset.cp]){const nm=g[T.dataset.cp].name;openForm(null);$("fName").value=nm;autoPin("fName","fPin");$("form").scrollIntoView({behavior:"smooth",block:"start"})}
   if(T.dataset.pe){const r=rows.find(x=>x.id===T.dataset.pe);if(r){openForm(r);$("form").scrollIntoView({behavior:"smooth",block:"start"})}}
   if(T.dataset.cv&&g[T.dataset.cv]){$("q").value=g[T.dataset.cv].name;$("selType").value="";$("selComp").value="";$("selStat").value="";$("selCat").value="";showTab("pol");render()}
 };
