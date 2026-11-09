@@ -851,7 +851,7 @@ details.zadv{background:var(--card);border:1px solid var(--bd);border-radius:14p
 </div>
 <div class="row" style="margin-bottom:8px"><select id="selType"></select><select id="selStat"><option value="">All statuses</option><option value="on">Active</option><option value="off">Non-active (canceled or expired)</option><option value="new">New</option><option value="ren">Renewed</option><option value="canc">Canceled</option></select></div>
 <details class="zmf"><summary>More filters</summary><div class="row" style="margin:8px 0"><select id="selComp"></select><select id="selYear"></select></div><select id="selCat"></select></details>
-<select id="selSort" aria-label="Order of policies" style="margin:8px 0"><option value="old">Order: Old → New (as entered)</option><option value="new">Order: New → Old</option><option value="exp">Order: By expiry date</option><option value="name">Order: By client name (A–Z)</option></select>
+<select id="selSort" aria-label="Order of policies" style="margin:8px 0"><option value="old">Order: Old → New (as entered / renewed)</option><option value="new">Order: New → Old</option><option value="exp">Order: By expiry date</option><option value="name">Order: By client name (A–Z)</option></select>
 <div id="cnt"></div>
 <div id="list"></div>
 </div>
@@ -860,7 +860,7 @@ details.zadv{background:var(--card);border:1px solid var(--bd);border-radius:14p
   <div class="sech"><button class="g" data-go="home" style="padding:6px 12px;font-size:13px">← Home</button><h2>Clients</h2></div>
   <select id="cliCat" aria-label="Insurance type" style="margin-bottom:8px"></select>
   <input id="cliQ" type="search" placeholder="Search name, type, policy no. or PIN" aria-label="Search clients">
-  <select id="cliSort" aria-label="Order of policies" style="margin-top:8px"><option value="old">Order: Old → New (as entered)</option><option value="new">Order: New → Old</option><option value="exp">Order: By expiry date</option><option value="name">Order: By client name (A–Z)</option></select>
+  <select id="cliSort" aria-label="Order of policies" style="margin-top:8px"><option value="old">Order: Old → New (as entered / renewed)</option><option value="new">Order: New → Old</option><option value="exp">Order: By expiry date</option><option value="name">Order: By client name (A–Z)</option></select>
   <div id="cliCnt" class="mu" style="margin:10px 2px"></div>
   <div class="ctw"><table class="ctab"><thead><tr><th>Client</th><th>Insurance type</th><th>Policy No.</th><th>PIN</th></tr></thead><tbody id="cliBody"></tbody></table></div>
 </div>
@@ -909,7 +909,7 @@ details.zadv{background:var(--card);border:1px solid var(--bd);border-radius:14p
 <div class="zseg"><button type="button" data-go="pol">Policies</button><button type="button" data-go="db" class="on">Client list · + New</button></div>
   <div class="stats"><div class="stat"><b id="dbN">0</b>Clients</div><div class="stat"><b id="dbA">0</b>Active policies</div><div class="stat"><b id="dbT" style="font-size:18px">$0</b>Active premium (USD)</div></div>
   <div class="bar"><input id="dbQ" type="search" placeholder="Search clients"><button id="dbNew">+ New client</button></div>
-  <select id="dbSort" aria-label="Order of clients" style="margin-bottom:8px"><option value="old">Order: Old → New (as entered)</option><option value="new">Order: New → Old</option><option value="exp">Order: By expiry date</option><option value="name">Order: By client name (A–Z)</option></select>
+  <select id="dbSort" aria-label="Order of clients" style="margin-bottom:8px"><option value="old">Order: Old → New (as entered / renewed)</option><option value="new">Order: New → Old</option><option value="exp">Order: By expiry date</option><option value="name">Order: By client name (A–Z)</option></select>
   <div id="cForm" class="panel">
     <label>Client name *</label><input id="cName">
     <label>Phone</label><input id="cPhone" inputmode="tel">
@@ -1945,7 +1945,11 @@ async function fixTypes(){if(typesFixed||!db)return;typesFixed=true;
   try{if(cc.updateMany)await cc.updateMany(ups);else for(const[id,u]of ups)await cc.doc(id).update(u)}catch(e){}}
 function pinOf(r){if(r.pin)return r.pin;const m=/(?:^|·\s*)[^·:]*\bpin\b[^·:]*:\s*([^·]+)/i.exec(r.note||"");return m?m[1].trim():""}
 function polLine(r){const T=r.term||1,ch=isCanc(r)?'<span class="stc x">Canceled</span>':T>1?`<span class="stc r">Renewed${T>2?" ×"+(T-1):""}</span>`:'<span class="stc n">New</span>';const rv=isRenewed(r)?renewedMap().get(r):null;return `<div class="pno">${ch}${rv?`<span class="stc r">Renewed as ${esc(rv.policy||"new policy")}</span>`:""}<span>Policy No. <b>${r.policy?esc(r.policy):"–"}</b></span><span>PIN <b>${pinOf(r)?esc(pinOf(r)):"–"}</b></span></div>`}
-function entT(r){if(r&&r.created)return Number(r.created)||0;const m=/^[0-9a-z]{8}/.exec(String(r&&r.id||""));if(!m)return 0;const t=parseInt(m[0],36);return t>1.5e12&&t<Date.now()+864e5?t:0}
+function entT0(r){if(r&&r.created)return Number(r.created)||0;const m=/^[0-9a-z]{8}/.exec(String(r&&r.id||""));if(!m)return 0;const t=parseInt(m[0],36);return t>1.5e12&&t<Date.now()+864e5?t:0}
+function entT(r){const b=entT0(r);if(!r)return b;let rw=Number(r.renewedAt)||0;
+  /* renewed inside Zamat before renewedAt existed: the last change is the renewal */
+  if(!rw&&(r.term||1)>1&&Array.isArray(r.tx)&&r.tx.some(t=>t&&t.i)&&r.start&&!r.tx.some(t=>t&&t.i===r.start))rw=Number(r.updated)||0;
+  return Math.max(b,rw)}
 function sortMode(){try{return localStorage.getItem("zamat_sort")||"old"}catch(e){return"old"}}
 function sortPols(l,m){m=m||sortMode();const st=(a,b)=>(a.start||"").localeCompare(b.start||"");const f=m==="new"?(a,b)=>entT(b)-entT(a)||st(b,a):m==="exp"?(a,b)=>(a.expiry||"9").localeCompare(b.expiry||"9"):m==="name"?(a,b)=>(a.name||"").localeCompare(b.name||"")||typeOf(a).localeCompare(typeOf(b)):(a,b)=>entT(a)-entT(b)||st(a,b);return l.sort(f)}
 function renderCli(){
@@ -2844,7 +2848,7 @@ const listClick=async e=>{
       if((v.premium!=null&&!(v.premium>=0))||(v.commission!=null&&!(v.commission>=0))){$("msg").textContent="Enter valid amounts.";return}
       const cl0=closureOf(r),hist=(r.hist||[]).slice();
       hist.push({term:r.term||1,start:r.start||null,expiry:r.expiry||null,closed:cl0.closed,date:cl0.date||null,paid:cl0.paid,comm:commOf(r),premium:r.premium!=null?Number(r.premium):null});
-      const upd={start:ns,expiry:ne,renewal:ne,term:(r.term||1)+1,hist,closedTerm:null,closedDate:null,updated:Date.now()};
+      const upd={start:ns,expiry:ne,renewal:ne,term:(r.term||1)+1,hist,closedTerm:null,closedDate:null,updated:Date.now(),renewedAt:Date.now()};
       if(v.premium!=null)upd.premium=v.premium;
       if(v.commission!=null)upd.commission=v.commission;
       if(Array.isArray(r.tx)&&r.tx.length)upd.tx=r.tx.concat([{d:todayStr(),i:ns,k:"ren",p:Number(upd.premium!=null?upd.premium:r.premium)||0}]);
