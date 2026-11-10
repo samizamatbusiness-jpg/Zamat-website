@@ -505,6 +505,7 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
     if(P.style==="glass")return `:root:not([data-theme="dark"]) body{background:linear-gradient(160deg,${mix(p,"#ffffff",.84)},${mix(a,"#ffffff",.78)}) fixed!important}
 :root:not([data-theme="dark"]) .panel,:root:not([data-theme="dark"]) .card,:root:not([data-theme="dark"]) .zt-card,:root:not([data-theme="dark"]) .zl-card,:root:not([data-theme="dark"]) .tile.g,:root:not([data-theme="dark"]) .zcat button.g,:root:not([data-theme="dark"]) .stat{background:rgba(255,255,255,.62)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-color:rgba(255,255,255,.7)!important;box-shadow:0 8px 24px -14px rgba(10,20,40,.3)!important}`;
     return""}
+  window.ZPAL=["#0B2545","#14304F","#1B3D63","#2A5683","#1E5965","#2B7380","#2E7A85","#3F8E98","#7FB3B8","#CFE3E5","#E7F1F2","#FFFFFF"];
   const CKEYS=[
     ["Home page",[["homeBg","Page background","#12264B"],["topBar","Top bar","#12264B"],["cardBg","Main card","#21407A"],["cardText","Main card text","#FFFFFF"],["tileBg","Squares (Health, Motor…)","#1A3263"],["tileText","Squares text","#FFFFFF"],["tileIcon","Squares icons","#D3DAE3"],["tileBorder","Squares border","#33496F"]]],
     ["Bottom bar",[["navBg","Bottom bar","#12264B"],["navText","Bottom bar icons & text","#D3DAE3"],["homeBtn","Home button","#21407A"]]],
@@ -2924,7 +2925,9 @@ render();renderBrand();
 .zmr{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--bd)}.zmr span{flex:1;font-size:14px;color:var(--tx)}.zma{min-height:0;width:32px;height:32px;padding:0;border-radius:50%;font-size:15px}.zma:disabled{opacity:.3}
 .znav{display:grid;grid-template-columns:1fr 1fr;gap:8px}.znav small{display:block;font-size:11.5px;color:var(--mu);font-weight:600;margin-bottom:3px}
 .zcg{margin-top:12px}.zcg>b{display:block;font-size:12.5px;color:var(--mu);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px}
-.zcr{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--bd)}.zcr span{flex:1;font-size:14px;color:var(--tx)}
+.zcr{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--bd)}
+#zsColors .zcr{flex-wrap:wrap!important}#zsColors .zsw{display:flex!important;flex:0 0 100%!important;width:100%!important;height:auto!important;min-height:0!important;overflow:visible!important;flex-direction:row!important;flex-wrap:wrap!important;gap:5px!important;padding:2px 0 4px!important;margin:0!important;position:static!important}#zsColors .zsw i{display:block!important;position:static!important;flex:none!important;width:22px!important;height:22px!important;margin:0!important;border-radius:50%!important;cursor:pointer;border:1.5px solid rgba(0,0,0,.14)!important;box-sizing:border-box}#zsColors .zsw i.on{outline:2.5px solid var(--ac2);outline-offset:2px}
+.zpal{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 4px}.zpal span{font-size:12px;color:var(--mu);flex-basis:100%}.zcr span{flex:1;font-size:14px;color:var(--tx)}
 .zcr input[type=color]{width:46px;height:34px;min-height:0;padding:2px;border-radius:10px;flex:none}
 .zcr .zcx{min-height:0;width:30px;height:30px;padding:0;border-radius:50%;font-size:15px;visibility:hidden}
 .zhc{display:flex;flex-wrap:wrap;gap:6px}.zhc button.g{display:flex;align-items:center;gap:6px;min-height:34px;padding:5px 10px;font-size:12.5px;color:var(--tx);border:2px solid var(--bd)}.zhc button.g.on{border-color:var(--ac2)}.zhc i{width:16px;height:16px;border-radius:50%;display:block}
@@ -2990,8 +2993,8 @@ render();renderBrand();
 </div>
 <h3>Colors</h3>
 <div class="panel" style="display:block" id="zsColors">
-  <div class="mu" style="margin:0 0 6px">Tap any color to change it. The change shows right away.</div>
-  ${zPrefs.CKEYS.map(([g,items])=>`<div class="zcg"><b>${g}</b>${items.map(([k,l,d])=>`<div class="zcr"><span>${l}</span><button class="g zcx" data-cx="${k}" title="Back to default">↺</button><input type="color" data-ck="${k}" value="${d}"></div>`).join("")}</div>`).join("")}
+  <div class="mu" style="margin:0 0 6px">Tap a dot to use navy or turquoise, or tap the color box to pick any color. The change shows right away.</div>
+  ${zPrefs.CKEYS.map(([g,items])=>`<div class="zcg"><b>${g}</b>${items.map(([k,l,d])=>`<div class="zcr"><span>${l}</span><button class="g zcx" data-cx="${k}" title="Back to default">↺</button><input type="color" data-ck="${k}" value="${d}"><div class="zsw">${ZPAL.map(c=>`<i data-sk="${k}" data-c="${c}" style="background:${c}" title="${c}"></i>`).join("")}</div></div>`).join("")}</div>`).join("")}
   <button class="g" id="zsColR" style="width:100%;margin-top:10px">Reset all colors</button>
 </div>
 <h3>Theme</h3>
@@ -3058,7 +3061,7 @@ render();renderBrand();
       $s("zsMenu").innerHTML=ord.map((k,i)=>`<div class="zmr"><span>${MI[k]}</span><button class="g zma" data-mu="${k}" ${i===0?"disabled":""}>↑</button><button class="g zma" data-md="${k}" ${i===ord.length-1?"disabled":""}>↓</button><label class="zsw" style="margin:0"><input type="checkbox" data-mt="${k}" ${hid.includes(k)?"":"checked"}><b></b></label></div>`).join("");
       document.querySelectorAll("#zsMSize button").forEach(b=>b.classList.toggle("on",b.dataset.v===(M.size||"s")))}
     {const N=Object.assign({l1:"",l2:"cli",r1:"pay",r2:""},p.nav||{});document.querySelectorAll("select[data-nv]").forEach(x=>x.value=N[x.dataset.nv]||"")}
-    {const cc=p.colors||{};zPrefs.CKEYS.forEach(([g,it])=>it.forEach(([k,l,d])=>{const i=document.querySelector(`#zsColors input[data-ck="${k}"]`);if(i&&document.activeElement!==i)i.value=cc[k]||d;const x=document.querySelector(`#zsColors [data-cx="${k}"]`);if(x)x.style.visibility=cc[k]?"visible":"hidden"}))}
+    {const cc=p.colors||{};zPrefs.CKEYS.forEach(([g,it])=>it.forEach(([k,l,d])=>{const i=document.querySelector(`#zsColors input[data-ck="${k}"]`);if(i&&document.activeElement!==i)i.value=cc[k]||d;const x=document.querySelector(`#zsColors [data-cx="${k}"]`);if(x)x.style.visibility=cc[k]?"visible":"hidden";const cur=(cc[k]||d).toUpperCase();document.querySelectorAll(`#zsColors [data-sk="${k}"]`).forEach(w=>w.classList.toggle("on",w.dataset.c.toUpperCase()===cur))}))}
     document.querySelectorAll("#zsPre button").forEach(b=>{const d=zPrefs.PRESETS[b.dataset.p];b.classList.toggle("on",!p.custom&&["theme","font","corners","layout","mode"].every(k=>p[k]===d[k])&&(p.style||"classic")===d.style)});
     $s("zsHc").value=p.heroColor||"#16335C";document.querySelectorAll("#zsHcSw button").forEach(b=>b.classList.toggle("on",b.dataset.hc.toLowerCase()===(p.heroColor||"#16335C").toLowerCase()));if(document.activeElement!==$s("zsHero"))$s("zsHero").value=p.heroTitle;if(document.activeElement!==$s("zsSub"))$s("zsSub").value=p.subtitle;
     TILES.forEach(([k])=>$s("zsT_"+k).checked=!(p.hidden||[]).includes(k));
@@ -3075,7 +3078,7 @@ render();renderBrand();
   $s("zsMenu").onchange=e=>{const t=e.target.closest("input[data-mt]");if(!t)return;const p=P(),h=new Set((p.menu||{}).hidden||[]);t.checked?h.delete(t.dataset.mt):h.add(t.dataset.mt);p.menu=Object.assign({},p.menu||{},{hidden:[...h]});S(p)};
   document.querySelectorAll("select[data-nv]").forEach(x=>x.onchange=()=>{const p=P();p.nav=Object.assign({l1:"",l2:"cli",r1:"pay",r2:""},p.nav||{},{[x.dataset.nv]:x.value});S(p)});
   $s("zsColors").oninput=e=>{const i=e.target.closest("input[data-ck]");if(!i)return;const p=P();p.colors=Object.assign({},p.colors||{},{[i.dataset.ck]:i.value});S(p);const x=document.querySelector(`#zsColors [data-cx="${i.dataset.ck}"]`);if(x)x.style.visibility="visible"};
-  $s("zsColors").onclick=async e=>{const x=e.target.closest("[data-cx]");if(x){const p=P();if(p.colors){delete p.colors[x.dataset.cx]}S(p);draw();return}
+  $s("zsColors").onclick=async e=>{const w=e.target.closest("[data-sk]");if(w){const p=P();p.colors=Object.assign({},p.colors||{},{[w.dataset.sk]:w.dataset.c});S(p);draw();return}const x=e.target.closest("[data-cx]");if(x){const p=P();if(p.colors){delete p.colors[x.dataset.cx]}S(p);draw();return}
     if(e.target.id==="zsColR"&&await ask("Reset all your custom colors?","Reset")){const p=P();p.colors={};S(p);draw()}};
   $s("zsPre").onclick=e=>{const b=e.target.closest("button[data-p]");if(!b)return;const d=zPrefs.PRESETS[b.dataset.p],p=P();Object.assign(p,{theme:d.theme,font:d.font,corners:d.corners,layout:d.layout,mode:d.mode,style:d.style,custom:null});S(p);draw()};
   [["zsMode","mode"],["zsFont","font"],["zsSize","size"],["zsCorn","corners"],["zsLay","layout"],["zsStyle","style"]].forEach(([id,k])=>$s(id).onclick=e=>{const b=e.target.closest("button[data-v]");if(!b)return;const p=P();p[k]=b.dataset.v;S(p);draw()});
