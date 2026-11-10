@@ -433,8 +433,7 @@ body.zc #tabPay.more #zpMore{margin-bottom:14px}
     slate:{name:"Slate Blue",p:"#1E3A5F",p2:"#2C5282",a:"#4299E1",g:"#ECC94B"},
     rose:{name:"Rose",p:"#5B1A33",p2:"#8E2C55",a:"#DB2777",g:"#F5C26B"},
     forest:{name:"Forest",p:"#1B3A2B",p2:"#2F5D45",a:"#65A30D",g:"#E2B04A"},
-    sand:{name:"Sand & Brown",p:"#4A3426",p2:"#6B4C36",a:"#B7791F",g:"#E9C46A"},
-    blueteal:{name:"Blue & Turquoise",p:"#1B3D63",p2:"#2A5683",a:"#2E7A85",g:"#7FB3B8",home:{bg:"#2B7380",hero1:"#1F4570",hero2:"#14304F",tile:"#1B3D63",tb:"rgba(255,255,255,.16)",icon:"#8CC3C8",nav:"#2B7380",navTx:"#E3F2F3",hb:"#1B3D63",money:"#8CD3D9"}}
+    sand:{name:"Sand & Brown",p:"#4A3426",p2:"#6B4C36",a:"#B7791F",g:"#E9C46A"}
   };
   const PRESETS={
     classic:{name:"Zamat Classic",d:"Banking-style home with categories",theme:"navy",font:"manrope",corners:"round",layout:"connect",mode:"auto",style:"classic"},
@@ -448,13 +447,21 @@ body.zc #tabPay.more #zpMore{margin-bottom:14px}
     grid:{name:"Classic Grid",d:"Big icon squares, outlined",theme:"emerald",font:"manrope",corners:"round",layout:"grid",mode:"light",style:"outline"},
     minimal:{name:"Clean List",d:"Simple list, no clutter",theme:"slate",font:"inter",corners:"soft",layout:"list",mode:"light",style:"flat"},
     luxury:{name:"Rose Wallet",d:"Rose & gold wallet style",theme:"rose",font:"poppins",corners:"round",layout:"bank",mode:"light",style:"elevated"},
-    earth:{name:"Earth Grid",d:"Warm sand & brown squares",theme:"sand",font:"manrope",corners:"soft",layout:"grid",mode:"light",style:"outline"},
-    blueteal:{name:"Blue & Turquoise",d:"Classic home in navy & turquoise",theme:"blueteal",font:"manrope",corners:"round",layout:"connect",mode:"auto",style:"classic"}
+    earth:{name:"Earth Grid",d:"Warm sand & brown squares",theme:"sand",font:"manrope",corners:"soft",layout:"grid",mode:"light",style:"outline"}
   };
 
   const FONTS={manrope:{n:"Manrope",css:'"Manrope"'},inter:{n:"Inter",css:'"Inter"',g:"Inter:wght@400;500;600;700;800"},poppins:{n:"Poppins",css:'"Poppins"',g:"Poppins:wght@400;500;600;700;800"},cairo:{n:"Cairo",css:'"Cairo"',g:"Cairo:wght@400;500;600;700;800"},system:{n:"System",css:'-apple-system,BlinkMacSystemFont,"Segoe UI"'}};
   const DEF={theme:"navy",custom:null,mode:"auto",font:"manrope",size:"m",corners:"round",layout:"connect",style:"classic",heroTitle:"INSURANCE POLICIES",subtitle:"Policies, renewals and collections in one place",hidden:[],types:null,comps:[],autolock:true};
-  const load=()=>{try{return Object.assign({},DEF,JSON.parse(localStorage.getItem(PK)||"{}"))}catch(e){return Object.assign({},DEF)}};
+  const load=()=>{let P;try{P=Object.assign({},DEF,JSON.parse(localStorage.getItem(PK)||"{}"))}catch(e){P=Object.assign({},DEF)}return undoBT(P)};
+  /* one-time: undo the Nov 10 Blue & Turquoise test (theme + color dots), back to the look before it */
+  const BTPAL=["#0B2545","#14304F","#1B3D63","#2A5683","#1E5965","#2B7380","#2E7A85","#3F8E98","#7FB3B8","#CFE3E5","#E7F1F2","#FFFFFF"];
+  function undoBT(P){let ch=false;
+    if(P.theme==="blueteal"){P.theme="navy";P.custom=null;ch=true}
+    let done=false;try{done=localStorage.getItem("zamat_undo_bt")==="1"}catch(e){}
+    if(!done){if(P.colors){Object.keys(P.colors).forEach(k=>{if(BTPAL.includes(String(P.colors[k]).toUpperCase())){delete P.colors[k];ch=true}})}
+      try{localStorage.setItem("zamat_undo_bt","1")}catch(e){}}
+    if(ch){try{localStorage.setItem(PK,JSON.stringify(P))}catch(e){}setTimeout(()=>{try{window.zSync&&zSync.prefs&&zSync.prefs(P)}catch(e){}},3000)}
+    return P}
   const h2r=h=>{h=h.replace("#","");if(h.length===3)h=h.split("").map(c=>c+c).join("");return[0,2,4].map(i=>parseInt(h.substr(i,2),16))};
   const r2h=a=>"#"+a.map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,"0")).join("");
   const mix=(a,b,t)=>{const x=h2r(a),y=h2r(b);return r2h(x.map((v,i)=>v+(y[i]-v)*t))};
@@ -474,16 +481,7 @@ header.brand{background:${head}!important}
 body[data-tab="home"] header.brand{background:${mix(p,"#000000",.2)}!important}
 body[data-tab="home"] #heroTitle,body[data-tab="home"] #byLine{color:${mix(g,"#ffffff",.25)}!important}
 #zLock{background:${head}!important}#zLock .lt{color:${mix(g,"#ffffff",.25)}!important}#zLock .dots i.f{background:${g};border-color:${g}}
-#nav #zHome{background:${p}!important}.t1{background:${p2}!important}.t2{background:${a}!important}.t3{background:${g}!important;color:${mix(g,"#000000",.8)}!important}.t4{background:${mix(p2,"#ffffff",.22)}!important}.t5{background:${mix(p,"#7a8599",.5)}!important}`+homeCSS(THEMES[P.theme])}
-  function homeCSS(t){const h=t&&t.home;if(!h||(load().custom))return"";const H='body.zc[data-tab="home"]';
-    return `
-${H}{background:${h.bg}!important}html:has(${H}){background:${h.bg}!important}${H} header.brand{background:${h.bg}!important}
-${H} #zHero{background:linear-gradient(135deg,${h.hero1},${h.hero2})!important;border-color:rgba(255,255,255,.14)!important}
-#zHero .zcm b,#zHero .zcm .zpm b{color:${h.money}!important}
-${H} .zcat button.g{background:${h.tile}!important;border-color:${h.tb}!important}
-${H} .zcat svg{stroke:${h.icon}!important;color:${h.icon}!important}
-${H} #nav{background:${h.nav}!important}${H} #nav button.g.zy{color:${h.navTx}!important}${H} #nav svg{stroke:${h.navTx}!important}
-${H} #nav #zHome{background:${h.hb}!important;border-color:${h.nav}!important}${H} #nav #zHome svg{stroke:#fff!important}`}
+#nav #zHome{background:${p}!important}.t1{background:${p2}!important}.t2{background:${a}!important}.t3{background:${g}!important;color:${mix(g,"#000000",.8)}!important}.t4{background:${mix(p2,"#ffffff",.22)}!important}.t5{background:${mix(p,"#7a8599",.5)}!important}`}
   function fontCSS(P){const f=FONTS[P.font]||FONTS.manrope;if(P.font==="manrope")return"";
     if(f.g&&!document.getElementById("zFont")){const l=document.createElement("link");l.id="zFont";l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family="+f.g+"&display=swap";document.head.appendChild(l)}
     return `body,button,input,select,textarea,#zLock{font-family:${f.css},system-ui,-apple-system,sans-serif!important}`}
@@ -505,7 +503,6 @@ body[data-tab="home"] .tile .ti{width:48px!important;height:48px!important}body[
     if(P.style==="glass")return `:root:not([data-theme="dark"]) body{background:linear-gradient(160deg,${mix(p,"#ffffff",.84)},${mix(a,"#ffffff",.78)}) fixed!important}
 :root:not([data-theme="dark"]) .panel,:root:not([data-theme="dark"]) .card,:root:not([data-theme="dark"]) .zt-card,:root:not([data-theme="dark"]) .zl-card,:root:not([data-theme="dark"]) .tile.g,:root:not([data-theme="dark"]) .zcat button.g,:root:not([data-theme="dark"]) .stat{background:rgba(255,255,255,.62)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-color:rgba(255,255,255,.7)!important;box-shadow:0 8px 24px -14px rgba(10,20,40,.3)!important}`;
     return""}
-  window.ZPAL=["#0B2545","#14304F","#1B3D63","#2A5683","#1E5965","#2B7380","#2E7A85","#3F8E98","#7FB3B8","#CFE3E5","#E7F1F2","#FFFFFF"];
   const CKEYS=[
     ["Home page",[["homeBg","Page background","#12264B"],["topBar","Top bar","#12264B"],["cardBg","Main card","#21407A"],["cardText","Main card text","#FFFFFF"],["tileBg","Squares (Health, Motor…)","#1A3263"],["tileText","Squares text","#FFFFFF"],["tileIcon","Squares icons","#D3DAE3"],["tileBorder","Squares border","#33496F"]]],
     ["Bottom bar",[["navBg","Bottom bar","#12264B"],["navText","Bottom bar icons & text","#D3DAE3"],["homeBtn","Home button","#21407A"]]],
@@ -2925,9 +2922,7 @@ render();renderBrand();
 .zmr{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--bd)}.zmr span{flex:1;font-size:14px;color:var(--tx)}.zma{min-height:0;width:32px;height:32px;padding:0;border-radius:50%;font-size:15px}.zma:disabled{opacity:.3}
 .znav{display:grid;grid-template-columns:1fr 1fr;gap:8px}.znav small{display:block;font-size:11.5px;color:var(--mu);font-weight:600;margin-bottom:3px}
 .zcg{margin-top:12px}.zcg>b{display:block;font-size:12.5px;color:var(--mu);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px}
-.zcr{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--bd)}
-#zsColors .zcr{flex-wrap:wrap!important}#zsColors .zsw{display:flex!important;flex:0 0 100%!important;width:100%!important;height:auto!important;min-height:0!important;overflow:visible!important;flex-direction:row!important;flex-wrap:wrap!important;gap:5px!important;padding:2px 0 4px!important;margin:0!important;position:static!important}#zsColors .zsw i{display:block!important;position:static!important;flex:none!important;width:22px!important;height:22px!important;margin:0!important;border-radius:50%!important;cursor:pointer;border:1.5px solid rgba(0,0,0,.14)!important;box-sizing:border-box}#zsColors .zsw i.on{outline:2.5px solid var(--ac2);outline-offset:2px}
-.zpal{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 4px}.zpal span{font-size:12px;color:var(--mu);flex-basis:100%}.zcr span{flex:1;font-size:14px;color:var(--tx)}
+.zcr{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--bd)}.zcr span{flex:1;font-size:14px;color:var(--tx)}
 .zcr input[type=color]{width:46px;height:34px;min-height:0;padding:2px;border-radius:10px;flex:none}
 .zcr .zcx{min-height:0;width:30px;height:30px;padding:0;border-radius:50%;font-size:15px;visibility:hidden}
 .zhc{display:flex;flex-wrap:wrap;gap:6px}.zhc button.g{display:flex;align-items:center;gap:6px;min-height:34px;padding:5px 10px;font-size:12.5px;color:var(--tx);border:2px solid var(--bd)}.zhc button.g.on{border-color:var(--ac2)}.zhc i{width:16px;height:16px;border-radius:50%;display:block}
@@ -2993,8 +2988,8 @@ render();renderBrand();
 </div>
 <h3>Colors</h3>
 <div class="panel" style="display:block" id="zsColors">
-  <div class="mu" style="margin:0 0 6px">Tap a dot to use navy or turquoise, or tap the color box to pick any color. The change shows right away.</div>
-  ${zPrefs.CKEYS.map(([g,items])=>`<div class="zcg"><b>${g}</b>${items.map(([k,l,d])=>`<div class="zcr"><span>${l}</span><button class="g zcx" data-cx="${k}" title="Back to default">↺</button><input type="color" data-ck="${k}" value="${d}"><div class="zsw">${ZPAL.map(c=>`<i data-sk="${k}" data-c="${c}" style="background:${c}" title="${c}"></i>`).join("")}</div></div>`).join("")}</div>`).join("")}
+  <div class="mu" style="margin:0 0 6px">Tap any color to change it. The change shows right away.</div>
+  ${zPrefs.CKEYS.map(([g,items])=>`<div class="zcg"><b>${g}</b>${items.map(([k,l,d])=>`<div class="zcr"><span>${l}</span><button class="g zcx" data-cx="${k}" title="Back to default">↺</button><input type="color" data-ck="${k}" value="${d}"></div>`).join("")}</div>`).join("")}
   <button class="g" id="zsColR" style="width:100%;margin-top:10px">Reset all colors</button>
 </div>
 <h3>Theme</h3>
@@ -3061,7 +3056,7 @@ render();renderBrand();
       $s("zsMenu").innerHTML=ord.map((k,i)=>`<div class="zmr"><span>${MI[k]}</span><button class="g zma" data-mu="${k}" ${i===0?"disabled":""}>↑</button><button class="g zma" data-md="${k}" ${i===ord.length-1?"disabled":""}>↓</button><label class="zsw" style="margin:0"><input type="checkbox" data-mt="${k}" ${hid.includes(k)?"":"checked"}><b></b></label></div>`).join("");
       document.querySelectorAll("#zsMSize button").forEach(b=>b.classList.toggle("on",b.dataset.v===(M.size||"s")))}
     {const N=Object.assign({l1:"",l2:"cli",r1:"pay",r2:""},p.nav||{});document.querySelectorAll("select[data-nv]").forEach(x=>x.value=N[x.dataset.nv]||"")}
-    {const cc=p.colors||{};zPrefs.CKEYS.forEach(([g,it])=>it.forEach(([k,l,d])=>{const i=document.querySelector(`#zsColors input[data-ck="${k}"]`);if(i&&document.activeElement!==i)i.value=cc[k]||d;const x=document.querySelector(`#zsColors [data-cx="${k}"]`);if(x)x.style.visibility=cc[k]?"visible":"hidden";const cur=(cc[k]||d).toUpperCase();document.querySelectorAll(`#zsColors [data-sk="${k}"]`).forEach(w=>w.classList.toggle("on",w.dataset.c.toUpperCase()===cur))}))}
+    {const cc=p.colors||{};zPrefs.CKEYS.forEach(([g,it])=>it.forEach(([k,l,d])=>{const i=document.querySelector(`#zsColors input[data-ck="${k}"]`);if(i&&document.activeElement!==i)i.value=cc[k]||d;const x=document.querySelector(`#zsColors [data-cx="${k}"]`);if(x)x.style.visibility=cc[k]?"visible":"hidden"}))}
     document.querySelectorAll("#zsPre button").forEach(b=>{const d=zPrefs.PRESETS[b.dataset.p];b.classList.toggle("on",!p.custom&&["theme","font","corners","layout","mode"].every(k=>p[k]===d[k])&&(p.style||"classic")===d.style)});
     $s("zsHc").value=p.heroColor||"#16335C";document.querySelectorAll("#zsHcSw button").forEach(b=>b.classList.toggle("on",b.dataset.hc.toLowerCase()===(p.heroColor||"#16335C").toLowerCase()));if(document.activeElement!==$s("zsHero"))$s("zsHero").value=p.heroTitle;if(document.activeElement!==$s("zsSub"))$s("zsSub").value=p.subtitle;
     TILES.forEach(([k])=>$s("zsT_"+k).checked=!(p.hidden||[]).includes(k));
@@ -3078,7 +3073,7 @@ render();renderBrand();
   $s("zsMenu").onchange=e=>{const t=e.target.closest("input[data-mt]");if(!t)return;const p=P(),h=new Set((p.menu||{}).hidden||[]);t.checked?h.delete(t.dataset.mt):h.add(t.dataset.mt);p.menu=Object.assign({},p.menu||{},{hidden:[...h]});S(p)};
   document.querySelectorAll("select[data-nv]").forEach(x=>x.onchange=()=>{const p=P();p.nav=Object.assign({l1:"",l2:"cli",r1:"pay",r2:""},p.nav||{},{[x.dataset.nv]:x.value});S(p)});
   $s("zsColors").oninput=e=>{const i=e.target.closest("input[data-ck]");if(!i)return;const p=P();p.colors=Object.assign({},p.colors||{},{[i.dataset.ck]:i.value});S(p);const x=document.querySelector(`#zsColors [data-cx="${i.dataset.ck}"]`);if(x)x.style.visibility="visible"};
-  $s("zsColors").onclick=async e=>{const w=e.target.closest("[data-sk]");if(w){const p=P();p.colors=Object.assign({},p.colors||{},{[w.dataset.sk]:w.dataset.c});S(p);draw();return}const x=e.target.closest("[data-cx]");if(x){const p=P();if(p.colors){delete p.colors[x.dataset.cx]}S(p);draw();return}
+  $s("zsColors").onclick=async e=>{const x=e.target.closest("[data-cx]");if(x){const p=P();if(p.colors){delete p.colors[x.dataset.cx]}S(p);draw();return}
     if(e.target.id==="zsColR"&&await ask("Reset all your custom colors?","Reset")){const p=P();p.colors={};S(p);draw()}};
   $s("zsPre").onclick=e=>{const b=e.target.closest("button[data-p]");if(!b)return;const d=zPrefs.PRESETS[b.dataset.p],p=P();Object.assign(p,{theme:d.theme,font:d.font,corners:d.corners,layout:d.layout,mode:d.mode,style:d.style,custom:null});S(p);draw()};
   [["zsMode","mode"],["zsFont","font"],["zsSize","size"],["zsCorn","corners"],["zsLay","layout"],["zsStyle","style"]].forEach(([id,k])=>$s(id).onclick=e=>{const b=e.target.closest("button[data-v]");if(!b)return;const p=P();p[k]=b.dataset.v;S(p);draw()});
